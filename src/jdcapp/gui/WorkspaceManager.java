@@ -29,21 +29,41 @@ import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
 import jdcapp.file.FileManager;
+import static jdcapp.settings.AppPropertyType.ADD_CLASS_ICON;
+import static jdcapp.settings.AppPropertyType.ADD_CLASS_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_ICON;
+import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.APP_LOGO;
 import static jdcapp.settings.AppPropertyType.CODE_EXPORT_ICON;
 import static jdcapp.settings.AppPropertyType.CODE_EXPORT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.EXIT_ICON;
 import static jdcapp.settings.AppPropertyType.EXIT_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.GRID_TOGGLE_LABEL;
 import static jdcapp.settings.AppPropertyType.LOAD_ICON;
 import static jdcapp.settings.AppPropertyType.LOAD_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.NEW_ICON;
 import static jdcapp.settings.AppPropertyType.NEW_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_ICON;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.REDO_ICON;
+import static jdcapp.settings.AppPropertyType.REDO_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.REMOVE_ICON;
+import static jdcapp.settings.AppPropertyType.REMOVE_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.RESIZE_ICON;
+import static jdcapp.settings.AppPropertyType.RESIZE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.SAVE_AS_ICON;
 import static jdcapp.settings.AppPropertyType.SAVE_AS_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.SAVE_ICON;
 import static jdcapp.settings.AppPropertyType.SAVE_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.SELECT_ICON;
+import static jdcapp.settings.AppPropertyType.SELECT_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.SNAP_TOGGLE_LABEL;
+import static jdcapp.settings.AppPropertyType.UNDO_ICON;
+import static jdcapp.settings.AppPropertyType.UNDO_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ZOOM_IN_ICON;
+import static jdcapp.settings.AppPropertyType.ZOOM_IN_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ZOOM_OUT_ICON;
+import static jdcapp.settings.AppPropertyType.ZOOM_OUT_TOOLTIP;
 import static jdcapp.settings.AppStartupConstants.FILE_PROTOCOL;
 import static jdcapp.settings.AppStartupConstants.PATH_IMAGES;
 import properties_manager.PropertiesManager;
@@ -75,9 +95,11 @@ public class WorkspaceManager {
     FlowPane editToolbarPane;
     FlowPane viewToolbarPane;
     
-    //The subpanes for the two export buttons and the two toggle buttons
+    //The subpanes for the two export buttons and the two toggle buttons (with HBoxes for toggle button labels)
     VBox exportPane;
     VBox togglePane;
+    HBox gridPane;
+    HBox snapPane;
     
     //The buttons for the file toolbar
     Button newButton;
@@ -179,13 +201,12 @@ public class WorkspaceManager {
         
         //Starts the window
         initWindow();
-        //TODO: finish coding constructor
     }
     
     /**
      * Calls methods to initalize the various buttons and controls in the top toolbar.
      * Note that initTopToolbar does not set up any event handling, this is done by
-     * initHandlers method.
+     * initHandlers method. When this method exits, the top toolbar will be fully initialized.
      */
     private void initTopToolbar(){
         initFileToolbar();
@@ -217,7 +238,55 @@ public class WorkspaceManager {
     }
     
     /**
-     * Initializes all the event handling in the 
+     * Initializes editToolbarPane and all buttons that it will contain.
+     */
+    private void initEditToolbar(){
+        editToolbarPane = new FlowPane();
+        
+        //Initialize the edit toolbar buttons and add them to editToolbarPane
+        selectButton = initChildButton(editToolbarPane, SELECT_ICON.toString(), SELECT_TOOLTIP.toString(), true);
+        resizeButton = initChildButton(editToolbarPane, RESIZE_ICON.toString(), RESIZE_TOOLTIP.toString(), true);
+        addClassButton = initChildButton(editToolbarPane, ADD_CLASS_ICON.toString(), ADD_CLASS_TOOLTIP.toString(), true);
+        addInterfaceButton = initChildButton(editToolbarPane, ADD_INTERFACE_ICON.toString(), ADD_INTERFACE_TOOLTIP.toString(), true);
+        removeButton = initChildButton(editToolbarPane, REMOVE_ICON.toString(), REMOVE_TOOLTIP.toString(), true);
+        undoButton = initChildButton(editToolbarPane, UNDO_ICON.toString(), UNDO_TOOLTIP.toString(), true);
+        redoButton = initChildButton(editToolbarPane, REDO_ICON.toString(), REDO_TOOLTIP.toString(), true);
+        
+    }
+    
+    /**
+     * Initializes viewToolbarPane and all buttons that it will contain.
+     */
+    private void initViewToolbar(){
+        viewToolbarPane = new FlowPane();
+        gridPane = new HBox();
+        snapPane = new HBox();
+        togglePane = new VBox();
+        
+        //Initialize the zoom buttons and add them to viewToolbarPane
+        zoomInButton = initChildButton(viewToolbarPane, ZOOM_IN_ICON.toString(), ZOOM_IN_TOOLTIP.toString(), true);
+        zoomOutButton = initChildButton(viewToolbarPane, ZOOM_OUT_ICON.toString(), ZOOM_OUT_TOOLTIP.toString(), true);
+        
+        //Initialize the grid toggle button and its label
+        gridToggle = new ToggleButton();
+        gridLabel = new Label(GRID_TOGGLE_LABEL.toString());
+        gridPane.getChildren().add(gridToggle);
+        gridPane.getChildren().add(gridLabel);
+        
+        //Initialize the snap toggle button and its label
+        snapToggle = new ToggleButton();
+        snapLabel = new Label(SNAP_TOGGLE_LABEL.toString());
+        snapPane.getChildren().add(snapToggle);
+        snapPane.getChildren().add(snapLabel);
+        
+        //Add gridPane and snapPane to the overall togglePane, then add togglePane to viewToolbarPane
+        togglePane.getChildren().add(gridPane);
+        togglePane.getChildren().add(snapPane);
+        viewToolbarPane.getChildren().add(togglePane);
+    }
+    
+    /**
+     * Initializes all the event handling in the top toolbar
      */
     private void initTopToolbarHandlers(){
         //Set up the handlers for the file toolbar using FileController
@@ -244,7 +313,14 @@ public class WorkspaceManager {
             fileController.handleExitRequest();
         });
         
-        //Set up the handlers for the edit toolbar using EditController
+        //TODO: Set up handlers for the edit and view toolbars
+    }
+    
+    /**
+     * Initializes all the event handling in the right toolbar
+     */
+    private void initRightToolbarHandlers(){
+        //TODO: Finish coding method
     }
     
     // Initialize the window (ie stage) putting all the controls

@@ -53,6 +53,16 @@ public enum AppPropertyType {
         REMOVE_TOOLTIP,
         UNDO_TOOLTIP,
         REDO_TOOLTIP,
+        
+        // VIEW TOOLBAR ICONS
+        ZOOM_IN_ICON,
+        ZOOM_OUT_ICON,
+        
+        // TOOLTIPS/LABELS FOR VIEW TOOLBAR BUTTONS
+        ZOOM_IN_TOOLTIP,
+        ZOOM_OUT_TOOLTIP,
+        GRID_TOGGLE_LABEL,
+        SNAP_TOGGLE_LABEL,
 	
 	// ERROR MESSAGES
 	NEW_ERROR_MESSAGE,
