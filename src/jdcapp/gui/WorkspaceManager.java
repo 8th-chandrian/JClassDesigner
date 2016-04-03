@@ -11,7 +11,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -74,6 +74,11 @@ import properties_manager.PropertiesManager;
  */
 public class WorkspaceManager {
     
+    static final String TOP_SUB_TOOLBAR_CLASS = "top_sub_toolbar";
+    static final String TOP_BUTTON_LARGE = "top_button_large";
+    static final String TOP_BUTTON_SMALL = "top_button_small";
+    static final String TOP_VBOX = "top_vbox";
+    
     //The parent app and app name
     JDCApp app;
     String appTitle;
@@ -91,13 +96,13 @@ public class WorkspaceManager {
     HBox appToolbarPane;
     
     //The three subtoolbars in the top toolbar
-    FlowPane fileToolbarPane;
-    FlowPane editToolbarPane;
-    FlowPane viewToolbarPane;
+    HBox fileToolbarPane;
+    HBox editToolbarPane;
+    HBox viewToolbarPane;
     
     //The subpanes for the two export buttons and the two toggle buttons (with HBoxes for toggle button labels)
     VBox exportPane;
-    VBox togglePane;
+    VBox checkPane;
     HBox gridPane;
     HBox snapPane;
     
@@ -122,8 +127,8 @@ public class WorkspaceManager {
     //The buttons and labels for the view toolbar
     Button zoomInButton;
     Button zoomOutButton;
-    ToggleButton gridToggle;
-    ToggleButton snapToggle;
+    CheckBox gridCheck;
+    CheckBox snapCheck;
     Label gridLabel;
     Label snapLabel;
     
@@ -235,7 +240,7 @@ public class WorkspaceManager {
      * Initializes fileToolbarPane and all buttons that it will contain.
      */
     private void initFileToolbar(){
-        fileToolbarPane = new FlowPane();
+        fileToolbarPane = new HBox();
         exportPane = new VBox();
         
         //Initialize the file toolbar buttons and add them to fileToolbarPane
@@ -255,7 +260,7 @@ public class WorkspaceManager {
      * Initializes editToolbarPane and all buttons that it will contain.
      */
     private void initEditToolbar(){
-        editToolbarPane = new FlowPane();
+        editToolbarPane = new HBox();
         
         //Initialize the edit toolbar buttons and add them to editToolbarPane
         selectButton = initChildButton(editToolbarPane, SELECT_ICON.toString(), SELECT_TOOLTIP.toString(), true);
@@ -274,31 +279,31 @@ public class WorkspaceManager {
     private void initViewToolbar(){
         PropertiesManager props = PropertiesManager.getPropertiesManager();
         
-        viewToolbarPane = new FlowPane();
+        viewToolbarPane = new HBox();
         gridPane = new HBox();
         snapPane = new HBox();
-        togglePane = new VBox();
+        checkPane = new VBox();
         
         //Initialize the zoom buttons and add them to viewToolbarPane
         zoomInButton = initChildButton(viewToolbarPane, ZOOM_IN_ICON.toString(), ZOOM_IN_TOOLTIP.toString(), true);
         zoomOutButton = initChildButton(viewToolbarPane, ZOOM_OUT_ICON.toString(), ZOOM_OUT_TOOLTIP.toString(), true);
         
         //Initialize the grid toggle button and its label
-        gridToggle = new ToggleButton();
+        gridCheck = new CheckBox();
         gridLabel = new Label(props.getProperty(GRID_TOGGLE_LABEL.toString()));
-        gridPane.getChildren().add(gridToggle);
+        gridPane.getChildren().add(gridCheck);
         gridPane.getChildren().add(gridLabel);
         
         //Initialize the snap toggle button and its label
-        snapToggle = new ToggleButton();
+        snapCheck = new CheckBox();
         snapLabel = new Label(props.getProperty(SNAP_TOGGLE_LABEL.toString()));
-        snapPane.getChildren().add(snapToggle);
+        snapPane.getChildren().add(snapCheck);
         snapPane.getChildren().add(snapLabel);
         
         //Add gridPane and snapPane to the overall togglePane, then add togglePane to viewToolbarPane
-        togglePane.getChildren().add(gridPane);
-        togglePane.getChildren().add(snapPane);
-        viewToolbarPane.getChildren().add(togglePane);
+        checkPane.getChildren().add(gridPane);
+        checkPane.getChildren().add(snapPane);
+        viewToolbarPane.getChildren().add(checkPane);
     }
     
     /**
@@ -412,7 +417,30 @@ public class WorkspaceManager {
     }
     
     public void initStyle(){
-        //TODO: CODE METHOD
+        fileToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
+        editToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
+        viewToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
+        
+        newButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        loadButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        saveButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        saveAsButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        exitButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        selectButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        resizeButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        addClassButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        addInterfaceButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        removeButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        undoButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        redoButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        zoomInButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        zoomOutButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        
+        codeExportButton.getStyleClass().add(TOP_BUTTON_SMALL);
+        photoExportButton.getStyleClass().add(TOP_BUTTON_SMALL);
+        
+        exportPane.getStyleClass().add(TOP_VBOX);
+        checkPane.getStyleClass().add(TOP_VBOX);
     }
     
     //TODO: Finish adding methods

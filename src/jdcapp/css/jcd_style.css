@@ -6,3 +6,28 @@
     Author     : Noah
 */
 
+.top_sub_toolbar {
+    -fx-spacing: 10;
+    -fx-border-radius: 5.0;
+    -fx-padding: 5 10 5 10;
+    -fx-alignment: CENTER;
+    -fx-border-width: 2px;
+    -fx-border-color: BLACK;
+}
+
+.top_button_large {
+    -fx-padding: 3 3 3 3;
+}
+
+.top_button_small {
+    -fx-padding: 1 15 1 15;
+}
+
+.top_vbox {
+    -fx-spacing: 2 0 2 0;
+    -fx-alignment: CENTER;
+}
+
+.check-box {
+    
+}
