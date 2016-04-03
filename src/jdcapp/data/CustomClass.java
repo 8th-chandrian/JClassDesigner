@@ -29,8 +29,8 @@ public class CustomClass{
     private HashMap<String, CustomClass> parents;
     
     //The lists of all the variables and methods contained within the class
-    private ObservableList<CustomVar> variables;
-    private ObservableList<CustomMethod> methods;
+    private ArrayList<CustomVar> variables;
+    private ArrayList<CustomMethod> methods;
     
     //The maximum number of arguments found in the methods contained within this class
     //TODO: figure out if this is a good way to handle the table generation
@@ -47,22 +47,6 @@ public class CustomClass{
     //The HashMap containing lists of points on the lines connecting this class and its parents
     private HashMap<String, ArrayList<Point2D>> points;
     
-    //Compares variables based on their names. Used to sort variables in alphabetical order.
-    static final Comparator<CustomVar> varComparator = new Comparator() {
-        @Override
-        public int compare(Object c1, Object c2) {
-            return (((CustomVar)c1).getVarName()).compareTo(((CustomVar)c2).getVarName());
-        }
-    };
-    
-    //Compares methods based on their names. Used to sort methods in alphabetical order.
-    static final Comparator<CustomMethod> methodComparator = new Comparator() {
-        @Override
-        public int compare(Object c1, Object c2) {
-            return (((CustomMethod)c1).getMethodName()).compareTo(((CustomMethod)c2).getMethodName());
-        }
-    };
-    
     /**
      * Default constructor.
      */
@@ -70,12 +54,93 @@ public class CustomClass{
         className = DEFAULT_CLASS_NAME;
         packageName = DEFAULT_PACKAGE_NAME;
         parents = new HashMap<>();
-        variables = variables.sorted(varComparator);
-        methods = methods.sorted(methodComparator);
+        variables = new ArrayList<>();
+        methods = new ArrayList<>();
         startX = initX;
         startY = initY;
         width = DEFAULT_CLASS_WIDTH;
         height = DEFAULT_CLASS_HEIGHT;
     }
-    //TODO: FINISH CODING CLASS
+    
+    public String getClassName(){
+        return className;
+    }
+    
+    public void setClassName(String className){
+        this.className = className;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public HashMap<String, CustomClass> getParents() {
+        return parents;
+    }
+
+    public void setParents(HashMap<String, CustomClass> parents) {
+        this.parents = parents;
+    }
+
+    public ArrayList<CustomVar> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(ArrayList<CustomVar> variables) {
+        this.variables = variables;
+    }
+
+    public ArrayList<CustomMethod> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(ArrayList<CustomMethod> methods) {
+        this.methods = methods;
+    }
+
+    public double getStartX() {
+        return startX;
+    }
+
+    public void setStartX(double startX) {
+        this.startX = startX;
+    }
+
+    public double getStartY() {
+        return startY;
+    }
+
+    public void setStartY(double startY) {
+        this.startY = startY;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public HashMap<String, ArrayList<Point2D>> getPoints() {
+        return points;
+    }
+
+    public void setPoints(HashMap<String, ArrayList<Point2D>> points) {
+        this.points = points;
+    }
+    
+    //TODO: Finish coding this class
 }

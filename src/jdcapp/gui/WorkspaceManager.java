@@ -30,6 +30,8 @@ import jdcapp.controller.EditController;
 import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
+import jdcapp.data.DataManager;
+import jdcapp.data.JDCAppState;
 import jdcapp.file.FileManager;
 import static jdcapp.settings.AppPropertyType.ADD_CLASS_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_CLASS_TOOLTIP;
@@ -205,6 +207,7 @@ public class WorkspaceManager {
         appTitle = initAppTitle;
         app = initApp;
         canvasActivated = false;
+        canvas = new Pane();
         
         //Initializes the toolbars and various controls=
         initTopToolbar();
@@ -423,6 +426,9 @@ public class WorkspaceManager {
             viewController.handleSnapCheckRequest(snapCheck.isSelected());
         });
         
+        //Set up the handlers for the component toolbar using ComponentController
+        componentController = new ComponentController(app);
+        
         //Set up the canvas mouse event handlers using WorkspaceController
         workspaceController = new WorkspaceController(app);
         canvas.setOnMouseEntered(e -> {
@@ -468,7 +474,6 @@ public class WorkspaceManager {
 
         // ADD THE TOOLBARS, AND CREATE AND ADD THE CANVAS
         appPane = new BorderPane();
-        canvas = new Pane();
         appPane.setTop(appToolbarPane);
         appPane.setRight(componentToolbarPane);
         appPane.setCenter(canvas);
@@ -587,10 +592,37 @@ public class WorkspaceManager {
 
     public void updateFileToolbarControls(boolean saved) {
         saveButton.setDisable(saved);
+        saveButton.setDisable(false);
         //TODO: Finish coding method
+    }
+    
+    public void updateEditToolbarControls(){
+        DataManager dataManager = app.getDataManager();
+        
+        if(dataManager.getState() == JDCAppState.SELECTING && dataManager.getSelectedClass() != null){
+            selectButton.setDisable(true);
+            resizeButton.setDisable(false);
+            removeButton.setDisable(false);
+        }
+        else if(dataManager.getState() == JDCAppState.SELECTING){
+            selectButton.setDisable(true);
+            resizeButton.setDisable(true);
+            removeButton.setDisable(true);
+        }
+        else if(dataManager.getState() == JDCAppState.RESIZING_NOTHING){
+            selectButton.setDisable(false);
+            resizeButton.setDisable(true);
+            removeButton.setDisable(false);
+        }
+        
+        //TODO: Possibly finish adding cases (if there are any more cases to be handled)
+    }
+    
+    public Pane getCanvas(){
+        return canvas;
     }
 
     public void reloadWorkspace() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO: CODE THIS METHOD ASAP
     }
 }

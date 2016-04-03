@@ -4,12 +4,19 @@
 package jdcapp.controller;
 
 import jdcapp.JDCApp;
+import jdcapp.data.CustomClass;
+import jdcapp.data.DataManager;
+import jdcapp.data.JDCAppState;
+import jdcapp.gui.WorkspaceManager;
 
 /**
  *
  * @author Noah
  */
 public class EditController {
+    
+    public static final double defaultX = 100;
+    public static final double defaultY = 100;
     
     //The parent application
     JDCApp app;
@@ -27,7 +34,23 @@ public class EditController {
     }
 
     public void handleAddClassRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        //Create a new custom class and set its position to the default x and y values given
+        CustomClass newClass = new CustomClass(defaultX, defaultY);
+        
+        //Add the default class name to the array of class names and the class to the hashmap of classes
+        dataManager.getClassNames().add(newClass.getClassName());
+        dataManager.getClasses().put(newClass.getClassName(), newClass);
+        
+        //Select the newly-created class
+        dataManager.setState(JDCAppState.SELECTING);
+        dataManager.setSelectedClass(newClass.getClassName());
+        
+        //Update the edit toolbar controls to reflect the selection, and reload the workspace so that the class is visible
+        workspaceManager.updateEditToolbarControls();
+        workspaceManager.reloadWorkspace();
     }
 
     public void handleAddInterfaceRequest() {
