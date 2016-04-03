@@ -177,8 +177,7 @@ public class WorkspaceManager {
     boolean canvasActivated;
     
     /**
-     * The constructor. Sets up the GUI in its entirety, without initializing canvas. Canvas will be initialized
-     * when a file is either created with newButton or loaded with loadButton.
+     * The constructor. Sets up the GUI in its entirety.
      * @param initPrimaryStage
      *      The app's primary stage, on which the GUI is displayed.
      * @param initAppTitle
@@ -191,7 +190,7 @@ public class WorkspaceManager {
         appTitle = initAppTitle;
         app = initApp;
         
-        //Initializes the toolbars and various controls
+        //Initializes the toolbars and various controls=
         initTopToolbar();
         initRightToolbar();
         
@@ -204,11 +203,21 @@ public class WorkspaceManager {
     }
     
     /**
+     * Accessor for the app's primary stage's scene
+     * @return 
+     *      the primary scene
+     */
+    public Scene getPrimaryScene(){ return primaryScene; }
+    
+    /**
      * Calls methods to initalize the various buttons and controls in the top toolbar.
      * Note that initTopToolbar does not set up any event handling, this is done by
-     * initHandlers method. When this method exits, the top toolbar will be fully initialized.
+     * initHandlers method. When this method exits, the top toolbar will be fully initialized
+     * and added to appPane.
      */
     private void initTopToolbar(){
+        appToolbarPane = new HBox();
+        
         initFileToolbar();
         initEditToolbar();
         initViewToolbar();
@@ -218,11 +227,16 @@ public class WorkspaceManager {
         appToolbarPane.getChildren().add(viewToolbarPane);
     }
     
+    private void initRightToolbar(){
+        //TODO: CODE METHOD
+    }
+    
     /**
      * Initializes fileToolbarPane and all buttons that it will contain.
      */
     private void initFileToolbar(){
         fileToolbarPane = new FlowPane();
+        exportPane = new VBox();
         
         //Initialize the file toolbar buttons and add them to fileToolbarPane
         newButton = initChildButton(fileToolbarPane, NEW_ICON.toString(), NEW_TOOLTIP.toString(), false);
@@ -258,6 +272,8 @@ public class WorkspaceManager {
      * Initializes viewToolbarPane and all buttons that it will contain.
      */
     private void initViewToolbar(){
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        
         viewToolbarPane = new FlowPane();
         gridPane = new HBox();
         snapPane = new HBox();
@@ -269,13 +285,13 @@ public class WorkspaceManager {
         
         //Initialize the grid toggle button and its label
         gridToggle = new ToggleButton();
-        gridLabel = new Label(GRID_TOGGLE_LABEL.toString());
+        gridLabel = new Label(props.getProperty(GRID_TOGGLE_LABEL.toString()));
         gridPane.getChildren().add(gridToggle);
         gridPane.getChildren().add(gridLabel);
         
         //Initialize the snap toggle button and its label
         snapToggle = new ToggleButton();
-        snapLabel = new Label(SNAP_TOGGLE_LABEL.toString());
+        snapLabel = new Label(props.getProperty(SNAP_TOGGLE_LABEL.toString()));
         snapPane.getChildren().add(snapToggle);
         snapPane.getChildren().add(snapLabel);
         
@@ -340,12 +356,12 @@ public class WorkspaceManager {
         primaryStage.setWidth(bounds.getWidth());
         primaryStage.setHeight(bounds.getHeight());
 
-        // ADD THE TOOLBAR ONLY, NOTE THAT THE WORKSPACE
-        // HAS BEEN CONSTRUCTED, BUT WON'T BE ADDED UNTIL
-        // THE USER STARTS EDITING A COURSE
+        // ADD THE TOOLBARS, AND CREATE AND ADD THE CANVAS
         appPane = new BorderPane();
+        canvas = new Pane();
         appPane.setTop(appToolbarPane);
         appPane.setRight(componentToolbarPane);
+        appPane.setCenter(canvas);
         primaryScene = new Scene(appPane);
         
         // SET THE APP ICON
@@ -393,6 +409,10 @@ public class WorkspaceManager {
 	
 	// AND RETURN THE COMPLETED BUTTON
         return button;
+    }
+    
+    public void initStyle(){
+        //TODO: CODE METHOD
     }
     
     //TODO: Finish adding methods

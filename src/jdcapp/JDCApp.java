@@ -122,8 +122,7 @@ public class JDCApp extends Application {
 	stylesheet += props.getProperty(APP_CSS);
 	URL stylesheetURL = getClass().getResource(stylesheet);
 	String stylesheetPath = stylesheetURL.toExternalForm();
-        
-        //TODO: Write getPrimaryScene method in WorkspaceManager
+
 	getWorkspaceManager().getPrimaryScene().getStylesheets().add(stylesheetPath);	
     }
     
