@@ -4,7 +4,25 @@
 package jdcapp.controller;
 
 import java.io.File;
+import java.io.IOException;
+import javafx.stage.FileChooser;
 import jdcapp.JDCApp;
+import jdcapp.data.DataManager;
+import jdcapp.gui.AppMessageDialogSingleton;
+import jdcapp.gui.AppYesNoCancelDialogSingleton;
+import static jdcapp.settings.AppPropertyType.NEW_COMPLETED_MESSAGE;
+import static jdcapp.settings.AppPropertyType.NEW_COMPLETED_TITLE;
+import static jdcapp.settings.AppPropertyType.NEW_ERROR_MESSAGE;
+import static jdcapp.settings.AppPropertyType.NEW_ERROR_TITLE;
+import static jdcapp.settings.AppPropertyType.SAVE_COMPLETED_MESSAGE;
+import static jdcapp.settings.AppPropertyType.SAVE_COMPLETED_TITLE;
+import static jdcapp.settings.AppPropertyType.SAVE_UNSAVED_WORK_MESSAGE;
+import static jdcapp.settings.AppPropertyType.SAVE_UNSAVED_WORK_TITLE;
+import static jdcapp.settings.AppPropertyType.SAVE_WORK_TITLE;
+import static jdcapp.settings.AppPropertyType.WORK_FILE_EXT;
+import static jdcapp.settings.AppPropertyType.WORK_FILE_EXT_DESC;
+import static jdcapp.settings.AppStartupConstants.PATH_WORK;
+import properties_manager.PropertiesManager;
 
 /**
  *
@@ -28,7 +46,43 @@ public class FileController {
     }
 
     public void handleNewRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        try {
+            // WE MAY HAVE TO SAVE CURRENT WORK
+            boolean continueToMakeNew = true;
+            if (!saved) {
+                // THE USER CAN OPT OUT HERE WITH A CANCEL
+                continueToMakeNew = promptToSave();
+            }
+
+            // IF THE USER REALLY WANTS TO MAKE A NEW COURSE
+            if (continueToMakeNew) {
+                // RESET THE DATA, WHICH SHOULD TRIGGER A RESET OF THE UI
+                app.getDataManager().reset();        
+
+		// LOAD ALL THE DATA INTO THE WORKSPACE
+		app.getWorkspaceManager().reloadWorkspace();	
+
+		// MAKE SURE THE CANVAS AND OTHER CONTROLS ARE ACTIVATED
+                app.getWorkspaceManager().activateCanvas();
+                app.getWorkspaceManager().activateWorkspaceControls();
+		
+		// WORK IS NOT SAVED
+                saved = false;
+		currentWorkFile = null;
+
+                // REFRESH THE GUI, WHICH WILL ENABLE AND DISABLE
+                // THE APPROPRIATE CONTROLS
+                app.getWorkspaceManager().updateFileToolbarControls(saved);
+
+                // TELL THE USER NEW WORK IS UNDERWAY
+		dialog.show(props.getProperty(NEW_COMPLETED_TITLE), props.getProperty(NEW_COMPLETED_MESSAGE));
+            }
+        } catch (IOException ioe) {
+            // SOMETHING WENT WRONG, PROVIDE FEEDBACK
+	    dialog.show(props.getProperty(NEW_ERROR_TITLE), props.getProperty(NEW_ERROR_MESSAGE));
+        }
     }
 
     public void handleLoadRequest() {
@@ -53,5 +107,87 @@ public class FileController {
     
     public void handleExitRequest() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * This helper method verifies that the user really wants to save their
+     * unsaved work, which they might not want to do. Note that it could be used
+     * in multiple contexts before doing other actions, like creating new
+     * work, or opening another file. Note that the user will be
+     * presented with 3 options: YES, NO, and CANCEL. YES means the user wants
+     * to save their work and continue the other action (we return true to
+     * denote this), NO means don't save the work but continue with the other
+     * action (true is returned), CANCEL means don't save the work and don't
+     * continue with the other action (false is returned).
+     *
+     * @return true if the user presses the YES option to save, true if the user
+     * presses the NO option to not save, false if the user presses the CANCEL
+     * option to not continue.
+     */
+    private boolean promptToSave() throws IOException {
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+	
+	// CHECK TO SEE IF THE CURRENT WORK HAS
+	// BEEN SAVED AT LEAST ONCE
+	
+        // PROMPT THE USER TO SAVE UNSAVED WORK
+	AppYesNoCancelDialogSingleton yesNoDialog = AppYesNoCancelDialogSingleton.getSingleton();
+        yesNoDialog.show(props.getProperty(SAVE_UNSAVED_WORK_TITLE), props.getProperty(SAVE_UNSAVED_WORK_MESSAGE));
+        
+        // AND NOW GET THE USER'S SELECTION
+        String selection = yesNoDialog.getSelection();
+
+        // IF THE USER SAID YES, THEN SAVE BEFORE MOVING ON
+        if (selection.equals(AppYesNoCancelDialogSingleton.YES)) {
+            // SAVE THE DATA FILE
+            DataManager dataManager = app.getDataManager();
+	    
+	    if (currentWorkFile == null) {
+		// PROMPT THE USER FOR A FILE NAME
+		FileChooser fc = new FileChooser();
+		fc.setInitialDirectory(new File(PATH_WORK));
+		fc.setTitle(props.getProperty(SAVE_WORK_TITLE));
+		fc.getExtensionFilters().addAll(
+		new FileChooser.ExtensionFilter(props.getProperty(WORK_FILE_EXT_DESC), props.getProperty(WORK_FILE_EXT)));
+
+		File selectedFile = fc.showSaveDialog(app.getWorkspaceManager().getWindow());
+		if (selectedFile != null) {
+		    saveWork(selectedFile);
+		    saved = true;
+		}
+	    }
+	    else {
+		saveWork(currentWorkFile);
+		saved = true;
+	    }
+        } // IF THE USER SAID CANCEL, THEN WE'LL TELL WHOEVER
+        // CALLED THIS THAT THE USER IS NOT INTERESTED ANYMORE
+        else if (selection.equals(AppYesNoCancelDialogSingleton.CANCEL)) {
+            return false;
+        }
+
+        // IF THE USER SAID NO, WE JUST GO ON WITHOUT SAVING
+        // BUT FOR BOTH YES AND NO WE DO WHATEVER THE USER
+        // HAD IN MIND IN THE FIRST PLACE
+        return true;
+    }
+    
+    // HELPER METHOD FOR SAVING WORK
+    private void saveWork(File selectedFile) throws IOException {
+	// SAVE IT TO A FILE
+	app.getFileManager().saveData(app.getDataManager(), selectedFile.getPath());
+	
+	// MARK IT AS SAVED
+	currentWorkFile = selectedFile;
+	saved = true;
+	
+	// TELL THE USER THE FILE HAS BEEN SAVED
+	AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        dialog.show(props.getProperty(SAVE_COMPLETED_TITLE),props.getProperty(SAVE_COMPLETED_MESSAGE));
+		    
+	// AND REFRESH THE GUI, WHICH WILL ENABLE AND DISABLE
+	// THE APPROPRIATE CONTROLS
+	app.getWorkspaceManager().updateFileToolbarControls(saved);	
     }
 }

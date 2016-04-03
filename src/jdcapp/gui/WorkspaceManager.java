@@ -204,6 +204,7 @@ public class WorkspaceManager {
         primaryStage = initPrimaryStage;
         appTitle = initAppTitle;
         app = initApp;
+        canvasActivated = false;
         
         //Initializes the toolbars and various controls=
         initTopToolbar();
@@ -223,6 +224,14 @@ public class WorkspaceManager {
      *      the primary scene
      */
     public Scene getPrimaryScene(){ return primaryScene; }
+    
+    /**
+     * Accessor method for getting this application's window,
+     * which is the primary stage within which the full GUI will be placed.
+     * 
+     * @return This application's primary stage (i.e. window).
+     */    
+    public Stage getWindow() { return primaryStage; }
     
     /**
      * Calls methods to initalize the various buttons and controls in the top toolbar.
@@ -329,12 +338,14 @@ public class WorkspaceManager {
         
         //Initialize the grid toggle button and its label
         gridCheck = new CheckBox();
+        gridCheck.setDisable(true);
         gridLabel = new Label(props.getProperty(GRID_TOGGLE_LABEL.toString()));
         gridPane.getChildren().add(gridCheck);
         gridPane.getChildren().add(gridLabel);
         
         //Initialize the snap toggle button and its label
         snapCheck = new CheckBox();
+        snapCheck.setDisable(true);
         snapLabel = new Label(props.getProperty(SNAP_TOGGLE_LABEL.toString()));
         snapPane.getChildren().add(snapCheck);
         snapPane.getChildren().add(snapLabel);
@@ -373,7 +384,62 @@ public class WorkspaceManager {
             fileController.handleExitRequest();
         });
         
-        //TODO: Set up handlers for the edit and view toolbars
+        //Set up the handlers for the edit toolbar using EditController
+        editController = new EditController(app);
+        selectButton.setOnAction(e -> {
+            editController.handleSelectRequest();
+        });
+        resizeButton.setOnAction(e -> {
+            editController.handleResizeRequest();
+        });
+        addClassButton.setOnAction(e -> {
+            editController.handleAddClassRequest();
+        });
+        addInterfaceButton.setOnAction(e -> {
+            editController.handleAddInterfaceRequest();
+        });
+        removeButton.setOnAction(e -> {
+           editController.handleRemoveRequest(); 
+        });
+        undoButton.setOnAction(e -> {
+           editController.handleUndoRequest(); 
+        });
+        redoButton.setOnAction(e -> {
+            editController.handleRedoRequest();
+        });
+        
+        //Set up the handlers for the view toolbar using ViewController
+        viewController = new ViewController(app);
+        zoomInButton.setOnAction(e -> {
+            viewController.handleZoomInRequest();
+        });
+        zoomOutButton.setOnAction(e -> {
+            viewController.handleZoomOutRequest();
+        });
+        gridCheck.setOnAction(e -> {
+            viewController.handleGridCheckRequest(gridCheck.isSelected());
+        });
+        snapCheck.setOnAction(e -> {
+            viewController.handleSnapCheckRequest(snapCheck.isSelected());
+        });
+        
+        //Set up the canvas mouse event handlers using WorkspaceController
+        workspaceController = new WorkspaceController(app);
+        canvas.setOnMouseEntered(e -> {
+            workspaceController.handleMouseEntered();
+        });
+        canvas.setOnMouseExited(e -> {
+            workspaceController.handleMouseExited();
+        });
+        canvas.setOnMousePressed(e -> {
+            workspaceController.handleMousePressed(e.getX(), e.getY());
+        });
+        canvas.setOnMouseDragged(e -> {
+            workspaceController.handleMouseDragged(e.getX(), e.getY());
+        });
+        canvas.setOnMouseReleased(e -> {
+            workspaceController.handleMouseReleased(e.getX(), e.getY());
+        });
     }
     
     /**
@@ -486,5 +552,45 @@ public class WorkspaceManager {
         appToolbarPane.getStyleClass().add(TOP_TOOLBAR_CLASS);
     }
     
+    /**
+     * Activates the canvas when a new file is created or a file is loaded for editing
+     */
+    public void activateCanvas(){
+        canvasActivated = true;
+    }
+    
+    /**
+     * Indicates whether or not the canvas is activated
+     * @return 
+     */
+    public boolean isCanvasActivated(){
+        return canvasActivated;
+    }
+    
+    /**
+     * Activates the workspace controls so that they can be used to edit the newly-loaded or created
+     * file. This method is called by handleNewRequest() and handleLoadRequest().
+     */
+    public void activateWorkspaceControls(){
+        photoExportButton.setDisable(false);
+        codeExportButton.setDisable(false);
+        selectButton.setDisable(false);
+        addClassButton.setDisable(false);
+        addInterfaceButton.setDisable(false);
+        zoomInButton.setDisable(false);
+        zoomOutButton.setDisable(false);
+        gridCheck.setDisable(false);
+        snapCheck.setDisable(false);
+    }
+    
     //TODO: Finish adding methods
+
+    public void updateFileToolbarControls(boolean saved) {
+        saveButton.setDisable(saved);
+        //TODO: Finish coding method
+    }
+
+    public void reloadWorkspace() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

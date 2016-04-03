@@ -18,6 +18,8 @@ public class CustomClass{
     
     static final String DEFAULT_CLASS_NAME = "DefaultClass";
     static final String DEFAULT_PACKAGE_NAME = "default";
+    static final double DEFAULT_CLASS_WIDTH = 100;
+    static final double DEFAULT_CLASS_HEIGHT = 50;
     
     //The class's name and the name of its package
     private String className;
@@ -64,11 +66,16 @@ public class CustomClass{
     /**
      * Default constructor.
      */
-    public CustomClass(){
+    public CustomClass(double initX, double initY){
         className = DEFAULT_CLASS_NAME;
         packageName = DEFAULT_PACKAGE_NAME;
         parents = new HashMap<>();
         variables = variables.sorted(varComparator);
+        methods = methods.sorted(methodComparator);
+        startX = initX;
+        startY = initY;
+        width = DEFAULT_CLASS_WIDTH;
+        height = DEFAULT_CLASS_HEIGHT;
     }
     //TODO: FINISH CODING CLASS
 }
