@@ -11,6 +11,13 @@ import java.util.ArrayList;
  */
 public class CustomMethod {
     
+    static final String DEFAULT_METHOD_NAME = "defaultMethod";
+    static final String DEFAULT_RETURN_TYPE = "DefaultType";
+    static final boolean DEFAULT_METHOD_STATIC_VALUE = false;
+    static final boolean DEFAULT_METHOD_ABSTRACT_VALUE = false;
+    static final String DEFAULT_METHOD_ACCESS = "private";
+    
+    
     //Method name and return type
     private String methodName;
     private String returnType;
@@ -26,6 +33,17 @@ public class CustomMethod {
     //The list of method arguments
     private ArrayList<String> arguments;
     
+    public CustomMethod(){
+        methodName = DEFAULT_METHOD_NAME;
+        returnType = DEFAULT_RETURN_TYPE;
+        staticValue = DEFAULT_METHOD_STATIC_VALUE;
+        abstractValue = DEFAULT_METHOD_ABSTRACT_VALUE;
+        access = DEFAULT_METHOD_ACCESS;
+        arguments = new ArrayList<>();
+    }
     
+    public String getMethodName(){
+        return methodName;
+    }
     //TODO: FINISH CODING CLASS
 }

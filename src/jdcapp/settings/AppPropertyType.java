@@ -63,6 +63,23 @@ public enum AppPropertyType {
         ZOOM_OUT_TOOLTIP,
         GRID_TOGGLE_LABEL,
         SNAP_TOGGLE_LABEL,
+        
+        // COMPONENT TOOLBAR ICONS
+        ADD_ELEMENT_ICON,
+        REMOVE_ELEMENT_ICON,
+        
+        // TOOLTIPS FOR COMPONENT TOOLBAR
+        ADD_VARIABLE_TOOLTIP,
+        ADD_METHOD_TOOLTIP,
+        REMOVE_VARIABLE_TOOLTIP,
+        REMOVE_METHOD_TOOLTIP,
+        
+        // LABELS/DEFAULT TEXT FOR COMPONENT TOOLBAR
+        CLASS_NAME_LABEL,
+        PACKAGE_NAME_LABEL,
+        PARENT_NAME_LABEL,
+        //TODO: Finish putting in default text values here
+        
 	
 	// ERROR MESSAGES
 	NEW_ERROR_MESSAGE,

@@ -12,11 +12,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -34,6 +36,7 @@ import static jdcapp.settings.AppPropertyType.ADD_CLASS_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.APP_LOGO;
+import static jdcapp.settings.AppPropertyType.CLASS_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.CODE_EXPORT_ICON;
 import static jdcapp.settings.AppPropertyType.CODE_EXPORT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.EXIT_ICON;
@@ -43,6 +46,8 @@ import static jdcapp.settings.AppPropertyType.LOAD_ICON;
 import static jdcapp.settings.AppPropertyType.LOAD_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.NEW_ICON;
 import static jdcapp.settings.AppPropertyType.NEW_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.PACKAGE_NAME_LABEL;
+import static jdcapp.settings.AppPropertyType.PARENT_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_ICON;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.REDO_ICON;
@@ -66,6 +71,7 @@ import static jdcapp.settings.AppPropertyType.ZOOM_OUT_ICON;
 import static jdcapp.settings.AppPropertyType.ZOOM_OUT_TOOLTIP;
 import static jdcapp.settings.AppStartupConstants.FILE_PROTOCOL;
 import static jdcapp.settings.AppStartupConstants.PATH_IMAGES;
+import org.controlsfx.control.CheckComboBox;
 import properties_manager.PropertiesManager;
 
 /**
@@ -74,10 +80,14 @@ import properties_manager.PropertiesManager;
  */
 public class WorkspaceManager {
     
+    static final String TOP_TOOLBAR_CLASS = "top_toolbar";
     static final String TOP_SUB_TOOLBAR_CLASS = "top_sub_toolbar";
-    static final String TOP_BUTTON_LARGE = "top_button_large";
-    static final String TOP_BUTTON_SMALL = "top_button_small";
-    static final String TOP_VBOX = "top_vbox";
+    static final String TOP_VIEW_TOOLBAR_CLASS = "top_view_toolbar";
+    static final String TOP_BUTTON_LARGE_CLASS = "top_button_large";
+    static final String TOP_BUTTON_SMALL_CLASS = "top_button_small";
+    static final String TOP_CHECK_VBOX_CLASS = "top_check_vbox";
+    static final String TOP_EXPORT_VBOX_CLASS = "top_check_vbox";
+    static final String RIGHT_GRIDPANE_CLASS = "right_gridpane";
     
     //The parent app and app name
     JDCApp app;
@@ -93,7 +103,7 @@ public class WorkspaceManager {
     BorderPane appPane;
     
     //The top toolbar of the app
-    HBox appToolbarPane;
+    FlowPane appToolbarPane;
     
     //The three subtoolbars in the top toolbar
     HBox fileToolbarPane;
@@ -135,20 +145,20 @@ public class WorkspaceManager {
     //The right side toolbar of the app
     VBox componentToolbarPane;
     
-    //The control, label, and pane for class
-    FlowPane classPane;
+    //The grid for holding class, package, and parent data
+    GridPane infoGrid;
+    
+    //The label and control for class
     Label classNameLabel;
     TextField classNameText;
     
-    //The control, label, and pane for package
-    FlowPane packagePane;
+    //The label and control for package
     Label packageNameLabel;
     TextField packageNameText;
     
-    //The control, label, and pane for parent
-    FlowPane parentPane;
+    //The label and control for parent
     Label parentNameLabel;
-    ListView parentListView; //TODO: Figure out if this is how you want to implement parent selection
+    CheckComboBox parentComboBox; //TODO: Figure out if this is how you want to implement parent selection
     
     //The controls, labels, and pane for variables
     FlowPane variablePane;
@@ -221,7 +231,7 @@ public class WorkspaceManager {
      * and added to appPane.
      */
     private void initTopToolbar(){
-        appToolbarPane = new HBox();
+        appToolbarPane = new FlowPane();
         
         initFileToolbar();
         initEditToolbar();
@@ -233,7 +243,36 @@ public class WorkspaceManager {
     }
     
     private void initRightToolbar(){
-        //TODO: CODE METHOD
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        
+        componentToolbarPane = new VBox();
+        infoGrid = new GridPane();
+        infoGrid.setGridLinesVisible(false);
+        
+        //Initialize the class, package, and parent labels
+        classNameLabel = new Label(props.getProperty(CLASS_NAME_LABEL.toString()));
+        packageNameLabel = new Label(props.getProperty(PACKAGE_NAME_LABEL.toString()));
+        parentNameLabel = new Label(props.getProperty(PARENT_NAME_LABEL.toString()));
+        
+        //Initialize the class and package text fields
+        //NOTE: the text fields will be disabled until a new class/interface is made or an old one is selected
+        classNameText = new TextField();
+        classNameText.setDisable(true);
+        packageNameText = new TextField();
+        packageNameText.setDisable(true);
+        
+        parentComboBox = new CheckComboBox();
+        //TODO: Set parentComboBox to display a list of potential parent classes
+        
+        //Populate infoGrid with our class, package, and parent labels and controls
+        infoGrid.add(classNameLabel, 0, 0);
+        infoGrid.add(classNameText, 1, 0);
+        infoGrid.add(packageNameLabel, 0, 1);
+        infoGrid.add(packageNameText, 1, 1);
+        infoGrid.add(parentNameLabel, 0, 2);
+        infoGrid.add(parentComboBox, 1, 2);
+        
+        componentToolbarPane.getChildren().add(infoGrid);
     }
     
     /**
@@ -419,28 +458,32 @@ public class WorkspaceManager {
     public void initStyle(){
         fileToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
         editToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
-        viewToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
+        viewToolbarPane.getStyleClass().add(TOP_VIEW_TOOLBAR_CLASS);
         
-        newButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        loadButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        saveButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        saveAsButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        exitButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        selectButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        resizeButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        addClassButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        addInterfaceButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        removeButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        undoButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        redoButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        zoomInButton.getStyleClass().add(TOP_BUTTON_LARGE);
-        zoomOutButton.getStyleClass().add(TOP_BUTTON_LARGE);
+        newButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        loadButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        saveButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        saveAsButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        exitButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        selectButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        resizeButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        addClassButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        addInterfaceButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        removeButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        undoButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        redoButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        zoomInButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
+        zoomOutButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
         
-        codeExportButton.getStyleClass().add(TOP_BUTTON_SMALL);
-        photoExportButton.getStyleClass().add(TOP_BUTTON_SMALL);
+        codeExportButton.getStyleClass().add(TOP_BUTTON_SMALL_CLASS);
+        photoExportButton.getStyleClass().add(TOP_BUTTON_SMALL_CLASS);
         
-        exportPane.getStyleClass().add(TOP_VBOX);
-        checkPane.getStyleClass().add(TOP_VBOX);
+        exportPane.getStyleClass().add(TOP_EXPORT_VBOX_CLASS);
+        checkPane.getStyleClass().add(TOP_CHECK_VBOX_CLASS);
+        
+        infoGrid.getStyleClass().add(RIGHT_GRIDPANE_CLASS);
+        
+        appToolbarPane.getStyleClass().add(TOP_TOOLBAR_CLASS);
     }
     
     //TODO: Finish adding methods

@@ -59,6 +59,22 @@
         <property name="GRID_TOGGLE_LABEL"	value="Grid"></property>
         <property name="SNAP_TOGGLE_LABEL"	value="Snap"></property>
         
+        <!-- COMPONENT TOOLBAR ICON FILES -->
+        <property name="ADD_ELEMENT_ICON"       value="add_element.png"></property>
+        <property name="REMOVE_ELEMENT_ICON"    value="remove_element.png"></property>
+        
+        <!-- TOOLTIPS FOR COMPONENT TOOLBAR BUTTONS -->
+        <property name="ADD_VARIABLE_TOOLTIP"           value="Add Variable"></property>
+        <property name="REMOVE_VARIABLE_TOOLTIP"	value="Remove Variable"></property>
+        <property name="ADD_METHOD_LABEL"               value="Add Method"></property>
+        <property name="REMOVE_METHOD_LABEL"            value="Remove Method"></property>
+        
+        <!-- LABELS/DEFAULT TEXT FOR COMPONENT TOOLBAR -->
+        <property name="CLASS_NAME_LABEL"               value="Class Name:"></property>
+        <property name="PACKAGE_NAME_LABEL"             value="Package:"></property>
+        <property name="PARENT_NAME_LABEL"              value="Parent:"></property>
+        <!-- TODO: finish putting in default text values here -->
+        
         <!-- ERROR MESSAGES -->
         <property name="CLOSE_BUTTON_TEXT"              value="Close"></property>
 

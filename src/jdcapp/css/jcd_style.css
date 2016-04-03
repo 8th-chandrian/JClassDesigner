@@ -5,6 +5,10 @@
     Created on : Apr 2, 2016, 7:09:40 PM
     Author     : Noah
 */
+/*.top_toolbar {
+    -fx-border-width: 2px;
+    -fx-border-color: RED;
+} */
 
 .top_sub_toolbar {
     -fx-spacing: 10;
@@ -15,19 +19,41 @@
     -fx-border-color: BLACK;
 }
 
+.top_view_toolbar {
+    -fx-spacing: 10;
+    -fx-border-radius: 5.0;
+    -fx-padding: 5 10 5 10;
+    -fx-alignment: CENTER_LEFT;
+    -fx-border-width: 2px;
+    -fx-border-color: BLACK;
+    -fx-hgap: 10;
+}
+
 .top_button_large {
-    -fx-padding: 3 3 3 3;
+    -fx-padding: 5 9 5 9;
 }
 
 .top_button_small {
-    -fx-padding: 1 15 1 15;
+    -fx-padding: 2 17 2 17;
 }
 
-.top_vbox {
+.top_export_vbox {
     -fx-spacing: 2 0 2 0;
     -fx-alignment: CENTER;
 }
 
-.check-box {
-    
+.top_check_vbox {
+    -fx-spacing: 5 0 5 0;
+    -fx-alignment: CENTER;
+}
+
+.right_gridpane {
+    -fx-spacing: 10;
+    -fx-border-radius: 5.0;
+    -fx-padding: 15 10 15 10;
+    -fx-alignment: CENTER;
+    -fx-border-width: 2px;
+    -fx-border-color: BLACK;
+    -fx-hgap: 40;
+    -fx-vgap: 40;
 }

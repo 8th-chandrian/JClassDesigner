@@ -4,8 +4,10 @@
 package jdcapp.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Point2D;
 
 /**
@@ -13,6 +15,9 @@ import javafx.geometry.Point2D;
  * @author Noah
  */
 public class CustomClass{
+    
+    static final String DEFAULT_CLASS_NAME = "DefaultClass";
+    static final String DEFAULT_PACKAGE_NAME = "default";
     
     //The class's name and the name of its package
     private String className;
@@ -40,6 +45,30 @@ public class CustomClass{
     //The HashMap containing lists of points on the lines connecting this class and its parents
     private HashMap<String, ArrayList<Point2D>> points;
     
+    //Compares variables based on their names. Used to sort variables in alphabetical order.
+    static final Comparator<CustomVar> varComparator = new Comparator() {
+        @Override
+        public int compare(Object c1, Object c2) {
+            return (((CustomVar)c1).getVarName()).compareTo(((CustomVar)c2).getVarName());
+        }
+    };
     
+    //Compares methods based on their names. Used to sort methods in alphabetical order.
+    static final Comparator<CustomMethod> methodComparator = new Comparator() {
+        @Override
+        public int compare(Object c1, Object c2) {
+            return (((CustomMethod)c1).getMethodName()).compareTo(((CustomMethod)c2).getMethodName());
+        }
+    };
+    
+    /**
+     * Default constructor.
+     */
+    public CustomClass(){
+        className = DEFAULT_CLASS_NAME;
+        packageName = DEFAULT_PACKAGE_NAME;
+        parents = new HashMap<>();
+        variables = variables.sorted(varComparator);
+    }
     //TODO: FINISH CODING CLASS
 }
