@@ -10,6 +10,12 @@
     -fx-border-color: RED;
 } */
 
+#display_text {
+    -fx-font-family: 'sans-serif';
+    -fx-font-weight: normal;
+    -fx-font-size: 15px;
+}
+
 .top_sub_toolbar {
     -fx-spacing: 10;
     -fx-border-radius: 5.0;

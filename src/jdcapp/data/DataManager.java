@@ -19,13 +19,12 @@ public class DataManager {
     JDCApp app;
     
     //The HashMap containing all the classes, mapped to their class names
-    HashMap<String, CustomClass> classes;
     
     //The ArrayList containing all the class names, for use in iterating through the HashMap
-    ArrayList<String> classNames;
+    ArrayList<CustomClass> classes;
     
     //The name of the class currently selected
-    String selectedClass;
+    CustomClass selectedClass;
     
     //The state of the application
     JDCAppState state;
@@ -42,8 +41,7 @@ public class DataManager {
 
     public void reset() {
         //Initialize all variables except app and selectedClass
-        classes = new HashMap<>();
-        classNames = new ArrayList<>();
+        classes = new ArrayList<>();
         selectedClass = null;
         state = SELECTING;
     }
@@ -56,19 +54,15 @@ public class DataManager {
         return state;
     }
     
-    public HashMap<String, CustomClass> getClasses(){
+    public ArrayList<CustomClass> getClasses(){
         return classes;
     }
     
-    public ArrayList<String> getClassNames(){
-        return classNames;
+    public void setSelectedClass(CustomClass c){
+        selectedClass = c;
     }
     
-    public void setSelectedClass(String s){
-        selectedClass = s;
-    }
-    
-    public String getSelectedClass(){
+    public CustomClass getSelectedClass(){
         return selectedClass;
     }
 }

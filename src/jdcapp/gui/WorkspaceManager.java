@@ -3,7 +3,11 @@
  */
 package jdcapp.gui;
 
+import java.util.ArrayList;
+import javafx.scene.shape.Rectangle;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,6 +18,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -22,6 +29,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import jdcapp.JDCApp;
@@ -30,6 +40,10 @@ import jdcapp.controller.EditController;
 import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
+import jdcapp.data.CustomClass;
+import static jdcapp.data.CustomClass.DISPLAY_TEXT_CSS_ID;
+import jdcapp.data.CustomMethod;
+import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.file.FileManager;
@@ -193,6 +207,9 @@ public class WorkspaceManager {
     Pane canvas;
     boolean canvasActivated;
     
+    //The effect to be used on the selected CustomClass
+    Effect highlightedEffect;
+    
     /**
      * The constructor. Sets up the GUI in its entirety.
      * @param initPrimaryStage
@@ -219,6 +236,16 @@ public class WorkspaceManager {
         
         //Starts the window
         initWindow();
+        
+        //Initializes highlightedEffect
+        DropShadow dropShadowEffect = new DropShadow();
+	dropShadowEffect.setOffsetX(0.0f);
+	dropShadowEffect.setOffsetY(0.0f);
+	dropShadowEffect.setSpread(1.0);
+	dropShadowEffect.setColor(Color.YELLOW);
+	dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
+	dropShadowEffect.setRadius(3);
+	highlightedEffect = dropShadowEffect;
     }
     
     /**
@@ -623,6 +650,18 @@ public class WorkspaceManager {
     }
 
     public void reloadWorkspace() {
-        //TODO: CODE THIS METHOD ASAP
+        DataManager dataManager = app.getDataManager();
+        canvas.getChildren().clear();
+        
+        for(CustomClass c : dataManager.getClasses()){
+            Node[] temp = CustomClass.toDisplay(c);
+            if(c == dataManager.getSelectedClass()){
+                temp[0].setEffect(highlightedEffect);
+            }
+            else{
+                temp[0].setEffect(null);
+            }
+            canvas.getChildren().addAll(temp);
+        }
     }
 }

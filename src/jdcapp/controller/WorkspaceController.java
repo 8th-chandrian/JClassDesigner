@@ -19,11 +19,11 @@ public class WorkspaceController {
     }
 
     public void handleMouseEntered() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO: Code event handler
     }
 
     public void handleMouseExited() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO: Code event handler
     }
 
     public void handleMousePressed(double x, double y) {
