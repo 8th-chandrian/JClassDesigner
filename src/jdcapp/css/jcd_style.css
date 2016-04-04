@@ -5,47 +5,50 @@
     Created on : Apr 2, 2016, 7:09:40 PM
     Author     : Noah
 */
-/*.top_toolbar {
-    -fx-border-width: 2px;
-    -fx-border-color: RED;
-} */
 
 /* TODO: Make text resizable with zoom */
 #display_text {
     -fx-font-family: 'sans-serif';
     -fx-font-weight: normal;
-    -fx-font-size: 15px;
+    -fx-font-size: 12px;
+}
+
+.top_toolbar {
+    -fx-background-color: lightskyblue;
+    -fx-padding: 3;
 }
 
 .top_sub_toolbar {
     -fx-spacing: 10;
-    -fx-border-radius: 5.0;
     -fx-padding: 5 10 5 10;
     -fx-alignment: CENTER;
-    -fx-border-width: 2px;
-    -fx-border-color: BLACK;
+    -fx-background-color: lightskyblue;
+    -fx-border-radius: 7.0;
+    -fx-border-width: 3;
+    -fx-border-color: black;
 }
 
 .top_view_toolbar {
     -fx-spacing: 10;
-    -fx-border-radius: 5.0;
     -fx-padding: 5 10 5 10;
     -fx-alignment: CENTER_LEFT;
-    -fx-border-width: 2px;
-    -fx-border-color: BLACK;
     -fx-hgap: 10;
+    -fx-background-color: lightskyblue;
+    -fx-border-radius: 7.0;
+    -fx-border-width: 3;
+    -fx-border-color: black;
 }
 
 .top_button_large {
-    -fx-padding: 5 9 5 9;
+    -fx-padding: 3 7 3 7;
 }
 
 .top_button_small {
-    -fx-padding: 2 17 2 17;
+    -fx-padding: 1 15 1 15;
 }
 
 .top_export_vbox {
-    -fx-spacing: 2 0 2 0;
+    -fx-spacing: 1 0 1 0;
     -fx-alignment: CENTER;
 }
 
@@ -55,12 +58,38 @@
 }
 
 .right_gridpane {
+    -fx-vgap: 10;
+    -fx-hgap: 120;
+    -fx-padding: 2;
+}
+
+.right_vbox {
+    -fx-padding: 10;
     -fx-spacing: 10;
-    -fx-border-radius: 5.0;
-    -fx-padding: 15 10 15 10;
-    -fx-alignment: CENTER;
     -fx-border-width: 2px;
     -fx-border-color: BLACK;
-    -fx-hgap: 40;
-    -fx-vgap: 40;
+    -fx-border-radius: 7.0;
+    -fx-background-color: lightskyblue;
+}
+
+.component_button_flowpane {
+    -fx-padding: 2;
+    -fx-hgap: 5;
+}
+
+.component_button {
+    -fx-padding: 0;
+}
+
+.workspace {
+    -fx-border-width: 2px;
+    -fx-border-color: BLACK;
+    -fx-border-radius: 7.0;
+    -fx-background-color: lightgrey;
+}
+
+.small_label {
+    -fx-font-family: 'sans-serif';
+    -fx-font-weight: normal;
+    -fx-font-size: 15px;
 }

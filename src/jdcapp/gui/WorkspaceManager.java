@@ -50,8 +50,11 @@ import jdcapp.data.JDCAppState;
 import jdcapp.file.FileManager;
 import static jdcapp.settings.AppPropertyType.ADD_CLASS_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_CLASS_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ADD_ELEMENT_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ADD_METHOD_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ADD_VARIABLE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.APP_LOGO;
 import static jdcapp.settings.AppPropertyType.CLASS_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.CODE_EXPORT_ICON;
@@ -61,6 +64,7 @@ import static jdcapp.settings.AppPropertyType.EXIT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.GRID_TOGGLE_LABEL;
 import static jdcapp.settings.AppPropertyType.LOAD_ICON;
 import static jdcapp.settings.AppPropertyType.LOAD_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.METHOD_LABEL;
 import static jdcapp.settings.AppPropertyType.NEW_ICON;
 import static jdcapp.settings.AppPropertyType.NEW_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.PACKAGE_NAME_LABEL;
@@ -69,8 +73,11 @@ import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_ICON;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.REDO_ICON;
 import static jdcapp.settings.AppPropertyType.REDO_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.REMOVE_ELEMENT_ICON;
 import static jdcapp.settings.AppPropertyType.REMOVE_ICON;
+import static jdcapp.settings.AppPropertyType.REMOVE_METHOD_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.REMOVE_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.REMOVE_VARIABLE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.RESIZE_ICON;
 import static jdcapp.settings.AppPropertyType.RESIZE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.SAVE_AS_ICON;
@@ -82,6 +89,7 @@ import static jdcapp.settings.AppPropertyType.SELECT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.SNAP_TOGGLE_LABEL;
 import static jdcapp.settings.AppPropertyType.UNDO_ICON;
 import static jdcapp.settings.AppPropertyType.UNDO_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.VARIABLE_LABEL;
 import static jdcapp.settings.AppPropertyType.ZOOM_IN_ICON;
 import static jdcapp.settings.AppPropertyType.ZOOM_IN_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.ZOOM_OUT_ICON;
@@ -105,6 +113,10 @@ public class WorkspaceManager {
     static final String TOP_CHECK_VBOX_CLASS = "top_check_vbox";
     static final String TOP_EXPORT_VBOX_CLASS = "top_check_vbox";
     static final String RIGHT_GRIDPANE_CLASS = "right_gridpane";
+    static final String RIGHT_VBOX_CLASS = "right_vbox";
+    static final String COMPONENT_BUTTON_FLOWPANE_CLASS = "component_button_flowpane";
+    static final String COMPONENT_BUTTON_CLASS = "component_button";
+    static final String WORKSPACE_CLASS = "workspace";
     
     //The parent app and app name
     JDCApp app;
@@ -313,6 +325,37 @@ public class WorkspaceManager {
         infoGrid.add(parentComboBox, 1, 2);
         
         componentToolbarPane.getChildren().add(infoGrid);
+        
+        //Initialize the variable controls and tableview
+        variablePane = new FlowPane();
+        variableLabel = new Label(props.getProperty(VARIABLE_LABEL.toString()));
+        variablePane.getChildren().add(variableLabel);
+        addVariable = initChildButton(variablePane, ADD_ELEMENT_ICON.toString(), ADD_VARIABLE_TOOLTIP.toString(), true);
+        removeVariable = initChildButton(variablePane, REMOVE_ELEMENT_ICON.toString(), REMOVE_VARIABLE_TOOLTIP.toString(), true);
+        
+        componentToolbarPane.getChildren().add(variablePane);
+        
+        variableScrollPane = new ScrollPane();
+        variableTableView = new TableView();
+        variableScrollPane.setContent(variableTableView);
+        
+        componentToolbarPane.getChildren().add(variableScrollPane);
+        
+        //Initialize the method controls and tableview
+        methodPane = new FlowPane();
+        methodLabel = new Label(props.getProperty(METHOD_LABEL.toString()));
+        methodPane.getChildren().add(methodLabel);
+        addMethod = initChildButton(methodPane, ADD_ELEMENT_ICON.toString(), ADD_METHOD_TOOLTIP.toString(), true);
+        removeMethod = initChildButton(methodPane, REMOVE_ELEMENT_ICON.toString(), REMOVE_METHOD_TOOLTIP.toString(), true);
+        
+        componentToolbarPane.getChildren().add(methodPane);
+        
+        methodScrollPane = new ScrollPane();
+        methodTableView = new TableView();
+        methodScrollPane.setContent(methodTableView);
+        
+        componentToolbarPane.getChildren().add(methodScrollPane);
+        
     }
     
     /**
@@ -553,10 +596,14 @@ public class WorkspaceManager {
     }
     
     public void initStyle(){
+        
+        //Initialize style for top toolbar
+        appToolbarPane.getStyleClass().add(TOP_TOOLBAR_CLASS);
         fileToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
         editToolbarPane.getStyleClass().add(TOP_SUB_TOOLBAR_CLASS);
         viewToolbarPane.getStyleClass().add(TOP_VIEW_TOOLBAR_CLASS);
         
+        //Initialize style for large top buttons
         newButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
         loadButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
         saveButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
@@ -572,15 +619,24 @@ public class WorkspaceManager {
         zoomInButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
         zoomOutButton.getStyleClass().add(TOP_BUTTON_LARGE_CLASS);
         
+        //Initialize style for small top buttons and checkboxes
         codeExportButton.getStyleClass().add(TOP_BUTTON_SMALL_CLASS);
         photoExportButton.getStyleClass().add(TOP_BUTTON_SMALL_CLASS);
-        
         exportPane.getStyleClass().add(TOP_EXPORT_VBOX_CLASS);
         checkPane.getStyleClass().add(TOP_CHECK_VBOX_CLASS);
         
+        //Initialize style for right toolbar
         infoGrid.getStyleClass().add(RIGHT_GRIDPANE_CLASS);
+        componentToolbarPane.getStyleClass().add(RIGHT_VBOX_CLASS);
+        variablePane.getStyleClass().add(COMPONENT_BUTTON_FLOWPANE_CLASS);
+        methodPane.getStyleClass().add(COMPONENT_BUTTON_FLOWPANE_CLASS);
+        addVariable.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        removeVariable.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        addMethod.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        removeMethod.getStyleClass().add(COMPONENT_BUTTON_CLASS);
         
-        appToolbarPane.getStyleClass().add(TOP_TOOLBAR_CLASS);
+        //Initialize style for the canvas
+        canvas.getStyleClass().add(WORKSPACE_CLASS);
     }
     
     /**

@@ -21,7 +21,7 @@ public class CustomClassWrapper extends Group{
 
     public static final String DISPLAY_TEXT_CSS_ID = "display_text";
     static final double DEFAULT_WRAPPING_WIDTH = 200;
-    static double TEXT_LINE_PIXEL_HEIGHT = 15;
+    static double TEXT_LINE_PIXEL_HEIGHT = 12;
     
     //The data contained within this wrapper class
     private CustomClass data;
@@ -79,7 +79,7 @@ public class CustomClassWrapper extends Group{
                 (numLinesName) * TEXT_LINE_PIXEL_HEIGHT);
         nameOutline.setStroke(Color.BLACK);
         nameOutline.setStrokeWidth(1);
-        nameOutline.setFill(Color.TRANSPARENT);
+        nameOutline.setFill(Color.WHITE);
         
         //Add the text and rectangle to the array of nodes
         //displayClass[1] = nameOutline;
@@ -106,7 +106,7 @@ public class CustomClassWrapper extends Group{
                 getWrappingWidth(), (numLinesVars) * TEXT_LINE_PIXEL_HEIGHT);
         varsOutline.setStroke(Color.BLACK);
         varsOutline.setStrokeWidth(1);
-        varsOutline.setFill(Color.TRANSPARENT);
+        varsOutline.setFill(Color.WHITE);
         
         //Add the text and rectangle to the array of nodes
         //displayClass[2] = varsOutline;
@@ -133,7 +133,7 @@ public class CustomClassWrapper extends Group{
                 getWrappingWidth(), (numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
         methodsOutline.setStroke(Color.BLACK);
         methodsOutline.setStrokeWidth(1);
-        methodsOutline.setFill(Color.TRANSPARENT);
+        methodsOutline.setFill(Color.WHITE);
         
         //Add the text and rectangle to the array of nodes
         //displayClass[3] = methodsOutline;
@@ -146,7 +146,7 @@ public class CustomClassWrapper extends Group{
         outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
-        outline.setFill(Color.TRANSPARENT);
+        outline.setFill(Color.WHITE);
         
         //Add the overlaying rectangle to the array of nodes as index 0
         //displayClass[0] = outline;
