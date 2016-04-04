@@ -21,10 +21,10 @@ public class DataManager {
     //The HashMap containing all the classes, mapped to their class names
     
     //The ArrayList containing all the class names, for use in iterating through the HashMap
-    ArrayList<CustomClass> classes;
+    ArrayList<CustomClassWrapper> classes;
     
-    //The name of the class currently selected
-    CustomClass selectedClass;
+    //The class currently selected
+    CustomClassWrapper selectedClass;
     
     //The state of the application
     JDCAppState state;
@@ -54,15 +54,15 @@ public class DataManager {
         return state;
     }
     
-    public ArrayList<CustomClass> getClasses(){
+    public ArrayList<CustomClassWrapper> getClasses(){
         return classes;
     }
     
-    public void setSelectedClass(CustomClass c){
+    public void setSelectedClass(CustomClassWrapper c){
         selectedClass = c;
     }
     
-    public CustomClass getSelectedClass(){
+    public CustomClassWrapper getSelectedClass(){
         return selectedClass;
     }
 }

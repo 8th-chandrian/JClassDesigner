@@ -5,6 +5,7 @@ package jdcapp.controller;
 
 import jdcapp.JDCApp;
 import jdcapp.data.CustomClass;
+import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.gui.WorkspaceManager;
@@ -39,7 +40,7 @@ public class EditController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         //Create a new custom class and set its position to the default x and y values given
-        CustomClass newClass = new CustomClass(defaultX, defaultY);
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY);
         
         //Add the default class name to the array of class names and the class to the hashmap of classes
         dataManager.getClasses().add(newClass);

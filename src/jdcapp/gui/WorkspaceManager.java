@@ -41,7 +41,8 @@ import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
 import jdcapp.data.CustomClass;
-import static jdcapp.data.CustomClass.DISPLAY_TEXT_CSS_ID;
+import static jdcapp.data.CustomClassWrapper.DISPLAY_TEXT_CSS_ID;
+import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
@@ -230,7 +231,7 @@ public class WorkspaceManager {
         initTopToolbar();
         initRightToolbar();
         
-        //Initializes the event handling for the top and right toolbars.
+        //Initializes the event handling for the top and right toolbars, as well as the workspace
         initTopToolbarHandlers();
         initRightToolbarHandlers();
         
@@ -387,7 +388,7 @@ public class WorkspaceManager {
     }
     
     /**
-     * Initializes all the event handling in the top toolbar
+     * Initializes all the event handling in the top toolbar and workspace
      */
     private void initTopToolbarHandlers(){
         //Set up the handlers for the file toolbar using FileController
@@ -453,9 +454,6 @@ public class WorkspaceManager {
             viewController.handleSnapCheckRequest(snapCheck.isSelected());
         });
         
-        //Set up the handlers for the component toolbar using ComponentController
-        componentController = new ComponentController(app);
-        
         //Set up the canvas mouse event handlers using WorkspaceController
         workspaceController = new WorkspaceController(app);
         canvas.setOnMouseEntered(e -> {
@@ -478,8 +476,9 @@ public class WorkspaceManager {
     /**
      * Initializes all the event handling in the right toolbar
      */
-    private void initRightToolbarHandlers(){
-        //TODO: Finish coding method
+    private void initRightToolbarHandlers(){     
+        //Set up the handlers for the component toolbar using ComponentController
+        componentController = new ComponentController(app);
     }
     
     // Initialize the window (ie stage) putting all the controls
@@ -614,8 +613,6 @@ public class WorkspaceManager {
         gridCheck.setDisable(false);
         snapCheck.setDisable(false);
     }
-    
-    //TODO: Finish adding methods
 
     public void updateFileToolbarControls(boolean saved) {
         saveButton.setDisable(saved);
@@ -653,15 +650,18 @@ public class WorkspaceManager {
         DataManager dataManager = app.getDataManager();
         canvas.getChildren().clear();
         
-        for(CustomClass c : dataManager.getClasses()){
-            Node[] temp = CustomClass.toDisplay(c);
+        for(CustomClassWrapper c : dataManager.getClasses()){
             if(c == dataManager.getSelectedClass()){
-                temp[0].setEffect(highlightedEffect);
+                //Sets the outline rectangle to highlighted
+                c.getChildren().get(0).setEffect(highlightedEffect);
             }
             else{
-                temp[0].setEffect(null);
+                //Makes sure that only one CustomClass is highlighted at a time
+                c.getChildren().get(0).setEffect(null);
             }
-            canvas.getChildren().addAll(temp);
+            canvas.getChildren().add(c);
         }
     }
+    
+    //TODO: Finish adding methods
 }
