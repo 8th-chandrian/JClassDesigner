@@ -164,6 +164,10 @@ public class CustomClassWrapper extends Group{
         super.getChildren().add(methodsText);
     }
     
+    public Rectangle getOutlineRectangle(){
+        return (Rectangle)super.getChildren().get(0);
+    }
+    
     public double getStartX() { return startX; }
 
     public void setStartX(double startX) { this.startX = startX; }

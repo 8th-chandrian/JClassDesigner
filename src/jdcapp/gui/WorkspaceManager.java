@@ -620,6 +620,9 @@ public class WorkspaceManager {
         //TODO: Finish coding method
     }
     
+    /**
+     * Updates the edit toolbar controls so that proper buttons are enabled/disabled
+     */
     public void updateEditToolbarControls(){
         DataManager dataManager = app.getDataManager();
         
@@ -646,6 +649,9 @@ public class WorkspaceManager {
         return canvas;
     }
 
+    /**
+     * To be called when loading all CustomClassWrapper objects into canvas
+     */
     public void reloadWorkspace() {
         DataManager dataManager = app.getDataManager();
         canvas.getChildren().clear();
@@ -653,15 +659,49 @@ public class WorkspaceManager {
         for(CustomClassWrapper c : dataManager.getClasses()){
             if(c == dataManager.getSelectedClass()){
                 //Sets the outline rectangle to highlighted
-                c.getChildren().get(0).setEffect(highlightedEffect);
+                c.getOutlineRectangle().setEffect(highlightedEffect);
             }
             else{
                 //Makes sure that only one CustomClass is highlighted at a time
-                c.getChildren().get(0).setEffect(null);
+                c.getOutlineRectangle().setEffect(null);
             }
             canvas.getChildren().add(c);
         }
     }
     
+    /**
+     * To be called after any change is made to the selected class.
+     * Note: this method has the added effect of moving the selected class to the back of
+     * the arraylist/the front of the canvas
+     */
+    public void reloadSelectedClass(){
+        DataManager dataManager = app.getDataManager();
+
+        //Remove the selected class from the canvas and the arraylist of classes
+        canvas.getChildren().remove(dataManager.getSelectedClass());
+        dataManager.getClasses().remove(dataManager.getSelectedClass());
+        
+        //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
+        dataManager.getSelectedClass().toDisplay();
+        dataManager.getSelectedClass().getOutlineRectangle().setEffect(highlightedEffect);
+        canvas.getChildren().add(dataManager.getSelectedClass());
+        dataManager.getClasses().add(dataManager.getSelectedClass());
+    }
+    
+    /**
+     * To be called just before selecting a new class.
+     */
+    public void unhighlightSelectedClass(){
+        DataManager dataManager = app.getDataManager();
+        dataManager.getSelectedClass().getOutlineRectangle().setEffect(null);
+    }
+    
+    /**
+     * To be called just after selecting a new class.
+     */
+    public void highlightSelectedClass(){
+        DataManager dataManager = app.getDataManager();
+        dataManager.getSelectedClass().getOutlineRectangle().setEffect(highlightedEffect);
+    }
     //TODO: Finish adding methods
 }

@@ -10,6 +10,7 @@
     -fx-border-color: RED;
 } */
 
+/* TODO: Make text resizable with zoom */
 #display_text {
     -fx-font-family: 'sans-serif';
     -fx-font-weight: normal;
