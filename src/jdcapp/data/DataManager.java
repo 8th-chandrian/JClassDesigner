@@ -71,6 +71,9 @@ public class DataManager {
             workspaceManager.unhighlightSelectedClass();
         }
         selectedClass = c;
+        
+        //Load in data from the selected class to the component toolbar and highlight it in the workspace
+        workspaceManager.loadSelectedClassData();
         workspaceManager.highlightSelectedClass();
         return c;
     }

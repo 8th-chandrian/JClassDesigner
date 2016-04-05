@@ -19,6 +19,7 @@ public class WorkspaceController {
     JDCApp app;
     
     //Set when a mouse is pressed, referenced when it is dragged, and reset to -1 when it is released
+    //TODO: FIGURE OUT A BETTER WAY TO DO THIS
     private double startXLocation;
     private double startYLocation;
     private double origXLocation;

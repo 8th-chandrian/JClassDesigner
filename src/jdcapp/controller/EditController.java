@@ -56,6 +56,9 @@ public class EditController {
         }
         dataManager.setSelectedClass(newClass);
         
+        //Load the data from the selected class and enable the component controls
+        workspaceManager.loadSelectedClassData();
+        
         //Update the edit toolbar controls to reflect the selection, and reload the workspace so that the class is visible
         workspaceManager.updateEditToolbarControls();
         workspaceManager.reloadSelectedClass();

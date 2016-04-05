@@ -116,6 +116,7 @@ public class WorkspaceManager {
     static final String RIGHT_VBOX_CLASS = "right_vbox";
     static final String COMPONENT_BUTTON_FLOWPANE_CLASS = "component_button_flowpane";
     static final String COMPONENT_BUTTON_CLASS = "component_button";
+    static final String LARGE_LABEL_CLASS = "large_label";
     static final String WORKSPACE_CLASS = "workspace";
     
     //The parent app and app name
@@ -522,6 +523,13 @@ public class WorkspaceManager {
     private void initRightToolbarHandlers(){     
         //Set up the handlers for the component toolbar using ComponentController
         componentController = new ComponentController(app);
+        
+        classNameText.textProperty().addListener(e -> {
+            componentController.handleClassNameTextEdited(classNameText.getText());
+        });
+        packageNameText.textProperty().addListener(e -> {
+            componentController.handlePackageNameTextEdited(packageNameText.getText());
+        });
     }
     
     // Initialize the window (ie stage) putting all the controls
@@ -627,6 +635,7 @@ public class WorkspaceManager {
         
         //Initialize style for right toolbar
         infoGrid.getStyleClass().add(RIGHT_GRIDPANE_CLASS);
+        classNameLabel.getStyleClass().add(LARGE_LABEL_CLASS);
         componentToolbarPane.getStyleClass().add(RIGHT_VBOX_CLASS);
         variablePane.getStyleClass().add(COMPONENT_BUTTON_FLOWPANE_CLASS);
         methodPane.getStyleClass().add(COMPONENT_BUTTON_FLOWPANE_CLASS);
@@ -672,7 +681,7 @@ public class WorkspaceManager {
 
     public void updateFileToolbarControls(boolean saved) {
         saveButton.setDisable(saved);
-        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         //TODO: Finish coding method
     }
     
@@ -759,5 +768,19 @@ public class WorkspaceManager {
         DataManager dataManager = app.getDataManager();
         dataManager.getSelectedClass().getOutlineRectangle().setEffect(highlightedEffect);
     }
+    
+    /**
+     * To be called just after selecting a new class.
+     */
+    public void loadSelectedClassData(){
+        DataManager dataManager = app.getDataManager();
+        
+        classNameText.setText(dataManager.getSelectedClass().getData().getClassName());
+        packageNameText.setText(dataManager.getSelectedClass().getData().getPackageName());
+        
+        classNameText.setDisable(false);
+        packageNameText.setDisable(false);
+    }
+    
     //TODO: Finish adding methods
 }

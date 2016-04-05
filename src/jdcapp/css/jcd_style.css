@@ -88,8 +88,16 @@
     -fx-background-color: lightgrey;
 }
 
-.small_label {
+.label {
     -fx-font-family: 'sans-serif';
     -fx-font-weight: normal;
-    -fx-font-size: 15px;
+    -fx-font-size: 13px;
+    -fx-font-weight: 400;
+}
+
+.large_label {
+    -fx-font-family: 'sans-serif';
+    -fx-font-weight: normal;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
 }
