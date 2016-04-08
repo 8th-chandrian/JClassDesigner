@@ -20,8 +20,8 @@ import javafx.scene.text.Text;
  */
 public class CustomClass{
     
-    static final String DEFAULT_CLASS_NAME = "DefaultClass";
-    static final String DEFAULT_PACKAGE_NAME = "default";
+    static final String DEFAULT_CLASS_NAME = "";
+    static final String DEFAULT_PACKAGE_NAME = "";
     
     //The class's name and the name of its package
     private String className;

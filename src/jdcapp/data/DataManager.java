@@ -5,6 +5,7 @@ package jdcapp.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import javafx.scene.paint.Color;
 import jdcapp.JDCApp;
 import static jdcapp.data.JDCAppState.SELECTING;
 import jdcapp.gui.WorkspaceManager;
@@ -116,5 +117,37 @@ public class DataManager {
     
     public CustomClassWrapper getSelectedClass(){
         return selectedClass;
+    }
+    
+    //TODO: INEFFICIENT METHOD, FIND A BETTER WAY TO DO THIS (AT SOME POINT)
+    public void checkCombinations(){
+        for(CustomClassWrapper c : classes){
+            if(isCombinationUnique(c.getData().getClassName(), c.getData().getPackageName()))
+                c.getNameText().setFill(Color.BLACK);
+            else
+                c.getNameText().setFill(Color.RED);
+        }
+    }
+    
+    /**
+     * Checks if one combination of class and package is unique in among all the classes and packages
+     * @param className
+     * @param packageName
+     * @return 
+     *      True if the combination is unique, false otherwise
+     */
+    public boolean isCombinationUnique(String className, String packageName){
+        int numOccurances = 0;
+        if(className.equals("") || packageName.equals(""))
+                return true;
+        for(CustomClassWrapper c : classes){
+            if(c.getData().getClassName().equals(className) && c.getData().getPackageName().equals(packageName))
+                numOccurances++;
+            
+        }
+        if(numOccurances > 1)
+            return false;
+        else
+            return true;
     }
 }

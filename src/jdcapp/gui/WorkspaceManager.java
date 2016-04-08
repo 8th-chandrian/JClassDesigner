@@ -3,20 +3,14 @@
  */
 package jdcapp.gui;
 
-import java.util.ArrayList;
-import javafx.scene.shape.Rectangle;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -30,8 +24,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import jdcapp.JDCApp;
@@ -40,11 +32,7 @@ import jdcapp.controller.EditController;
 import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
-import jdcapp.data.CustomClass;
-import static jdcapp.data.CustomClassWrapper.DISPLAY_TEXT_CSS_ID;
 import jdcapp.data.CustomClassWrapper;
-import jdcapp.data.CustomMethod;
-import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.file.FileManager;
@@ -118,6 +106,10 @@ public class WorkspaceManager {
     static final String COMPONENT_BUTTON_CLASS = "component_button";
     static final String LARGE_LABEL_CLASS = "large_label";
     static final String WORKSPACE_CLASS = "workspace";
+    static final String WORKSPACE_SCROLL_PANE_CLASS = "workspace_scroll_pane";
+    
+    static final double DEFAULT_WIDTH = 2000;
+    static final double DEFAULT_HEIGHT = 1000;
     
     //The parent app and app name
     JDCApp app;
@@ -219,6 +211,7 @@ public class WorkspaceManager {
     
     //The render variables (our classes are rendered on canvas)
     Pane canvas;
+    ScrollPane canvasScrollPane;
     boolean canvasActivated;
     
     //The effect to be used on the selected CustomClass
@@ -239,6 +232,7 @@ public class WorkspaceManager {
         app = initApp;
         canvasActivated = false;
         canvas = new Pane();
+        canvasScrollPane = new ScrollPane(canvas);
         
         //Initializes the toolbars and various controls=
         initTopToolbar();
@@ -553,7 +547,7 @@ public class WorkspaceManager {
         appPane = new BorderPane();
         appPane.setTop(appToolbarPane);
         appPane.setRight(componentToolbarPane);
-        appPane.setCenter(canvas);
+        appPane.setCenter(canvasScrollPane);
         primaryScene = new Scene(appPane);
         
         // SET THE APP ICON
@@ -646,6 +640,10 @@ public class WorkspaceManager {
         
         //Initialize style for the canvas
         canvas.getStyleClass().add(WORKSPACE_CLASS);
+        canvas.setMinSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        canvasScrollPane.getStyleClass().add(WORKSPACE_SCROLL_PANE_CLASS);
+        canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        canvasScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
     }
     
     /**
@@ -722,6 +720,7 @@ public class WorkspaceManager {
         canvas.getChildren().clear();
         
         for(CustomClassWrapper c : dataManager.getClasses()){
+            c.toDisplay();
             if(c == dataManager.getSelectedClass()){
                 //Sets the outline rectangle to highlighted
                 c.getOutlineRectangle().setEffect(highlightedEffect);
@@ -738,9 +737,14 @@ public class WorkspaceManager {
      * To be called after any change is made to the selected class.
      * Note: this method has the added effect of moving the selected class to the back of
      * the arraylist/the front of the canvas
+     * 
+     * Note: this method ensures that text displayed as red (error text) remains red
      */
     public void reloadSelectedClass(){
         DataManager dataManager = app.getDataManager();
+        boolean isRed = false;
+        if(dataManager.getSelectedClass().getNameText().getFill().equals(Color.RED))
+            isRed = true;
 
         //Remove the selected class from the canvas and the arraylist of classes
         canvas.getChildren().remove(dataManager.getSelectedClass());
@@ -749,6 +753,8 @@ public class WorkspaceManager {
         //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
         dataManager.getSelectedClass().toDisplay();
         dataManager.getSelectedClass().getOutlineRectangle().setEffect(highlightedEffect);
+        if(isRed)
+            dataManager.getSelectedClass().getNameText().setFill(Color.RED);
         canvas.getChildren().add(dataManager.getSelectedClass());
         dataManager.getClasses().add(dataManager.getSelectedClass());
     }

@@ -88,6 +88,11 @@
     -fx-background-color: lightgrey;
 }
 
+.workspace_scroll_pane {
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+}
+
 .label {
     -fx-font-family: 'sans-serif';
     -fx-font-weight: normal;

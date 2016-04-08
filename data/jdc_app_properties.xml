@@ -88,6 +88,7 @@
         <property name="SAVE_ERROR_TITLE"		value="Save Work Error"></property>
         <property name="PROPERTIES_LOAD_ERROR_MESSAGE"	value="An error occured loading a properties file."></property>	
         <property name="PROPERTIES_LOAD_ERROR_TITLE"	value="Properties File Loading Error"></property>
+        <property name="INVALID_COMBINATION_ERROR_MESSAGE"  value="Error: Class/Package Combo Already Exists"></property>
 	
         <!-- VERIFICATION MESSAGES -->
 	

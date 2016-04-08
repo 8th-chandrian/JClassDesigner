@@ -68,7 +68,7 @@ public class CustomClassWrapper extends Group{
         methodsText.setId(DISPLAY_TEXT_CSS_ID);
         
         //Create the name text display
-        nameText.setText(data.getClassName() + "\n");
+        nameText.setText(data.getClassName());
         nameText.setX(getStartX());
         nameText.setY(getStartY() + TEXT_LINE_PIXEL_HEIGHT);
         nameText.setWrappingWidth(getWrappingWidth());
@@ -86,11 +86,11 @@ public class CustomClassWrapper extends Group{
         //displayClass[4] = nameText;
         
         //Create the variable text display
-        String vars = " \n";
+        String vars = "";
         int numLinesVars = 2;
         if(!data.getVariables().isEmpty()){
             numLinesVars = 1;
-            vars = "";
+            //vars = "";
             for(CustomVar v : data.getVariables()){
                 vars += v.getVarName() + "\n";
                 numLinesVars++;
@@ -113,11 +113,11 @@ public class CustomClassWrapper extends Group{
         //displayClass[5] = varsText;
         
         //Create the method text display
-        String methods = " \n";
+        String methods = "";
         int numLinesMethods = 2;
         if(!data.getMethods().isEmpty()){
             numLinesMethods = 1;
-            methods = "";
+            //methods = "";
             for(CustomMethod m : data.getMethods()){
                 methods += m.getMethodName() + "\n";
                 numLinesMethods++;
