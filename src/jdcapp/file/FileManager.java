@@ -3,16 +3,25 @@
  */
 package jdcapp.file;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomMethod;
@@ -67,10 +76,10 @@ public class FileManager {
      * Saves the data in the DataManager to a .json file at the given path.
      * @param dataManager
      *      The DataManager to save from
-     * @param path 
+     * @param filePath 
      *      The file path to save to
      */
-    public void saveData(DataManager dataManager, String path) {
+    public void saveData(DataManager dataManager, String filePath) throws IOException{
         
         //Get the font name and pixel height, which will be needed to recreate the 
         //static variables in CustomClassWrapper
@@ -113,6 +122,24 @@ public class FileManager {
                 .add(JSON_PIXEL_HEIGHT, pixelHeight)
                 .add(JSON_CLASS_ARRAY, classArray)
                 .build();
+        
+        // AND NOW OUTPUT IT TO A JSON FILE WITH PRETTY PRINTING
+	Map<String, Object> properties = new HashMap<>(1);
+	properties.put(JsonGenerator.PRETTY_PRINTING, true);
+	JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
+	StringWriter sw = new StringWriter();
+	JsonWriter jsonWriter = writerFactory.createWriter(sw);
+	jsonWriter.writeObject(dataManagerJSO);
+	jsonWriter.close();
+
+	// INIT THE WRITER
+	OutputStream os = new FileOutputStream(filePath);
+	JsonWriter jsonFileWriter = Json.createWriter(os);
+	jsonFileWriter.writeObject(dataManagerJSO);
+	String prettyPrinted = sw.toString();
+	PrintWriter pw = new PrintWriter(filePath);
+	pw.write(prettyPrinted);
+	pw.close();
     }
     
     /**
