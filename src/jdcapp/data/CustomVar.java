@@ -32,8 +32,60 @@ public class CustomVar {
         access = DEFAULT_VAR_ACCESS;
     }
     
+    /**
+     * @return the varName
+     */
     public String getVarName(){
         return varName;
     }
-    //TODO: FINISH CODING CLASS
+
+    /**
+     * @param varName the varName to set
+     */
+    public void setVarName(String varName) {
+        this.varName = varName;
+    }
+
+    /**
+     * @return the varType
+     */
+    public String getVarType() {
+        return varType;
+    }
+
+    /**
+     * @param varType the varType to set
+     */
+    public void setVarType(String varType) {
+        this.varType = varType;
+    }
+
+    /**
+     * @return the staticValue
+     */
+    public boolean isStatic() {
+        return staticValue;
+    }
+
+    /**
+     * @param staticValue the staticValue to set
+     */
+    public void setStaticValue(boolean staticValue) {
+        this.staticValue = staticValue;
+    }
+
+    /**
+     * @return the access
+     */
+    public String getAccess() {
+        return access;
+    }
+
+    /**
+     * @param access the access to set
+     */
+    public void setAccess(String access) {
+        this.access = access;
+    }
+    
 }

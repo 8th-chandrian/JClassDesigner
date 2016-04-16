@@ -3,6 +3,7 @@
  */
 package jdcapp.file;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +49,19 @@ public class FileManager {
     static final String JSON_POINT_ARRAY = "points_array";
     static final String JSON_POINT_X = "point_x";
     static final String JSON_POINT_Y = "point_y";
+    
+    static final String JSON_VAR_NAME = "var_name";
+    static final String JSON_VAR_TYPE = "var_type";
+    static final String JSON_VAR_STATIC_VALUE = "var_static_value";
+    static final String JSON_VAR_ACCESS = "var_access";
+    
+    static final String JSON_METHOD_NAME = "method_name";
+    static final String JSON_METHOD_RETURN = "method_return";
+    static final String JSON_METHOD_STATIC_VALUE = "method_static_value";
+    static final String JSON_METHOD_ABSTRACT_VALUE = "method_abstract_value";
+    static final String JSON_METHOD_ACCESS = "method_access";
+    static final String JSON_METHOD_ARGUMENTS = "method_arguments";
+    
     
     /**
      * Saves the data in the DataManager to a .json file at the given path.
@@ -172,6 +186,7 @@ public class FileManager {
     
     /**
      * Helper method which converts an ArrayList of Point2D objects to a JsonArray
+     * 
      * @param pointArray
      *      The ArrayList to be converted
      * @return 
@@ -198,16 +213,118 @@ public class FileManager {
         return pointArrayJson;
     }
 
+    /**
+     * Helper method which converts an ArrayList of strings representing parent classes
+     * to a JsonArray
+     * 
+     * @param parents
+     *      The ArrayList to be converted
+     * @return 
+     *      The ArrayList in JsonArray format
+     */
     private JsonArray makeParentsJsonArray(ArrayList<String> parents) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JsonArrayBuilder parentArrayBuilder = Json.createArrayBuilder();
+        
+        for(String parentString : parents){
+            parentArrayBuilder.add(parentString);
+        }
+        
+        JsonArray parentArrayJson = parentArrayBuilder.build();
+        return parentArrayJson;
     }
 
+    /**
+     * Helper method which converts an ArrayList of CustomVar objects to a JsonArray
+     * 
+     * @param variables
+     *      The ArrayList to be converted
+     * @return 
+     *      The ArrayList in JsonArray format
+     */
     private JsonArray makeVariablesJsonArray(ArrayList<CustomVar> variables) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JsonArrayBuilder variableArrayBuilder = Json.createArrayBuilder();
+        
+        for(CustomVar v : variables){
+            JsonObject variableJson = makeCustomVariableJsonObject(v);
+            variableArrayBuilder.add(variableJson);
+        }
+        
+        JsonArray variableArrayJson = variableArrayBuilder.build();
+        return variableArrayJson;
+    }
+    
+    /**
+     * Helper method which converts a CustomVar object to a JsonObject
+     * 
+     * @param v
+     *      The CustomVar object to be converted
+     * @return 
+     *      The CustomVar object in JsonObject format
+     */
+    private JsonObject makeCustomVariableJsonObject(CustomVar v) {
+        String name = v.getVarName();
+        String type = v.getVarType();
+        boolean staticValue = v.isStatic();
+        String access = v.getAccess();
+        
+        JsonObject customVarJsonObject = Json.createObjectBuilder()
+                .add(JSON_VAR_NAME, name)
+                .add(JSON_VAR_TYPE, type)
+                .add(JSON_VAR_STATIC_VALUE, staticValue)
+                .add(JSON_VAR_ACCESS, access)
+                .build();
+        return customVarJsonObject;
     }
 
+    /**
+     * Helper method which converts an ArrayList of CustomVar objects to a JsonArray
+     * 
+     * @param methods
+     *      The ArrayList to be converted
+     * @return 
+     *      The ArrayList in JsonArray format
+     */
     private JsonArray makeMethodsJsonArray(ArrayList<CustomMethod> methods) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JsonArrayBuilder methodArrayBuilder = Json.createArrayBuilder();
+        
+        for(CustomMethod m : methods){
+            JsonObject methodJson = makeCustomMethodJsonObject(m);
+            methodArrayBuilder.add(methodJson);
+        }
+        
+        JsonArray methodArrayJson = methodArrayBuilder.build();
+        return methodArrayJson;
     }
 
+    /**
+     * Helper method which converts a CustomMethod object to a JsonObject
+     * 
+     * @param m
+     *      The CustomMethod object to be converted
+     * @return 
+     *      The CustomMethod object in JsonObject format
+     */
+    private JsonObject makeCustomMethodJsonObject(CustomMethod m) {
+        String name = m.getMethodName();
+        String returnType = m.getReturnType();
+        boolean staticValue = m.isStatic();
+        boolean abstractValue = m.isAbstract();
+        String access = m.getAccess();
+        
+        JsonArrayBuilder argsArrayBuilder = Json.createArrayBuilder();
+        for(String arg : m.getArguments()){
+            argsArrayBuilder.add(arg);
+        }
+        JsonArray argsArrayJson = argsArrayBuilder.build();
+        
+        JsonObject customMethodJsonObject = Json.createObjectBuilder()
+                .add(JSON_METHOD_NAME, name)
+                .add(JSON_METHOD_RETURN, returnType)
+                .add(JSON_METHOD_STATIC_VALUE, staticValue)
+                .add(JSON_METHOD_ABSTRACT_VALUE, abstractValue)
+                .add(JSON_METHOD_ACCESS, access)
+                .add(JSON_METHOD_ARGUMENTS, argsArrayJson)
+                .build();
+        return customMethodJsonObject;
+    }
 }
