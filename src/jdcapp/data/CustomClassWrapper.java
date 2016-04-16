@@ -10,6 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 /**
@@ -19,7 +21,6 @@ import javafx.scene.text.Text;
  */
 public class CustomClassWrapper extends Group{
 
-    public static final String DISPLAY_TEXT_CSS_ID = "display_text";
     static final double DEFAULT_WRAPPING_WIDTH = 200;
     static double TEXT_LINE_PIXEL_HEIGHT = 12;
     
@@ -37,6 +38,9 @@ public class CustomClassWrapper extends Group{
     //The wrapping width, to be used with the toDisplay method (will be set when class is resized)
     private double wrappingWidth;
     
+    //The text font, to be used with the toDisplay method (lets us resize font)
+    private Font textFont;
+    
     //The HashMap containing lists of points on the lines connecting this class and its parents
     private HashMap<String, ArrayList<Point2D>> points;
     
@@ -46,6 +50,7 @@ public class CustomClassWrapper extends Group{
         startX = initX;
         startY = initY;
         wrappingWidth = DEFAULT_WRAPPING_WIDTH;
+        textFont = Font.font("sans-serif", FontWeight.NORMAL, TEXT_LINE_PIXEL_HEIGHT);
         toDisplay();
     }
     
@@ -63,9 +68,9 @@ public class CustomClassWrapper extends Group{
         Text methodsText = new Text();
         
         //Set the id of the Text objects so that the text is formatted by the CSS
-        nameText.setId(DISPLAY_TEXT_CSS_ID);
-        varsText.setId(DISPLAY_TEXT_CSS_ID);
-        methodsText.setId(DISPLAY_TEXT_CSS_ID);
+        nameText.setFont(textFont);
+        varsText.setFont(textFont);
+        methodsText.setFont(textFont);
         
         //Create the name text display
         nameText.setText(data.getClassName());

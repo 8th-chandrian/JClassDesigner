@@ -6,12 +6,11 @@
     Author     : Noah
 */
 
-/* TODO: Make text resizable with zoom */
+/* TODO: Make text resizable with zoom
 #display_text {
     -fx-font-family: 'sans-serif';
     -fx-font-weight: normal;
-    -fx-font-size: 12px;
-}
+} */
 
 .top_toolbar {
     -fx-background-color: lightskyblue;
@@ -105,4 +104,8 @@
     -fx-font-weight: normal;
     -fx-font-size: 20px;
     -fx-font-weight: 700;
+}
+
+.table_view {
+    -fx-match-width: true;
 }

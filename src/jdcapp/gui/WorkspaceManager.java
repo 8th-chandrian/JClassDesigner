@@ -11,6 +11,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -107,6 +108,7 @@ public class WorkspaceManager {
     static final String LARGE_LABEL_CLASS = "large_label";
     static final String WORKSPACE_CLASS = "workspace";
     static final String WORKSPACE_SCROLL_PANE_CLASS = "workspace_scroll_pane";
+    static final String TABLE_VIEW_CLASS = "table_view";
     
     static final double DEFAULT_WIDTH = 2000;
     static final double DEFAULT_HEIGHT = 1000;
@@ -637,6 +639,25 @@ public class WorkspaceManager {
         removeVariable.getStyleClass().add(COMPONENT_BUTTON_CLASS);
         addMethod.getStyleClass().add(COMPONENT_BUTTON_CLASS);
         removeMethod.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        
+        //Add first row to variable table and method table, and add horizontal scrolling to scroll panes
+        variableScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        variableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        methodScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        methodScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        
+        //TODO: FIX STYLE FOR THIS ASAP
+        variableTableView.getColumns().add(new TableColumn("Name"));
+        variableTableView.getColumns().add(new TableColumn("Type"));
+        variableTableView.getColumns().add(new TableColumn("Static"));
+        variableTableView.getColumns().add(new TableColumn("Access"));
+        variableTableView.getStyleClass().add(TABLE_VIEW_CLASS);
+        
+        methodTableView.getColumns().add(new TableColumn("Name"));
+        methodTableView.getColumns().add(new TableColumn("Type"));
+        methodTableView.getColumns().add(new TableColumn("Static"));
+        methodTableView.getColumns().add(new TableColumn("Access"));
+        methodTableView.getStyleClass().add(TABLE_VIEW_CLASS);
         
         //Initialize style for the canvas
         canvas.getStyleClass().add(WORKSPACE_CLASS);
