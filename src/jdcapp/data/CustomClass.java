@@ -27,8 +27,12 @@ public class CustomClass{
     private String className;
     private String packageName;
     
-    //The HashMap of the class's parents, using their names as keys for the HashMap
-    private ArrayList<CustomClass> parents;
+    //Keeps track of whether or not this is an interface
+    private boolean interfaceValue;
+    
+    //The ArrayList of the class's parents (String arrays hold name-package 
+    //combinations for use in identification purposes)
+    private ArrayList<String[]> parents;
     
     //The lists of all the variables and methods contained within the class
     private ArrayList<CustomVar> variables;
@@ -37,7 +41,8 @@ public class CustomClass{
     /**
      * Default constructor.
      */
-    public CustomClass(){
+    public CustomClass(boolean interfaceValue){
+        this.interfaceValue = interfaceValue;
         className = DEFAULT_CLASS_NAME;
         packageName = DEFAULT_PACKAGE_NAME;
         parents = new ArrayList<>();
@@ -61,16 +66,31 @@ public class CustomClass{
         this.packageName = packageName;
     }
 
-    public ArrayList<CustomClass> getParents() {
+    public ArrayList<String[]> getParents() {
         return parents;
+    }
+    
+    public void setParents(ArrayList<String[]> parents){
+        this.parents = parents;
     }
 
     public ArrayList<CustomVar> getVariables() {
         return variables;
     }
+    
+    public void setVariables(ArrayList<CustomVar> variables){
+        this.variables = variables;
+    }
 
     public ArrayList<CustomMethod> getMethods() {
         return methods;
     }
+    
+    public void setMethods(ArrayList<CustomMethod> methods){
+        this.methods = methods;
+    }
 
+    public boolean isInterface(){
+        return interfaceValue;
+    }
 }

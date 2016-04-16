@@ -44,7 +44,7 @@ public class EditController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         //Create a new custom class and set its position to the default x and y values given
-        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY);
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY, false);
         
         //Add the default class to the arraylist of classes
         dataManager.getClasses().add(newClass);
@@ -65,7 +65,29 @@ public class EditController {
     }
 
     public void handleAddInterfaceRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        //Create a new custom class and set its position to the default x and y values given
+        //Constructor is passed true for isInterface argument
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY, true);
+        
+        //Add the default class to the arraylist of classes
+        dataManager.getClasses().add(newClass);
+        
+        //Select the newly-created class
+        dataManager.setState(JDCAppState.SELECTING);
+        if(dataManager.getSelectedClass() != null){
+            workspaceManager.unhighlightSelectedClass();
+        }
+        dataManager.setSelectedClass(newClass);
+        
+        //Load the data from the selected class and enable the component controls
+        workspaceManager.loadSelectedClassData();
+        
+        //Update the edit toolbar controls to reflect the selection, and reload the workspace so that the class is visible
+        workspaceManager.updateEditToolbarControls();
+        workspaceManager.reloadSelectedClass();
     }
 
     public void handleRemoveRequest() {

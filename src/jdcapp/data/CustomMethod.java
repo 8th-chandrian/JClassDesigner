@@ -45,5 +45,82 @@ public class CustomMethod {
     public String getMethodName(){
         return methodName;
     }
-    //TODO: FINISH CODING CLASS
+
+    /**
+     * @param methodName the methodName to set
+     */
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    /**
+     * @return the returnType
+     */
+    public String getReturnType() {
+        return returnType;
+    }
+
+    /**
+     * @param returnType the returnType to set
+     */
+    public void setReturnType(String returnType) {
+        this.returnType = returnType;
+    }
+
+    /**
+     * @return the staticValue
+     */
+    public boolean isStatic() {
+        return staticValue;
+    }
+
+    /**
+     * @param staticValue the staticValue to set
+     */
+    public void setStaticValue(boolean staticValue) {
+        this.staticValue = staticValue;
+    }
+
+    /**
+     * @return the abstractValue
+     */
+    public boolean isAbstract() {
+        return abstractValue;
+    }
+
+    /**
+     * @param abstractValue the abstractValue to set
+     */
+    public void setAbstractValue(boolean abstractValue) {
+        this.abstractValue = abstractValue;
+    }
+
+    /**
+     * @return the access
+     */
+    public String getAccess() {
+        return access;
+    }
+
+    /**
+     * @param access the access to set
+     */
+    public void setAccess(String access) {
+        this.access = access;
+    }
+
+    /**
+     * @return the arguments
+     */
+    public ArrayList<String> getArguments() {
+        return arguments;
+    }
+
+    /**
+     * @param arguments the arguments to set
+     */
+    public void setArguments(ArrayList<String> arguments) {
+        this.arguments = arguments;
+    }
+    
 }

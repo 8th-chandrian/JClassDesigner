@@ -526,6 +526,8 @@ public class WorkspaceManager {
         packageNameText.textProperty().addListener(e -> {
             componentController.handlePackageNameTextEdited(packageNameText.getText());
         });
+        
+        //TODO: Finish adding handlers for other events
     }
     
     // Initialize the window (ie stage) putting all the controls

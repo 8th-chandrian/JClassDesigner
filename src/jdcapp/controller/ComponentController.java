@@ -34,11 +34,6 @@ public class ComponentController {
         
         //TODO: This is a very clumsy solution with O(n^2) complexity, fix this when you have time
         dataManager.checkCombinations();
-        
-//        if(dataManager.isCombinationUnique(text, dataManager.getSelectedClass().getData().getPackageName()))
-//            dataManager.getSelectedClass().getNameText().setFill(Color.BLACK);
-//        else
-//            dataManager.getSelectedClass().getNameText().setFill(Color.RED);
 
     }
 
@@ -50,7 +45,6 @@ public class ComponentController {
         dataManager.getSelectedClass().getData().setPackageName(text);
         
         dataManager.checkCombinations();
-        //TODO: Fix isCombinationUnique(), method is currently broken
     }
     
 }

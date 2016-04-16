@@ -6,11 +6,6 @@
     Author     : Noah
 */
 
-/* TODO: Make text resizable with zoom
-#display_text {
-    -fx-font-family: 'sans-serif';
-    -fx-font-weight: normal;
-} */
 
 .top_toolbar {
     -fx-background-color: lightskyblue;

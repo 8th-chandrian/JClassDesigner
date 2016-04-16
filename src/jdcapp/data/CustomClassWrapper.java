@@ -44,9 +44,9 @@ public class CustomClassWrapper extends Group{
     //The HashMap containing lists of points on the lines connecting this class and its parents
     private HashMap<String, ArrayList<Point2D>> points;
     
-    public CustomClassWrapper(double initX, double initY){
+    public CustomClassWrapper(double initX, double initY, boolean isInterface){
         super();
-        data = new CustomClass();
+        data = new CustomClass(isInterface);
         startX = initX;
         startY = initY;
         wrappingWidth = DEFAULT_WRAPPING_WIDTH;
@@ -73,22 +73,19 @@ public class CustomClassWrapper extends Group{
         methodsText.setFont(textFont);
         
         //Create the name text display
+        //TODO: Edit this slightly to take into account interface displaying
         nameText.setText(data.getClassName());
-        nameText.setX(getStartX());
-        nameText.setY(getStartY() + TEXT_LINE_PIXEL_HEIGHT);
-        nameText.setWrappingWidth(getWrappingWidth());
+        nameText.setX(startX);
+        nameText.setY(startY + TEXT_LINE_PIXEL_HEIGHT);
+        nameText.setWrappingWidth(wrappingWidth);
         int numLinesName = 2;
         
         //Create the rectangle surrounding the name text
-        Rectangle nameOutline = new Rectangle(getStartX(), getStartY(), getWrappingWidth(), 
+        Rectangle nameOutline = new Rectangle(startX, startY, wrappingWidth, 
                 (numLinesName) * TEXT_LINE_PIXEL_HEIGHT);
         nameOutline.setStroke(Color.BLACK);
         nameOutline.setStrokeWidth(1);
         nameOutline.setFill(Color.WHITE);
-        
-        //Add the text and rectangle to the array of nodes
-        //displayClass[1] = nameOutline;
-        //displayClass[4] = nameText;
         
         //Create the variable text display
         String vars = "";
@@ -102,20 +99,16 @@ public class CustomClassWrapper extends Group{
             }
         }
         varsText.setText(vars);
-        varsText.setX(getStartX());
-        varsText.setY(getStartY() + ((numLinesName + 1) * TEXT_LINE_PIXEL_HEIGHT));
-        varsText.setWrappingWidth(getWrappingWidth());
+        varsText.setX(startX);
+        varsText.setY(startY + ((numLinesName + 1) * TEXT_LINE_PIXEL_HEIGHT));
+        varsText.setWrappingWidth(wrappingWidth);
         
         //Create the rectangle surrounding the variable text
-        Rectangle varsOutline = new Rectangle(getStartX(), getStartY() + (numLinesName * TEXT_LINE_PIXEL_HEIGHT), 
-                getWrappingWidth(), (numLinesVars) * TEXT_LINE_PIXEL_HEIGHT);
+        Rectangle varsOutline = new Rectangle(startX, startY + (numLinesName * TEXT_LINE_PIXEL_HEIGHT), 
+                wrappingWidth, (numLinesVars) * TEXT_LINE_PIXEL_HEIGHT);
         varsOutline.setStroke(Color.BLACK);
         varsOutline.setStrokeWidth(1);
         varsOutline.setFill(Color.WHITE);
-        
-        //Add the text and rectangle to the array of nodes
-        //displayClass[2] = varsOutline;
-        //displayClass[5] = varsText;
         
         //Create the method text display
         String methods = "";
@@ -129,35 +122,28 @@ public class CustomClassWrapper extends Group{
             }
         }
         methodsText.setText(methods);
-        methodsText.setX(getStartX());
-        methodsText.setY(getStartY() + ((numLinesName + numLinesVars + 1) * TEXT_LINE_PIXEL_HEIGHT));
-        methodsText.setWrappingWidth(getWrappingWidth());
+        methodsText.setX(startX);
+        methodsText.setY(startY + ((numLinesName + numLinesVars + 1) * TEXT_LINE_PIXEL_HEIGHT));
+        methodsText.setWrappingWidth(wrappingWidth);
         
         //Create the rectangle surrounding the method text
-        Rectangle methodsOutline = new Rectangle(getStartX(), getStartY() + ((numLinesName + numLinesVars) * TEXT_LINE_PIXEL_HEIGHT), 
-                getWrappingWidth(), (numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
+        Rectangle methodsOutline = new Rectangle(startX, startY + ((numLinesName + numLinesVars) * TEXT_LINE_PIXEL_HEIGHT), 
+                wrappingWidth, (numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
         methodsOutline.setStroke(Color.BLACK);
         methodsOutline.setStrokeWidth(1);
         methodsOutline.setFill(Color.WHITE);
         
-        //Add the text and rectangle to the array of nodes
-        //displayClass[3] = methodsOutline;
-        //displayClass[6] = methodsText;
-        
         //Create the overlaying rectangle
-        outline.setX(getStartX());
-        outline.setY(getStartY());
-        outline.setWidth(getWrappingWidth());
+        outline.setX(startX);
+        outline.setY(startY);
+        outline.setWidth(wrappingWidth);
         outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
         outline.setFill(Color.WHITE);
         
-        //Add the overlaying rectangle to the array of nodes as index 0
-        //displayClass[0] = outline;
-        
         //Set the width and height of the CustomClass to the width and height of the overlaying rectangle
-        setWidth(getWrappingWidth());
+        setWidth(wrappingWidth);
         setHeight((numLinesName + numLinesVars + numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
         
         super.getChildren().add(outline);
