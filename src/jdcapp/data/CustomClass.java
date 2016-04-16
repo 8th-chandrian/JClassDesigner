@@ -30,9 +30,11 @@ public class CustomClass{
     //Keeps track of whether or not this is an interface
     private boolean interfaceValue;
     
-    //The ArrayList of the class's parents (String arrays hold name-package 
-    //combinations for use in identification purposes)
-    private ArrayList<String[]> parents;
+    private boolean abstractValue;
+    
+    //The ArrayList of the class's parents (Strings are a concatenation of parent names
+    //and packages separated by a "-", for identification purposes)
+    private ArrayList<String> parents;
     
     //The lists of all the variables and methods contained within the class
     private ArrayList<CustomVar> variables;
@@ -43,6 +45,7 @@ public class CustomClass{
      */
     public CustomClass(boolean interfaceValue){
         this.interfaceValue = interfaceValue;
+        abstractValue = false;
         className = DEFAULT_CLASS_NAME;
         packageName = DEFAULT_PACKAGE_NAME;
         parents = new ArrayList<>();
@@ -66,11 +69,11 @@ public class CustomClass{
         this.packageName = packageName;
     }
 
-    public ArrayList<String[]> getParents() {
+    public ArrayList<String> getParents() {
         return parents;
     }
     
-    public void setParents(ArrayList<String[]> parents){
+    public void setParents(ArrayList<String> parents){
         this.parents = parents;
     }
 
@@ -92,5 +95,13 @@ public class CustomClass{
 
     public boolean isInterface(){
         return interfaceValue;
+    }
+    
+    public boolean isAbstract(){
+        return abstractValue;
+    }
+    
+    public void setAbstractValue(boolean abstractValue){
+        this.abstractValue = abstractValue;
     }
 }

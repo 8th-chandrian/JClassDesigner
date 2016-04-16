@@ -22,7 +22,13 @@ import javafx.scene.text.Text;
 public class CustomClassWrapper extends Group{
 
     static final double DEFAULT_WRAPPING_WIDTH = 200;
-    static double TEXT_LINE_PIXEL_HEIGHT = 12;
+    
+    //The height of the pixels, to be used when setting the text size and calculating the size of the 
+    //encompassing rectangles
+    static double pixelHeight = 12;
+    
+    //The text font, to be used with toDisplay (lets us alter the font size when zooming)
+    static Font textFont = Font.font("sans-serif", FontWeight.NORMAL, pixelHeight);
     
     //The data contained within this wrapper class
     private CustomClass data;
@@ -35,13 +41,12 @@ public class CustomClassWrapper extends Group{
     private double width;
     private double height;
     
-    //The wrapping width, to be used with the toDisplay method (will be set when class is resized)
+    //The wrapping width, to be used with the toDisplay method (can be changed when class is resized)
     private double wrappingWidth;
     
-    //The text font, to be used with the toDisplay method (lets us resize font)
-    private Font textFont;
-    
     //The HashMap containing lists of points on the lines connecting this class and its parents
+    //Note: The String used for hashing contains a concatenation of the parent name and package, 
+    //separated by a "-", for identification purposes
     private HashMap<String, ArrayList<Point2D>> points;
     
     public CustomClassWrapper(double initX, double initY, boolean isInterface){
@@ -50,13 +55,15 @@ public class CustomClassWrapper extends Group{
         startX = initX;
         startY = initY;
         wrappingWidth = DEFAULT_WRAPPING_WIDTH;
-        textFont = Font.font("sans-serif", FontWeight.NORMAL, TEXT_LINE_PIXEL_HEIGHT);
         toDisplay();
     }
     
     /**
      * Constructs requisite text objects and rectangles for the display of the CustomClass
      * object in the workspace.
+     * 
+     * TODO: Clean up this method and make it more adaptable (it will need serious editing to 
+     * support resizing and abstract classes/interfaces)
      */
     public void toDisplay(){
         //Call clear first, to remove any old display objects from the Group
@@ -76,13 +83,13 @@ public class CustomClassWrapper extends Group{
         //TODO: Edit this slightly to take into account interface displaying
         nameText.setText(data.getClassName());
         nameText.setX(startX);
-        nameText.setY(startY + TEXT_LINE_PIXEL_HEIGHT);
+        nameText.setY(startY + pixelHeight);
         nameText.setWrappingWidth(wrappingWidth);
         int numLinesName = 2;
         
         //Create the rectangle surrounding the name text
         Rectangle nameOutline = new Rectangle(startX, startY, wrappingWidth, 
-                (numLinesName) * TEXT_LINE_PIXEL_HEIGHT);
+                (numLinesName) * pixelHeight);
         nameOutline.setStroke(Color.BLACK);
         nameOutline.setStrokeWidth(1);
         nameOutline.setFill(Color.WHITE);
@@ -100,12 +107,12 @@ public class CustomClassWrapper extends Group{
         }
         varsText.setText(vars);
         varsText.setX(startX);
-        varsText.setY(startY + ((numLinesName + 1) * TEXT_LINE_PIXEL_HEIGHT));
+        varsText.setY(startY + ((numLinesName + 1) * pixelHeight));
         varsText.setWrappingWidth(wrappingWidth);
         
         //Create the rectangle surrounding the variable text
-        Rectangle varsOutline = new Rectangle(startX, startY + (numLinesName * TEXT_LINE_PIXEL_HEIGHT), 
-                wrappingWidth, (numLinesVars) * TEXT_LINE_PIXEL_HEIGHT);
+        Rectangle varsOutline = new Rectangle(startX, startY + (numLinesName * pixelHeight), 
+                wrappingWidth, (numLinesVars) * pixelHeight);
         varsOutline.setStroke(Color.BLACK);
         varsOutline.setStrokeWidth(1);
         varsOutline.setFill(Color.WHITE);
@@ -123,12 +130,12 @@ public class CustomClassWrapper extends Group{
         }
         methodsText.setText(methods);
         methodsText.setX(startX);
-        methodsText.setY(startY + ((numLinesName + numLinesVars + 1) * TEXT_LINE_PIXEL_HEIGHT));
+        methodsText.setY(startY + ((numLinesName + numLinesVars + 1) * pixelHeight));
         methodsText.setWrappingWidth(wrappingWidth);
         
         //Create the rectangle surrounding the method text
-        Rectangle methodsOutline = new Rectangle(startX, startY + ((numLinesName + numLinesVars) * TEXT_LINE_PIXEL_HEIGHT), 
-                wrappingWidth, (numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
+        Rectangle methodsOutline = new Rectangle(startX, startY + ((numLinesName + numLinesVars) * pixelHeight), 
+                wrappingWidth, (numLinesMethods) * pixelHeight);
         methodsOutline.setStroke(Color.BLACK);
         methodsOutline.setStrokeWidth(1);
         methodsOutline.setFill(Color.WHITE);
@@ -137,14 +144,14 @@ public class CustomClassWrapper extends Group{
         outline.setX(startX);
         outline.setY(startY);
         outline.setWidth(wrappingWidth);
-        outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
+        outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
         outline.setFill(Color.WHITE);
         
         //Set the width and height of the CustomClass to the width and height of the overlaying rectangle
         setWidth(wrappingWidth);
-        setHeight((numLinesName + numLinesVars + numLinesMethods) * TEXT_LINE_PIXEL_HEIGHT);
+        setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
         
         super.getChildren().add(outline);
         super.getChildren().add(nameOutline);
@@ -191,22 +198,30 @@ public class CustomClassWrapper extends Group{
 
     public void setHeight(double height) { this.height = height; }
 
-    public HashMap<String, ArrayList<Point2D>> getPoints() {
-        return points;
-    }
+    public HashMap<String, ArrayList<Point2D>> getPoints() { return points; }
 
-    public void setPoints(HashMap<String, ArrayList<Point2D>> points) {
-        this.points = points;
-    }
+    public void setPoints(HashMap<String, ArrayList<Point2D>> points) { this.points = points; }
 
-    private double getWrappingWidth() {
-        return wrappingWidth;
+    public double getWrappingWidth() { return wrappingWidth; }
+    
+    public void setWrappingWidth(double w) { wrappingWidth = w; }
+    
+    //Static getters and setters
+    public static double getPixelHeight(){
+        return pixelHeight;
     }
     
-    public void setWrappingWidth(double w){
-        wrappingWidth = w;
+    public static void setPixelHeight(double ph){
+        pixelHeight = ph;
     }
     
-        
+    public static Font getFont(){
+        return textFont;
+    }
+    
+    public static void setFont(Font f){
+        textFont = f;
+    }
+    
     //TODO: Finish coding this class
 }
