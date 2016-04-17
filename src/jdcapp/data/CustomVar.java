@@ -33,6 +33,20 @@ public class CustomVar {
     }
     
     /**
+     * Overloaded constructor, TO BE USED FOR TESTING ONLY
+     * @param name
+     * @param type
+     * @param isStatic
+     * @param access 
+     */
+    public CustomVar(String name, String type, boolean isStatic, String access){
+        varName = name;
+        varType = type;
+        staticValue = isStatic;
+        this.access = access;
+    }
+    
+    /**
      * @return the varName
      */
     public String getVarName(){

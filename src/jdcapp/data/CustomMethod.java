@@ -31,6 +31,7 @@ public class CustomMethod {
     private String access;
     
     //The list of method arguments
+    //Arguments will be formatted as argument_name + " : " + argument_type
     private ArrayList<String> arguments;
     
     public CustomMethod(){
@@ -40,6 +41,25 @@ public class CustomMethod {
         abstractValue = DEFAULT_METHOD_ABSTRACT_VALUE;
         access = DEFAULT_METHOD_ACCESS;
         arguments = new ArrayList<>();
+    }
+    
+    /**
+     * Overloaded constructor, TO BE USED FOR TESTING PURPOSES ONLY
+     * @param name
+     * @param type
+     * @param isStatic
+     * @param isAbstract
+     * @param access
+     * @param arguments 
+     */
+    public CustomMethod(String name, String type, boolean isStatic, boolean isAbstract, 
+            String access, ArrayList<String> arguments){
+        methodName = name;
+        returnType = type;
+        staticValue = isStatic;
+        abstractValue = isAbstract;
+        this.access = access;
+        this.arguments = arguments;
     }
     
     public String getMethodName(){
