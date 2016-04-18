@@ -44,10 +44,9 @@ public class CustomClassWrapper extends Group{
     //The wrapping width, to be used with the toDisplay method (can be changed when class is resized)
     private double wrappingWidth;
     
-    //The HashMap containing lists of points on the lines connecting this class and its parents
-    //Note: The String used for hashing contains a concatenation of the parent name and package, 
-    //separated by a "-", for identification purposes
-    private HashMap<String, ArrayList<Point2D>> points;
+    //The HashMap containing lists of points on the lines connecting this class and its associated classes
+    //Note: The String used for hashing contains the connected class's name
+    private HashMap<String, ConnectorArrayList> connections;
     
     public CustomClassWrapper(double initX, double initY, boolean isInterface){
         super();
@@ -198,9 +197,9 @@ public class CustomClassWrapper extends Group{
 
     public void setHeight(double height) { this.height = height; }
 
-    public HashMap<String, ArrayList<Point2D>> getPoints() { return points; }
+    public HashMap<String, ConnectorArrayList> getConnections() { return connections; }
 
-    public void setPoints(HashMap<String, ArrayList<Point2D>> points) { this.points = points; }
+    public void setConnections(HashMap<String, ConnectorArrayList> connections) { this.connections = connections; }
 
     public double getWrappingWidth() { return wrappingWidth; }
     

@@ -32,8 +32,7 @@ public class CustomClass{
     
     private boolean abstractValue;
     
-    //The ArrayList of the class's parents (Strings are a concatenation of parent names
-    //and packages separated by a "-", for identification purposes)
+    //The ArrayList of the class's parents (Strings are the parent names)
     private ArrayList<String> parents;
     
     //The lists of all the variables and methods contained within the class

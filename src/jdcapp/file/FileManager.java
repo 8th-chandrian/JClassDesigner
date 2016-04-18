@@ -22,6 +22,7 @@ import javax.json.JsonObject;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
+import jdcapp.data.ConnectorArrayList;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomMethod;
@@ -56,6 +57,7 @@ public class FileManager {
     
     static final String JSON_KEY = "key";
     static final String JSON_POINT_ARRAY = "points_array";
+    static final String JSON_CONNECTOR_TYPE = "connector_type";
     static final String JSON_POINT_X = "point_x";
     static final String JSON_POINT_Y = "point_y";
     
@@ -96,7 +98,7 @@ public class FileManager {
             double height = c.getHeight();
             double wrappingWidth = c.getWrappingWidth();
             JsonObject customClassJson = makeCustomClassJsonObject(c.getData());
-            JsonArray pointsHashMapJsonArray = makeHashMapJsonObject(c.getPoints());
+            JsonArray connectionsHashMapJsonArray = makeHashMapJsonObject(c.getConnections());
             
             //Then build the JsonObject to save
             JsonObject wrapperJson = Json.createObjectBuilder()
@@ -106,7 +108,7 @@ public class FileManager {
                     .add(JSON_HEIGHT, height)
                     .add(JSON_WRAPPING_WIDTH, wrappingWidth)
                     .add(JSON_CUSTOM_CLASS, customClassJson)
-                    .add(JSON_POINTS_HASH_MAP, pointsHashMapJsonArray)
+                    .add(JSON_POINTS_HASH_MAP, connectionsHashMapJsonArray)
                     .build();
             
             //Add it to the array of classes
@@ -172,21 +174,21 @@ public class FileManager {
     }
 
     /**
-     * Helper method which converts a HashMap of Strings (representing parents) mapped to 
-     * ArrayLists of Point2D objects (representing the points connecting the current class
-     * and its given parent) to a JsonArray
+     * Helper method which converts a HashMap of Strings (representing connected classes) 
+     * mapped to ArrayLists of Point2D objects (representing the points connecting the current class
+     * and its given connected class) to a JsonArray
      * 
      * @param points
      *      The HashMap to be converted
      * @return 
      *      The converted map in JsonArray form
      */
-    private JsonArray makeHashMapJsonObject(HashMap<String, ArrayList<Point2D>> points) {
+    private JsonArray makeHashMapJsonObject(HashMap<String, ConnectorArrayList> points) {
         
         //JsonObjects containing paired keys and ArrayLists of points will go in this array
         JsonArrayBuilder hashArrayBuilder = Json.createArrayBuilder();
         
-        //Get an iterator of all the keys (parent strings) in the HashMap
+        //Get an iterator of all the keys (connected class names) in the HashMap
         Iterator keyIterator = points.keySet().iterator();
         while(keyIterator.hasNext()){
             
@@ -196,11 +198,13 @@ public class FileManager {
             //Get the ArrayList associated with that key and convert to a JsonArray
             ArrayList<Point2D> pointArray = points.get(key);
             JsonArray pointJsonArray = makePointJsonArray(pointArray);
+            String connectorType = ((ConnectorArrayList) pointArray).getConnectorType();
             
             //Create the object containing the paired key and array
             JsonObject hashPairJson = Json.createObjectBuilder()
                     .add(JSON_KEY, key)
                     .add(JSON_POINT_ARRAY, pointJsonArray)
+                    .add(JSON_CONNECTOR_TYPE, connectorType)
                     .build();
             
             //Add that object to the array builder
