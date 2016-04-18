@@ -34,20 +34,20 @@ public class TestSave {
         CustomClassWrapper threadExample = new CustomClassWrapper(200, 200, false);
         threadExample.getData().setClassName("ThreadExample");
         
-        CustomVar startText = new CustomVar("START_TEXT", "String", true, "public");
-        CustomVar pauseText = new CustomVar("PAUSE_TEXT", "String", true, "public");
-        CustomVar window = new CustomVar("window", "Stage", false, "private");
-        CustomVar appPane = new CustomVar("appPane", "BorderPane", false, "private");
-        CustomVar topPane = new CustomVar("topPane", "FlowPane", false, "private");
-        CustomVar startButton = new CustomVar("startButton", "Button", false, "private");
-        CustomVar pauseButton = new CustomVar("pauseButton", "Button", false, "private");
-        CustomVar scrollPane = new CustomVar("scrollPane", "ScrollPane", false, "private");
-        CustomVar textArea = new CustomVar("textArea", "TextArea", false, "private");
-        CustomVar dateThread = new CustomVar("dateThread", "Thread", false, "private");
-        CustomVar dateTask = new CustomVar("dateTask", "Task", false, "private");
-        CustomVar counterThread = new CustomVar("counterThread", "Thread", false, "private");
-        CustomVar counterTask = new CustomVar("counterTask", "Task", false, "private");
-        CustomVar work = new CustomVar("work", "boolean", false, "private");
+        CustomVar startText = new CustomVar("START_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
+        CustomVar pauseText = new CustomVar("PAUSE_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
+        CustomVar window = new CustomVar("window", "Stage", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar appPane = new CustomVar("appPane", "BorderPane", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar topPane = new CustomVar("topPane", "FlowPane", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar startButton = new CustomVar("startButton", "Button", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar pauseButton = new CustomVar("pauseButton", "Button", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar scrollPane = new CustomVar("scrollPane", "ScrollPane", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar textArea = new CustomVar("textArea", "TextArea", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar dateThread = new CustomVar("dateThread", "Thread", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar dateTask = new CustomVar("dateTask", "Task", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar counterThread = new CustomVar("counterThread", "Thread", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar counterTask = new CustomVar("counterTask", "Task", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar work = new CustomVar("work", "boolean", false, CustomVar.PRIVATE_VAR_ACCESS);
         
         ArrayList<CustomVar> threadExampleVars = (ArrayList<CustomVar>)Arrays.asList(startText,
             pauseText, window, appPane, topPane, startButton, pauseButton, scrollPane, textArea,
@@ -56,25 +56,25 @@ public class TestSave {
         threadExample.getData().setVariables(threadExampleVars);
         
         CustomMethod start = new CustomMethod("start", "void", false, false, 
-                "public", (ArrayList<String>)Arrays.asList("primaryStage : Stage"));
+                CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList("primaryStage : Stage"));
         CustomMethod startWork = new CustomMethod("startWork", "void", false, false, 
-                "public", (ArrayList<String>)Arrays.asList(""));
+                CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList(""));
         CustomMethod doWork = new CustomMethod("doWork", "boolean", false, false, 
-                "public", (ArrayList<String>)Arrays.asList(""));
+                CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList(""));
         CustomMethod appendText = new CustomMethod("appendText", "void", false, false, 
-                "public", (ArrayList<String>)Arrays.asList("textToAppend : String"));
+                CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList("textToAppend : String"));
         CustomMethod sleep = new CustomMethod("sleep", "void", false, false, 
-                "public", (ArrayList<String>)Arrays.asList("timeToSleep : int"));
+                CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList("timeToSleep : int"));
         CustomMethod initLayout = new CustomMethod("initLayout", "void", false, false, 
-                "private", (ArrayList<String>)Arrays.asList(""));
+                CustomMethod.PRIVATE_METHOD_ACCESS, (ArrayList<String>)Arrays.asList(""));
         CustomMethod initHandlers = new CustomMethod("initHandlers", "void", false, false, 
-                "private", (ArrayList<String>)Arrays.asList(""));
+                CustomMethod.PRIVATE_METHOD_ACCESS, (ArrayList<String>)Arrays.asList(""));
         CustomMethod initWindow = new CustomMethod("initWindow", "void", false, false, 
-                "private", (ArrayList<String>)Arrays.asList("initPrimaryStage : Stage"));
+                CustomMethod.PRIVATE_METHOD_ACCESS, (ArrayList<String>)Arrays.asList("initPrimaryStage : Stage"));
         CustomMethod initThreads = new CustomMethod("initThreads", "void", false, false, 
-                "private", (ArrayList<String>)Arrays.asList(""));
+                CustomMethod.PRIVATE_METHOD_ACCESS, (ArrayList<String>)Arrays.asList(""));
         CustomMethod main = new CustomMethod("main", "void", true, false, 
-                "public", (ArrayList<String>)Arrays.asList("args : String[]"));
+                CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList("args : String[]"));
         
         ArrayList<CustomMethod> threadExampleMethods = (ArrayList<CustomMethod>)Arrays.asList(start,
                 startWork, doWork, appendText, sleep, initLayout, initHandlers, initWindow, 
@@ -102,7 +102,16 @@ public class TestSave {
         //  Code for the creation of the CounterTask class
         //////////////////////////////////////////////////////////////////////
         
+        CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300, false);
+        counterTaskExample.getData().setClassName("CounterTask");
         
+        CustomVar app = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar counter = new CustomVar("counter", "int", false, CustomVar.PRIVATE_VAR_ACCESS);
+        
+        CustomMethod counterTaskConstructor = new CustomMethod("CounterTask", "", false, false,
+            CustomMethod.PUBLIC_METHOD_ACCESS, (ArrayList<String>)Arrays.asList("initApp : ThreadExample"));
+        CustomMethod counterTaskCall = new CustomMethod("call", "void", false, false,
+            CustomMethod.PROTECTED_METHOD_ACCESS, (ArrayList<String>)Arrays.asList(""));
     }
     
 }

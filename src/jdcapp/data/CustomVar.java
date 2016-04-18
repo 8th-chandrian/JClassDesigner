@@ -12,7 +12,9 @@ public class CustomVar {
     static final String DEFAULT_VAR_NAME = "defaultVar";
     static final String DEFAULT_VAR_TYPE = "DefaultType";
     static final boolean DEFAULT_VAR_STATIC_VALUE = false;
-    static final String DEFAULT_VAR_ACCESS = "private";
+    public static final String PRIVATE_VAR_ACCESS = "private";
+    public static final String PUBLIC_VAR_ACCESS = "public";
+    public static final String PROTECTED_VAR_ACCESS = "protected";
     
     //The variable name and class type
     private String varName;
@@ -29,7 +31,7 @@ public class CustomVar {
         varName = DEFAULT_VAR_NAME;
         varType = DEFAULT_VAR_TYPE;
         staticValue = DEFAULT_VAR_STATIC_VALUE;
-        access = DEFAULT_VAR_ACCESS;
+        access = PRIVATE_VAR_ACCESS;
     }
     
     /**
@@ -99,7 +101,9 @@ public class CustomVar {
      * @param access the access to set
      */
     public void setAccess(String access) {
-        this.access = access;
+       if(access.equals(PUBLIC_VAR_ACCESS) || access.equals(PROTECTED_VAR_ACCESS)
+                || access.equals(PRIVATE_VAR_ACCESS))
+            this.access = access;
     }
     
 }

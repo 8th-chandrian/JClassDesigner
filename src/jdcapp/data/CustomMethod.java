@@ -15,7 +15,10 @@ public class CustomMethod {
     static final String DEFAULT_RETURN_TYPE = "DefaultType";
     static final boolean DEFAULT_METHOD_STATIC_VALUE = false;
     static final boolean DEFAULT_METHOD_ABSTRACT_VALUE = false;
-    static final String DEFAULT_METHOD_ACCESS = "private";
+    
+    public static final String PRIVATE_METHOD_ACCESS = "private";
+    public static final String PUBLIC_METHOD_ACCESS = "public";
+    public static final String PROTECTED_METHOD_ACCESS = "protected";
     
     
     //Method name and return type
@@ -39,7 +42,7 @@ public class CustomMethod {
         returnType = DEFAULT_RETURN_TYPE;
         staticValue = DEFAULT_METHOD_STATIC_VALUE;
         abstractValue = DEFAULT_METHOD_ABSTRACT_VALUE;
-        access = DEFAULT_METHOD_ACCESS;
+        access = PRIVATE_METHOD_ACCESS;
         arguments = new ArrayList<>();
     }
     
@@ -126,7 +129,9 @@ public class CustomMethod {
      * @param access the access to set
      */
     public void setAccess(String access) {
-        this.access = access;
+        if(access.equals(PUBLIC_METHOD_ACCESS) || access.equals(PROTECTED_METHOD_ACCESS)
+                || access.equals(PRIVATE_METHOD_ACCESS))
+            this.access = access;
     }
 
     /**
@@ -141,6 +146,32 @@ public class CustomMethod {
      */
     public void setArguments(ArrayList<String> arguments) {
         this.arguments = arguments;
+    }
+    
+    /**
+     * Checks whether or not the method is a constructor.
+     * @return 
+     *      If the return type is null or an empty string, the method must be a
+     *      constructor, so return true. Otherwise return false.
+     */
+    public boolean isConstructor(){
+        if(returnType.equals("") || returnType == null)
+            return true;
+        return false;
+    }
+    
+    /**
+     * Checks whether or not the method has no arguments
+     * @return 
+     *      If the size of the arguments ArrayList is 1 and the only argument is an
+     *      empty string or null, or if the arguments ArrayList is empty, return true.
+     *      Otherwise return false.
+     */
+    public boolean hasNoArguments(){
+        if((arguments.size() == 1 && (arguments.get(1).equals("") || arguments.get(1) == null)) 
+                || arguments.isEmpty())
+            return true;
+        return false;
     }
     
 }
