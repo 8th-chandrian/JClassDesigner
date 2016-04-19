@@ -159,7 +159,7 @@ public class ThreadExampleDesign {
         dateTaskExample.getData().setMethods(dateTaskExampleMethods);
         
         ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task", "Date"));
-        counterTaskExample.getData().setParents(dateTaskExampleParents);
+        dateTaskExample.getData().setParents(dateTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> dateTaskExampleConnections = new HashMap<>();
         ArrayList<Point2D> taskConnectorDateTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(500, 550), 
@@ -174,6 +174,82 @@ public class ThreadExampleDesign {
         dateTaskExample.setConnections(dateTaskExampleConnections);
         
         testData.getClasses().add(dateTaskExample);
+        
+        //////////////////////////////////////////////////////////////////////
+        //  Code for the creation of the PauseHandler class
+        //////////////////////////////////////////////////////////////////////
+        
+        CustomClassWrapper pauseHandlerExample = new CustomClassWrapper(580, 220);
+        dateTaskExample.getData().setClassName("PauseHandler");
+        
+        CustomVar appPause = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
+        ArrayList<CustomVar> pauseHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appPause));
+        
+        pauseHandlerExample.getData().setVariables(pauseHandlerExampleVars);
+        
+        CustomMethod pauseHandlerConstructor = new CustomMethod("PauseHandler", "", false, false,
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
+        CustomMethod pauseHandlerHandle = new CustomMethod("handle", "void", false, false,
+            CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
+        ArrayList<CustomMethod> pauseHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(pauseHandlerConstructor,
+                pauseHandlerHandle));
+        
+        pauseHandlerExample.getData().setMethods(pauseHandlerExampleMethods);
+        
+        ArrayList<String> pauseHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler", "ThreadExample"));
+        pauseHandlerExample.getData().setParents(pauseHandlerExampleParents);
+        
+        HashMap<String, ConnectorArrayList> pauseHandlerExampleConnections = new HashMap<>();
+        ArrayList<Point2D> eventHandlerConnectorPauseHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 540), 
+                new Point2D(800, 760)));
+        ConnectorArrayList eventHandlerConnectorPauseHandler = new ConnectorArrayList(eventHandlerConnectorPauseHandlerArray, ConnectorArrayList.ARROW_CONNECTOR);
+        pauseHandlerExampleConnections.put("EventHandler", eventHandlerConnectorPauseHandler);
+        ArrayList<Point2D> threadExampleConnectorPauseHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
+                new Point2D(600, 800)));
+        ConnectorArrayList threadExampleConnectorPauseHandler = new ConnectorArrayList(threadExampleConnectorPauseHandlerArray, ConnectorArrayList.DIAMOND_CONNECTOR);
+        pauseHandlerExampleConnections.put("ThreadExample", threadExampleConnectorPauseHandler);
+        
+        pauseHandlerExample.setConnections(pauseHandlerExampleConnections);
+        
+        testData.getClasses().add(pauseHandlerExample);
+        
+        //////////////////////////////////////////////////////////////////////
+        //  Code for the creation of the StartHandler class
+        //////////////////////////////////////////////////////////////////////
+        
+        CustomClassWrapper startHandlerExample = new CustomClassWrapper(580, 220);
+        dateTaskExample.getData().setClassName("StartHandler");
+        
+        CustomVar appStart = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
+        ArrayList<CustomVar> startHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appStart));
+        
+        startHandlerExample.getData().setVariables(startHandlerExampleVars);
+        
+        CustomMethod startHandlerConstructor = new CustomMethod("StartHandler", "", false, false,
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
+        CustomMethod startHandlerHandle = new CustomMethod("handle", "void", false, false,
+            CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
+        ArrayList<CustomMethod> startHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(startHandlerConstructor,
+                startHandlerHandle));
+        
+        startHandlerExample.getData().setMethods(startHandlerExampleMethods);
+        
+        ArrayList<String> startHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler", "ThreadExample"));
+        startHandlerExample.getData().setParents(startHandlerExampleParents);
+        
+        HashMap<String, ConnectorArrayList> startHandlerExampleConnections = new HashMap<>();
+        ArrayList<Point2D> eventHandlerConnectorStartHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 540), 
+                new Point2D(800, 760)));
+        ConnectorArrayList eventHandlerConnectorStartHandler = new ConnectorArrayList(eventHandlerConnectorStartHandlerArray, ConnectorArrayList.ARROW_CONNECTOR);
+        startHandlerExampleConnections.put("EventHandler", eventHandlerConnectorStartHandler);
+        ArrayList<Point2D> threadExampleConnectorStartHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
+                new Point2D(600, 800)));
+        ConnectorArrayList threadExampleConnectorStartHandler = new ConnectorArrayList(threadExampleConnectorStartHandlerArray, ConnectorArrayList.DIAMOND_CONNECTOR);
+        startHandlerExampleConnections.put("ThreadExample", threadExampleConnectorStartHandler);
+        
+        startHandlerExample.setConnections(startHandlerExampleConnections);
+        
+        testData.getClasses().add(startHandlerExample);
     } 
     
     public DataManager getData(){
