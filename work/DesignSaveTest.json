@@ -206,10 +206,10 @@
                     }
                 ]
             },
-            "points_hash_map":[
+            "connections":[
                 {
                     "key":"CounterTask",
-                    "points_array":[
+                    "point_array":[
                         {
                             "point_x":300.0,
                             "point_y":400.0
@@ -223,7 +223,7 @@
                 },
                 {
                     "key":"Application",
-                    "points_array":[
+                    "point_array":[
                         {
                             "point_x":200.0,
                             "point_y":250.0
@@ -288,10 +288,10 @@
                     }
                 ]
             },
-            "points_hash_map":[
+            "connections":[
                 {
                     "key":"Task",
-                    "points_array":[
+                    "point_array":[
                         {
                             "point_x":200.0,
                             "point_y":500.0

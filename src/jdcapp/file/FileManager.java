@@ -88,6 +88,7 @@ public class FileManager {
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
     
+    
     /**
      * Saves the data in the DataManager to a .json file at the given path.
      * @param dataManager
@@ -373,6 +374,7 @@ public class FileManager {
         return customMethodJsonObject;
     }
     
+    
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
     //
@@ -381,6 +383,15 @@ public class FileManager {
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Loads the data from the given filePath String into the dataManager specified
+     * @param dataManager
+     *      The DataManager that the data will be loaded into
+     * @param filePath
+     *      The location of the .json file to load from
+     * @throws IOException 
+     *      Thrown if loadJSONFile encounters an error
+     */
     public void loadData(DataManager dataManager, String filePath) throws IOException {
 	// CLEAR THE OLD DATA OUT
 	dataManager.reset();
