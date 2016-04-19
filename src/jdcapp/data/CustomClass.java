@@ -42,8 +42,8 @@ public class CustomClass{
     /**
      * Default constructor.
      */
-    public CustomClass(boolean interfaceValue){
-        this.interfaceValue = interfaceValue;
+    public CustomClass(){
+        interfaceValue = false;
         abstractValue = false;
         className = DEFAULT_CLASS_NAME;
         packageName = DEFAULT_PACKAGE_NAME;
@@ -102,5 +102,9 @@ public class CustomClass{
     
     public void setAbstractValue(boolean abstractValue){
         this.abstractValue = abstractValue;
+    }
+    
+    public void setInterfaceValue(boolean interfaceValue){
+        this.interfaceValue = interfaceValue;
     }
 }

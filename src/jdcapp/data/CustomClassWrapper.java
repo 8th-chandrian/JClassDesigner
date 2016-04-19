@@ -48,9 +48,9 @@ public class CustomClassWrapper extends Group{
     //Note: The String used for hashing contains the connected class's name
     private HashMap<String, ConnectorArrayList> connections;
     
-    public CustomClassWrapper(double initX, double initY, boolean isInterface){
+    public CustomClassWrapper(double initX, double initY){
         super();
-        data = new CustomClass(isInterface);
+        data = new CustomClass();
         startX = initX;
         startY = initY;
         wrappingWidth = DEFAULT_WRAPPING_WIDTH;
@@ -180,6 +180,10 @@ public class CustomClassWrapper extends Group{
     
     public CustomClass getData(){
         return data;
+    }
+    
+    public void setData(CustomClass c){
+        data = c;
     }
     
     public double getStartX() { return startX; }

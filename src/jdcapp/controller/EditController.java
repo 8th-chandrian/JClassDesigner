@@ -44,7 +44,7 @@ public class EditController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         //Create a new custom class and set its position to the default x and y values given
-        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY, false);
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY);
         
         //Add the default class to the arraylist of classes
         dataManager.getClasses().add(newClass);
@@ -69,8 +69,9 @@ public class EditController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         //Create a new custom class and set its position to the default x and y values given
-        //Constructor is passed true for isInterface argument
-        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY, true);
+        //Set the interface value to true (default is false)
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY);
+        newClass.getData().setInterfaceValue(true);
         
         //Add the default class to the arraylist of classes
         dataManager.getClasses().add(newClass);

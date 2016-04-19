@@ -36,7 +36,7 @@ public class TestSave {
         //  Code for the creation of the ThreadExample class
         //////////////////////////////////////////////////////////////////////
         
-        CustomClassWrapper threadExample = new CustomClassWrapper(200, 200, false);
+        CustomClassWrapper threadExample = new CustomClassWrapper(200, 200);
         threadExample.getData().setClassName("ThreadExample");
         
         CustomVar startText = new CustomVar("START_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
@@ -109,7 +109,7 @@ public class TestSave {
         //  Code for the creation of the CounterTask class
         //////////////////////////////////////////////////////////////////////
         
-        CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300, false);
+        CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300);
         counterTaskExample.getData().setClassName("CounterTask");
         
         CustomVar app = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);

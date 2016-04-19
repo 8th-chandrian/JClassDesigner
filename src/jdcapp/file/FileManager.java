@@ -3,8 +3,10 @@
  */
 package jdcapp.file;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,10 +17,14 @@ import java.util.Iterator;
 import java.util.Map;
 import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
@@ -41,7 +47,7 @@ public class FileManager {
     static final String JSON_HEIGHT = "height";
     static final String JSON_WRAPPING_WIDTH = "wrapping_width";
     static final String JSON_CUSTOM_CLASS = "custom_class";
-    static final String JSON_POINTS_HASH_MAP = "points_hash_map";
+    static final String JSON_CONNECTIONS = "connections";
     
     static final String JSON_CLASS_NAME = "class_name";
     static final String JSON_PACKAGE_NAME = "package_name";
@@ -56,7 +62,7 @@ public class FileManager {
     static final String JSON_CLASS_ARRAY = "class_array";
     
     static final String JSON_KEY = "key";
-    static final String JSON_POINT_ARRAY = "points_array";
+    static final String JSON_POINT_ARRAY = "point_array";
     static final String JSON_CONNECTOR_TYPE = "connector_type";
     static final String JSON_POINT_X = "point_x";
     static final String JSON_POINT_Y = "point_y";
@@ -73,6 +79,14 @@ public class FileManager {
     static final String JSON_METHOD_ACCESS = "method_access";
     static final String JSON_METHOD_ARGUMENTS = "method_arguments";
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    //
+    //          CLASSES USED FOR SAVING DATA
+    //
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
     
     /**
      * Saves the data in the DataManager to a .json file at the given path.
@@ -108,7 +122,7 @@ public class FileManager {
                     .add(JSON_HEIGHT, height)
                     .add(JSON_WRAPPING_WIDTH, wrappingWidth)
                     .add(JSON_CUSTOM_CLASS, customClassJson)
-                    .add(JSON_POINTS_HASH_MAP, connectionsHashMapJsonArray)
+                    .add(JSON_CONNECTIONS, connectionsHashMapJsonArray)
                     .build();
             
             //Add it to the array of classes
@@ -357,5 +371,175 @@ public class FileManager {
                 .add(JSON_METHOD_ARGUMENTS, argsArrayJson)
                 .build();
         return customMethodJsonObject;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    //
+    //          CLASSES USED FOR LOADING DATA
+    //
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    
+    public void loadData(DataManager dataManager, String filePath) throws IOException {
+	// CLEAR THE OLD DATA OUT
+	dataManager.reset();
+	
+	// LOAD THE JSON FILE WITH ALL THE DATA
+	JsonObject json = loadJSONFile(filePath);
+	
+	// Load the font data
+	String fontName = json.getString(JSON_FONT_NAME);
+        double pixelHeight = getDataAsDouble(json, JSON_PIXEL_HEIGHT);
+        Font textFont = Font.font(fontName, FontWeight.NORMAL, pixelHeight);
+        
+	CustomClassWrapper.setFont(textFont);
+        CustomClassWrapper.setPixelHeight(pixelHeight);
+	
+	// Load the array of CustomClassWrappers
+	JsonArray jsonClassArray = json.getJsonArray(JSON_CLASS_ARRAY);
+	for (int i = 0; i < jsonClassArray.size(); i++) {
+	    JsonObject jsonCustomClassWrapper = jsonClassArray.getJsonObject(i);
+	    CustomClassWrapper c = loadCustomClassWrapper(jsonCustomClassWrapper);
+	    dataManager.getClasses().add(c);
+	}
+    }
+    
+    private CustomClassWrapper loadCustomClassWrapper(JsonObject j){
+        //Load in X and Y values and instantiate the CustomClassWrapper
+        double startX = getDataAsDouble(j, JSON_START_X);
+        double startY = getDataAsDouble(j, JSON_START_Y);
+        CustomClassWrapper c = new CustomClassWrapper(startX, startY);
+        
+        //Load in width, height, and wrapping width
+        c.setWidth(getDataAsDouble(j, JSON_WIDTH));
+        c.setHeight(getDataAsDouble(j, JSON_HEIGHT));
+        c.setWrappingWidth(getDataAsDouble(j, JSON_WRAPPING_WIDTH));
+        
+        //Load in CustomClass data
+        c.setData(loadCustomClass(j.getJsonObject(JSON_CUSTOM_CLASS)));
+        
+        //Load in HashMap of connections
+        c.setConnections(loadConnections(j.getJsonArray(JSON_CONNECTIONS)));
+        return c;
+    }
+    
+    private CustomClass loadCustomClass(JsonObject j){
+        CustomClass c = new CustomClass();
+        c.setClassName(j.getString(JSON_CLASS_NAME));
+        c.setPackageName(j.getString(JSON_PACKAGE_NAME));
+        c.setInterfaceValue(j.getBoolean(JSON_INTERFACE_VALUE));
+        c.setAbstractValue(j.getBoolean(JSON_ABSTRACT_VALUE));
+        
+        c.setParents(loadParents(j.getJsonArray(JSON_PARENTS)));
+        c.setVariables(loadVariables(j.getJsonArray(JSON_VARIABLES)));
+        c.setMethods(loadMethods(j.getJsonArray(JSON_METHODS)));
+        
+        return c;
+    }
+    
+    private ArrayList<String> loadParents(JsonArray j){
+        ArrayList<String> parents = new ArrayList<>();
+        
+        for(int i = 0; i < j.size(); i++){
+            String parentString = j.getString(i);
+            parents.add(parentString);
+        }
+        
+        return parents;
+    } 
+    
+    private ArrayList<CustomVar> loadVariables(JsonArray j){
+        ArrayList<CustomVar> vars = new ArrayList<>();
+        
+        for(int i = 0; i < j.size(); i++){
+            JsonObject varJson = j.getJsonObject(i);
+            CustomVar v = loadCustomVar(varJson);
+            vars.add(v);
+        }
+        
+        return vars;
+    }
+    
+    private CustomVar loadCustomVar(JsonObject varJson){
+        CustomVar var = new CustomVar();
+        
+        var.setVarName(varJson.getString(JSON_VAR_NAME));
+        var.setVarType(varJson.getString(JSON_VAR_TYPE));
+        var.setAccess(varJson.getString(JSON_VAR_ACCESS));
+        var.setStaticValue(varJson.getBoolean(JSON_VAR_STATIC_VALUE));
+        
+        return var;
+    }
+    
+    private ArrayList<CustomMethod> loadMethods(JsonArray j){
+        ArrayList<CustomMethod> methods = new ArrayList<>();
+        
+        for(int i = 0; i < j.size(); i++){
+            JsonObject methodJson = j.getJsonObject(i);
+            CustomMethod m = loadCustomMethod(methodJson);
+            methods.add(m);
+        }
+        
+        return methods;
+    }
+    
+    private CustomMethod loadCustomMethod(JsonObject methodJson){
+        CustomMethod m = new CustomMethod();
+        
+        m.setMethodName(methodJson.getString(JSON_METHOD_NAME));
+        m.setReturnType(methodJson.getString(JSON_METHOD_RETURN));
+        m.setAccess(methodJson.getString(JSON_METHOD_ACCESS));
+        m.setAbstractValue(methodJson.getBoolean(JSON_METHOD_ABSTRACT_VALUE));
+        m.setStaticValue(methodJson.getBoolean(JSON_METHOD_STATIC_VALUE));
+        
+        JsonArray argsJson = methodJson.getJsonArray(JSON_METHOD_ARGUMENTS);
+        ArrayList<String> args = new ArrayList<>();
+        for(int i = 0; i < argsJson.size(); i++){
+            String arg = argsJson.getString(i);
+            args.add(arg);
+        }
+        
+        m.setArguments(args);
+        return m;
+    }
+    
+    private HashMap<String, ConnectorArrayList> loadConnections(JsonArray j){
+        HashMap<String, ConnectorArrayList> connections = new HashMap<>();
+        
+        for(int i = 0; i < j.size(); i++){
+            JsonObject connectionJson = j.getJsonObject(i);
+            String key = connectionJson.getString(JSON_KEY);
+            
+            JsonArray pointsArrayJson = connectionJson.getJsonArray(JSON_POINT_ARRAY);
+            String connectorType = connectionJson.getString(JSON_CONNECTOR_TYPE);
+            ConnectorArrayList connectionPoints = new ConnectorArrayList(connectorType);
+            for(int k = 0; k < pointsArrayJson.size(); k++){
+                double pointX = getDataAsDouble(pointsArrayJson.getJsonObject(k), JSON_POINT_X);
+                double pointY = getDataAsDouble(pointsArrayJson.getJsonObject(k), JSON_POINT_Y);
+                Point2D point = new Point2D(pointX, pointY);
+                connectionPoints.add(point);
+            }
+            
+            connections.put(key, connectionPoints);
+        }
+        
+        return connections;
+    }
+    
+    // HELPER METHOD FOR LOADING DATA FROM A JSON FORMAT
+    private JsonObject loadJSONFile(String jsonFilePath) throws IOException {
+	InputStream is = new FileInputStream(jsonFilePath);
+	JsonReader jsonReader = Json.createReader(is);
+	JsonObject json = jsonReader.readObject();
+	jsonReader.close();
+	is.close();
+	return json;
+    }
+    
+    private double getDataAsDouble(JsonObject json, String dataName) {
+	JsonValue value = json.get(dataName);
+	JsonNumber number = (JsonNumber)value;
+	return number.bigDecimalValue().doubleValue();	
     }
 }
