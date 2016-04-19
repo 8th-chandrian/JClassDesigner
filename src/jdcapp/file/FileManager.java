@@ -189,7 +189,7 @@ public class FileManager {
         JsonArrayBuilder hashArrayBuilder = Json.createArrayBuilder();
         
         //Get an iterator of all the keys (connected class names) in the HashMap
-        Iterator keyIterator = points.keySet().iterator();
+        Iterator<String> keyIterator = points.keySet().iterator();
         while(keyIterator.hasNext()){
             
             //Get the key

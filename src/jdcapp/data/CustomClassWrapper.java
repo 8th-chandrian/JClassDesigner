@@ -54,6 +54,7 @@ public class CustomClassWrapper extends Group{
         startX = initX;
         startY = initY;
         wrappingWidth = DEFAULT_WRAPPING_WIDTH;
+        connections = new HashMap<>();
         toDisplay();
     }
     

@@ -31,6 +31,7 @@ public class DataManager {
     public DataManager(JDCApp init){
         app = init;
         selectedClass = null;
+        classes = new ArrayList<>();
         
         //TODO: Finish coding constructor (is this all we need here?)
     }

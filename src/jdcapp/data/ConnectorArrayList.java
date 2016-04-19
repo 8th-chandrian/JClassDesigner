@@ -47,6 +47,11 @@ public class ConnectorArrayList extends ArrayList<Point2D>{
         this.connectorType = connectorType;
     }
     
+    public ConnectorArrayList(ArrayList<Point2D> points, String connectorType){
+        super(points);
+        this.connectorType = connectorType;
+    }
+    
     public String getConnectorType(){
         return connectorType;
     }
