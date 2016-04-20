@@ -17,7 +17,6 @@ public class TestSave {
         
         ThreadExampleDesign toSave = new ThreadExampleDesign();
         
-        //THIS IS TEMPORARY, DELETE AFTER USING
         try{
             File saveFile = new File("./work/DesignSaveTest.json");
             FileManager testFileManager = new FileManager();

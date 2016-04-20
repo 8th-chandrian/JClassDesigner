@@ -91,7 +91,8 @@ public class ThreadExampleDesignInterface {
         
         //NOTE: There would be many more connections than just the two listed here, but
         //more are not necessary for testing purposes so they have been excluded
-        ArrayList<Point2D> applicationConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 250), new Point2D(200, 400)));
+        ArrayList<Point2D> applicationConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 250), new Point2D(200, 400), 
+                new Point2D(200, 500)));
         ConnectorArrayList applicationConnector = new ConnectorArrayList(applicationConnectorArray, ConnectorArrayList.ARROW_CONNECTOR);
         threadExampleConnections.put("Application", applicationConnector);
         ArrayList<Point2D> counterTaskConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(300, 400), new Point2D(300, 500)));
