@@ -8,8 +8,12 @@ import java.io.IOException;
 import javafx.stage.FileChooser;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
+import jdcapp.file.FileManager;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
+import static jdcapp.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
+import static jdcapp.settings.AppPropertyType.LOAD_ERROR_TITLE;
+import static jdcapp.settings.AppPropertyType.LOAD_WORK_TITLE;
 import static jdcapp.settings.AppPropertyType.NEW_COMPLETED_MESSAGE;
 import static jdcapp.settings.AppPropertyType.NEW_COMPLETED_TITLE;
 import static jdcapp.settings.AppPropertyType.NEW_ERROR_MESSAGE;
@@ -86,7 +90,25 @@ public class FileController {
     }
 
     public void handleLoadRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            // WE MAY HAVE TO SAVE CURRENT WORK
+            boolean continueToOpen = true;
+            if (!saved) {
+                // THE USER CAN OPT OUT HERE WITH A CANCEL
+                continueToOpen = promptToSave();
+            }
+
+            // IF THE USER REALLY WANTS TO OPEN A Course
+            if (continueToOpen) {
+                // GO AHEAD AND PROCEED LOADING A Course
+                promptToOpen();
+            }
+        } catch (IOException ioe) {
+            // SOMETHING WENT WRONG
+	    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	    PropertiesManager props = PropertiesManager.getPropertiesManager();
+	    dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
+        }
     }
 
     public void handleSaveRequest() {
@@ -189,5 +211,40 @@ public class FileController {
 	// AND REFRESH THE GUI, WHICH WILL ENABLE AND DISABLE
 	// THE APPROPRIATE CONTROLS
 	app.getWorkspaceManager().updateFileToolbarControls(saved);	
+    }
+    
+    /**
+     * This helper method asks the user for a file to open. The user-selected
+     * file is then loaded and the GUI updated. Note that if the user cancels
+     * the open process, nothing is done. If an error occurs loading the file, a
+     * message is displayed, but nothing changes.
+     */
+    private void promptToOpen() {
+	// WE'LL NEED TO GET CUSTOMIZED STUFF WITH THIS
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+	
+        // AND NOW ASK THE USER FOR THE FILE TO OPEN
+        FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(PATH_WORK));
+	fc.setTitle(props.getProperty(LOAD_WORK_TITLE));
+        File selectedFile = fc.showOpenDialog(app.getWorkspaceManager().getWindow());
+
+        // ONLY OPEN A NEW FILE IF THE USER SAYS OK
+        if (selectedFile != null) {
+            try {
+                DataManager dataManager = app.getDataManager();
+		FileManager fileManager = app.getFileManager();
+                fileManager.loadData(dataManager, selectedFile.getAbsolutePath());
+                app.getWorkspaceManager().reloadWorkspace();
+
+		// MAKE SURE THE WORKSPACE IS ACTIVATED
+		//app.getWorkspaceManager().activateWorkspace(app.getGUI().getAppPane());
+                saved = true;
+                app.getWorkspaceManager().updateFileToolbarControls(saved);
+            } catch (Exception e) {
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
+            }
+        }
     }
 }

@@ -182,7 +182,7 @@ public class ThreadExampleDesignAbstract {
         //////////////////////////////////////////////////////////////////////
         
         CustomClassWrapper pauseHandlerExample = new CustomClassWrapper(580, 220);
-        dateTaskExample.getData().setClassName("PauseHandler");
+        pauseHandlerExample.getData().setClassName("PauseHandler");
         
         CustomVar appPause = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> pauseHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appPause));
@@ -220,7 +220,7 @@ public class ThreadExampleDesignAbstract {
         //////////////////////////////////////////////////////////////////////
         
         CustomClassWrapper startHandlerExample = new CustomClassWrapper(580, 220);
-        dateTaskExample.getData().setClassName("StartHandler");
+        startHandlerExample.getData().setClassName("StartHandler");
         
         CustomVar appStart = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> startHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appStart));

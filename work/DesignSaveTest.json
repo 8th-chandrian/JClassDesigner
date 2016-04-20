@@ -1,6 +1,6 @@
 
 {
-    "font_name":"System Regular",
+    "font_name":"SansSerif Regular",
     "pixel_height":12.0,
     "class_array":[
         {
@@ -251,7 +251,7 @@
                 "class_name":"CounterTask",
                 "package_name":"",
                 "interface_value":false,
-                "abstract_value":false,
+                "abstract_value":true,
                 "parents":[
                     "Task"
                 ],
@@ -284,7 +284,7 @@
                         "method_name":"call",
                         "method_return":"void",
                         "method_static_value":false,
-                        "method_abstract_value":false,
+                        "method_abstract_value":true,
                         "method_access":"protected",
                         "method_arguments":[
                             ""
@@ -316,7 +316,7 @@
             "height":72.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"StartHandler",
+                "class_name":"DateTask",
                 "package_name":"",
                 "interface_value":false,
                 "abstract_value":false,
@@ -399,7 +399,7 @@
             "height":72.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"",
+                "class_name":"PauseHandler",
                 "package_name":"",
                 "interface_value":false,
                 "abstract_value":false,
@@ -476,7 +476,7 @@
             "height":72.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"",
+                "class_name":"StartHandler",
                 "package_name":"",
                 "interface_value":false,
                 "abstract_value":false,

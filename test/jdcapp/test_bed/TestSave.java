@@ -15,7 +15,7 @@ public class TestSave {
     
     public static void main(String[] args){
         
-        ThreadExampleDesign toSave = new ThreadExampleDesign();
+        ThreadExampleDesignAbstract toSave = new ThreadExampleDesignAbstract();
         
         try{
             File saveFile = new File("./work/DesignSaveTest.json");
