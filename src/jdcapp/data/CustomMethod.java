@@ -20,6 +20,18 @@ public class CustomMethod {
     public static final String PUBLIC_METHOD_ACCESS = "public";
     public static final String PROTECTED_METHOD_ACCESS = "protected";
     
+    public static final String VOID_RETURN_TYPE = "void";
+    public static final String CONSTRUCTOR_RETURN_TYPE = "";
+    
+    public static final String BYTE_RETURN_TYPE = "byte";
+    public static final String SHORT_RETURN_TYPE = "short";
+    public static final String INT_RETURN_TYPE = "int";
+    public static final String LONG_RETURN_TYPE = "long";
+    public static final String FLOAT_RETURN_TYPE = "float";
+    public static final String DOUBLE_RETURN_TYPE = "double";
+    public static final String BOOLEAN_RETURN_TYPE = "boolean";
+    public static final String CHAR_RETURN_TYPE = "char";
+    
     
     //Method name and return type
     private String methodName;
@@ -155,7 +167,7 @@ public class CustomMethod {
      *      constructor, so return true. Otherwise return false.
      */
     public boolean isConstructor(){
-        if(returnType.equals("") || returnType == null)
+        if(returnType.equals(CONSTRUCTOR_RETURN_TYPE) || returnType == null)
             return true;
         return false;
     }

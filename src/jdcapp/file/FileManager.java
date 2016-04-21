@@ -595,10 +595,13 @@ public class FileManager {
         if(!makePackagesReturn)
             return ERROR_CREATING_DIRECTORIES;
         
+        
         //Then put all the java files in the packages
         boolean makeJavaFilesReturn = makeJavaFiles(classes, filePath);
         if(!makeJavaFilesReturn)
             return ERROR_CREATING_JAVA_FILES;
+        
+        return 0;
     }
     
     /**
@@ -615,7 +618,7 @@ public class FileManager {
             String packageName = c.getData().getPackageName();
             
             //If packageName is invalid, set packageName to the default package name
-            if(packageName.equals("") || packageName.equals(null))
+            if(packageName.equals("") || packageName == null)
                 packageName = c.getData().DEFAULT_PACKAGE_NAME;
             
             if(!packages.contains(packageName)){
@@ -632,14 +635,14 @@ public class FileManager {
      *      True if the directories were created successfully, false otherwise.
      */
     private boolean makePackageDirectories(ArrayList<String> packages, String filePath){
-        
+
         //Sort the package strings based on how many subdirectories they have
         //Ex: "jdcapp.data" has 1 more subdirectory than "jdcapp"
         Collections.sort(packages, new Comparator<String>(){
             @Override
             public int compare(String s1, String s2){
                 int s1Subdirectories = StringUtils.countMatches(s1, ".");
-                int s2Subdirectories = StringUtils.countMatches(s1, ".");
+                int s2Subdirectories = StringUtils.countMatches(s2, ".");
                 if(s1Subdirectories > s2Subdirectories)
                     return 1;
                 else if(s1Subdirectories == s2Subdirectories)
@@ -653,10 +656,12 @@ public class FileManager {
         //order so that no subdirectory is made without its parent directory already
         //existing.
         for(String packageName : packages){
-            packageName = packageName.replaceAll(".", "/");
+            packageName = packageName.replace('.', '/');
             String filePathPackage = filePath + "/" + packageName;
-            
-            boolean success = (new File(filePathPackage)).mkdirs();
+            System.out.println(filePathPackage);
+                        
+            File packageFile = new File(filePathPackage);
+            boolean success = packageFile.mkdirs();
             if(!success){
                 return false;
             }
@@ -665,49 +670,249 @@ public class FileManager {
     }
     
     /**
-     * Helper method to make all the .java files and put them in their respective
-     * directories.
+     * Helper method to make all the .java files and put them in their respective directories.
      * @param classes
      * @param filePath
      * @return 
      *      True if the files were created successfully, false otherwise.
      */
     private boolean makeJavaFiles(ArrayList<CustomClassWrapper> classes, String filePath){
+        
+        //Loop through all classes in the ArrayList
         for(CustomClassWrapper c : classes){
             String classFilePath = getJavaFilePath(c.getData(), filePath);
+            String classFileText = processClass(c.getData());
+            if(classFileText == null)
+                return false;
             
-            //As we traverse our arrays of CustomMethods and CustomVariables, we will
-            //add strings to this ArrayList to account for any classes that might need
-            //to be imported
-            ArrayList<String> imports = new ArrayList<>();
+            //Export the imports, method header, variables, and methods to a new file with address classFilePath
             
-            //The methods and variables ArrayLists will hold our processed methods and variables,
-            //ready to be written to our java file
-            ArrayList<String> methods = new ArrayList<>();
-            ArrayList<String> variables = new ArrayList<>();
-            
-            //Process the methods
-            for(CustomMethod m : c.getData().getMethods()){
-                if(!checkMethod(m))
-                    return false;
-                methods.add(processMethod(m));
-                ArrayList<String> importTextArray = getMethodImports(m);
-                if(importTextArray != null)
-                    imports.addAll(importTextArray);
-            }
-            
-            //Process the variables
-            for(CustomVar v : c.getData().getVariables()){
-                if(!checkVariable(v))
-                    return false;
-                variables.add(processVariable(v));
-                ArrayList<String> importTextArray = getVariableImports(v);
-                if(importTextArray != null)
-                    imports.addAll(importTextArray);
-            }
-            
-            //Export the imports, variables, and methods to a new file with address classFilePath
         }
+        
+        //TODO: REMOVE THIS
+        return true;
+    }
+    
+    private String processClass(CustomClass c){
+        //As we traverse our arrays of CustomMethods and CustomVariables, we will
+        //add strings to this ArrayList to account for any classes that might need
+        //to be imported
+        ArrayList<String> imports = new ArrayList<>();
+
+        //The methods and variables ArrayLists will hold our processed methods and variables,
+        //ready to be written to our java file
+        ArrayList<String> methods = new ArrayList<>();
+        ArrayList<String> variables = new ArrayList<>();
+
+        String classHeaderText = generateClassHeader(c);
+
+        //Convert the methods to strings
+        for(CustomMethod m : c.getMethods()){
+            if(!checkMethod(m, c.isInterface()))
+                return null;
+            methods.add(processMethod(m, c.isInterface()));
+            ArrayList<String> importTextArray = getMethodImports(m);
+
+            //Add imports if they are not already in the ArrayList of imports
+            if(importTextArray != null){
+                for(String s : importTextArray){
+                    if(!imports.contains(s))
+                        imports.add(s);
+                }
+            }
+        }
+
+        //Convert the variables to strings
+        for(CustomVar v : c.getVariables()){
+            if(!checkVariable(v))
+                return null;
+            
+            variables.add(processVariable(v));
+            ArrayList<String> importTextArray = getVariableImports(v);
+
+            //Add imports if they are not already in the ArrayList of imports
+            if(importTextArray != null){
+                for(String s : importTextArray){
+                    if(!imports.contains(s))
+                        imports.add(s);
+                }
+            }
+        }
+        
+        //TODO: REMOVE THIS
+        return null;
+    }
+    
+    private String generateClassHeader(CustomClass c){
+        String classHeader = "public ";
+        if(c.isInterface())
+            classHeader += "interface ";
+        else if(c.isAbstract())
+            classHeader += "abstract class ";
+        else
+            classHeader += "class ";
+        classHeader += c.getClassName();
+        
+        ArrayList<String> parents = c.getParents();
+        
+        return classHeader;
+    }
+    
+    /**
+     * Helper method which processes a CustomMethod object and returns skeleton code
+     * for that method as a String.
+     * @param m
+     * @param isInterface
+     * @return 
+     */
+    private String processMethod(CustomMethod m, boolean isInterface){
+        String processedMethod = "";
+        
+        //If method is an interface, it must be either static or abstract
+        if(isInterface){
+            
+            //If m is static, method should start with "static" modifier
+            //Interface methods are public by default, so we can exclude the public access modifier
+            if(m.isStatic()){
+                processedMethod += "static ";
+            }
+            
+            processedMethod += m.getReturnType() + " ";
+            processedMethod += m.getMethodName() + " (";
+            for(String arg : m.getArguments()){
+                String[] splitArg = arg.split(" . ");
+                processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+            }
+            processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            processedMethod += ")";
+            
+            //If m is static, need a return statement. If m is abstract, don't even need brackets.
+            if(m.isStatic()){
+                processedMethod += "{\n";
+                processedMethod += getReturnStatement(m);
+                processedMethod += "\n}";
+            }else if(m.isAbstract()){
+                processedMethod += ";";
+            }
+            
+        }
+        else if(m.isAbstract()){
+            processedMethod += m.getAccess() + " ";
+            if(m.isStatic())
+                processedMethod += "static ";
+            processedMethod += "abstract ";
+            if(!m.isConstructor())
+                processedMethod += m.getReturnType() + " ";
+            
+            processedMethod += m.getMethodName() + " (";
+            for(String arg : m.getArguments()){
+                String[] splitArg = arg.split(" . ");
+                processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+            }
+            processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            processedMethod += ");";
+        }
+        else{
+            processedMethod += m.getAccess() + " ";
+            if(m.isStatic())
+                processedMethod += "static ";
+            if(!m.isConstructor())
+                processedMethod += m.getReturnType() + " ";
+            
+            processedMethod += m.getMethodName() + " (";
+            for(String arg : m.getArguments()){
+                String[] splitArg = arg.split(" . ");
+                processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+            }
+            processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            processedMethod += "){\n";
+            if(!m.isConstructor())
+                processedMethod += getReturnStatement(m);
+            processedMethod += "\n}";
+        }
+        return processedMethod;
+    }
+    
+    /**
+     * Helper method which takes in a CustomVar object and converts it to a formatted
+     * String instantiation of it.
+     * @param v
+     * @return 
+     */
+    private String processVariable(CustomVar v){
+        String processedVariable = "";
+        
+        processedVariable += v.getAccess() + " ";
+        if(v.isStatic())
+            processedVariable += "static ";
+        processedVariable += v.getVarType() + " ";
+        processedVariable += v.getVarName() + ";";
+        
+        return processedVariable;
+    }
+    
+    /**
+     * Helper method to get a formatted return statement for a method stub.
+     * @param m
+     * @return 
+     */
+    private String getReturnStatement(CustomMethod m){
+        String returnStatement = "";
+        if(m.getReturnType().equals(CustomMethod.BOOLEAN_RETURN_TYPE))
+            returnStatement += "\treturn true;";
+        else if(m.getReturnType().equals(CustomMethod.CHAR_RETURN_TYPE))
+            returnStatement += "\treturn 'a';";
+        else if(m.getReturnType().equals(CustomMethod.INT_RETURN_TYPE))
+            returnStatement += "\treturn 0;";
+        else if(m.getReturnType().equals(CustomMethod.FLOAT_RETURN_TYPE))
+            returnStatement += "\treturn 0;";
+        else if(m.getReturnType().equals(CustomMethod.BYTE_RETURN_TYPE))
+            returnStatement += "\treturn 0;";
+        else if(m.getReturnType().equals(CustomMethod.LONG_RETURN_TYPE))
+            returnStatement += "\treturn 0;";
+        else if(m.getReturnType().equals(CustomMethod.DOUBLE_RETURN_TYPE))
+            returnStatement += "\treturn 0;";
+        else if(m.getReturnType().equals(CustomMethod.SHORT_RETURN_TYPE))
+            returnStatement += "\treturn 0;";
+        else if(m.getReturnType().equals(CustomMethod.VOID_RETURN_TYPE))
+            returnStatement += "\treturn;";
+        else
+            returnStatement += "\treturn null;";
+        return returnStatement;
+    }
+    
+    /**
+     * Helper method to check whether or not the method is valid. Checks to make sure
+     * the method name is not null or the empty string, and to make sure the method is
+     * abstract or static if the class is an interface.
+     * @param m
+     * @param isInterface
+     * @return 
+     */
+    private boolean checkMethod(CustomMethod m, boolean isInterface){
+        //If the class is an interface and the method is not abstract or static, 
+        //or is a constructor, or is not public return false
+        if(isInterface && !((m.isAbstract() || m.isStatic()) && !m.isConstructor() && m.getAccess().equals(CustomMethod.PUBLIC_METHOD_ACCESS)))
+            return false;
+        if(m.getMethodName() == null || m.getMethodName().equals(""))
+            return false;
+        return true;
+    }
+    
+    /**
+     * Helper method to check whether or not the variable is valid. Checks to make sure
+     * the variable name is not null or the empty string.
+     * 
+     * Note: variables will not be added to the class if it is an interface.
+     * @param m
+     * @param isInterface
+     * @return 
+     */
+    private boolean checkVariable(CustomVar v){
+        //If the variable name is invalid, return false
+        if(v.getVarName() == null || v.getVarName().equals(""))
+            return false;
+        return true;
     }
     
     /**
@@ -727,5 +932,13 @@ public class FileManager {
         
         javaFilePath = javaFilePath + c.getClassName() + ".java";
         return javaFilePath;
+    }
+
+    private ArrayList<String> getMethodImports(CustomMethod m) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private ArrayList<String> getVariableImports(CustomVar v) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

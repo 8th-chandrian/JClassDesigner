@@ -139,7 +139,7 @@ public class DataManager {
      */
     public boolean isCombinationUnique(String className, String packageName){
         int numOccurances = 0;
-        if(className.equals("") || packageName.equals(""))
+        if(className.equals(CustomClass.DEFAULT_CLASS_NAME) || packageName.equals(CustomClass.DEFAULT_PACKAGE_NAME))
                 return true;
         for(CustomClassWrapper c : classes){
             if(c.getData().getClassName().equals(className) && c.getData().getPackageName().equals(packageName))

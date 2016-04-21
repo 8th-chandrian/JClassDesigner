@@ -34,6 +34,7 @@ public class ThreadExampleDesign {
         
         CustomClassWrapper threadExample = new CustomClassWrapper(200, 200);
         threadExample.getData().setClassName("ThreadExample");
+        threadExample.getData().setPackageName("example");
         
         CustomVar startText = new CustomVar("START_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
         CustomVar pauseText = new CustomVar("PAUSE_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
@@ -108,6 +109,7 @@ public class ThreadExampleDesign {
         
         CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300);
         counterTaskExample.getData().setClassName("CounterTask");
+        counterTaskExample.getData().setPackageName("example.task.counter");
         
         CustomVar app = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         CustomVar counter = new CustomVar("counter", "int", false, CustomVar.PRIVATE_VAR_ACCESS);
@@ -143,6 +145,7 @@ public class ThreadExampleDesign {
         
         CustomClassWrapper dateTaskExample = new CustomClassWrapper(290, 650);
         dateTaskExample.getData().setClassName("DateTask");
+        dateTaskExample.getData().setPackageName("example.task");
         
         CustomVar appDate = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         CustomVar nowDate = new CustomVar("now", "Date", false, CustomVar.PRIVATE_VAR_ACCESS);
@@ -182,6 +185,7 @@ public class ThreadExampleDesign {
         
         CustomClassWrapper pauseHandlerExample = new CustomClassWrapper(580, 220);
         pauseHandlerExample.getData().setClassName("PauseHandler");
+        pauseHandlerExample.getData().setPackageName("example.handler");
         
         CustomVar appPause = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> pauseHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appPause));
@@ -220,6 +224,7 @@ public class ThreadExampleDesign {
         
         CustomClassWrapper startHandlerExample = new CustomClassWrapper(580, 220);
         startHandlerExample.getData().setClassName("StartHandler");
+        startHandlerExample.getData().setPackageName("example.handler");
         
         CustomVar appStart = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> startHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appStart));
