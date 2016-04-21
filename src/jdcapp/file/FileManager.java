@@ -5,6 +5,7 @@ package jdcapp.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,6 +91,8 @@ public class FileManager {
     public static final int CODE_EXPORTED_SUCCESSFULLY = 0;
     public static final int ERROR_CREATING_DIRECTORIES = -1;
     public static final int ERROR_CREATING_JAVA_FILES = -2;
+    
+    public static final String JAVA_FILE_EXTENSION = ".java";
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -658,7 +661,6 @@ public class FileManager {
         for(String packageName : packages){
             packageName = packageName.replace('.', '/');
             String filePathPackage = filePath + "/" + packageName;
-            System.out.println(filePathPackage);
                         
             File packageFile = new File(filePathPackage);
             boolean success = packageFile.mkdirs();
@@ -681,45 +683,55 @@ public class FileManager {
         //Loop through all classes in the ArrayList
         for(CustomClassWrapper c : classes){
             String classFilePath = getJavaFilePath(c.getData(), filePath);
-            String classFileText = processClass(c.getData());
+            String classFileText = processClass(c.getData(), classes);
             if(classFileText == null)
                 return false;
             
             //Export the imports, method header, variables, and methods to a new file with address classFilePath
-            
+            try{
+                File f = new File(classFilePath);
+                PrintWriter out = new PrintWriter(classFilePath);
+                out.println(classFileText);
+                out.close();
+            } catch (FileNotFoundException e){
+                e.printStackTrace();
+                return false;
+            } 
         }
         
         //TODO: REMOVE THIS
         return true;
     }
     
-    private String processClass(CustomClass c){
+    private String processClass(CustomClass c, ArrayList<CustomClassWrapper> classes){
         //As we traverse our arrays of CustomMethods and CustomVariables, we will
         //add strings to this ArrayList to account for any classes that might need
         //to be imported
         ArrayList<String> imports = new ArrayList<>();
+        
+        //Get the class header
+        String classHeaderText = generateClassHeader(c, classes);
+        String packageName = c.getPackageName();
 
         //The methods and variables ArrayLists will hold our processed methods and variables,
         //ready to be written to our java file
         ArrayList<String> methods = new ArrayList<>();
         ArrayList<String> variables = new ArrayList<>();
-
-        String classHeaderText = generateClassHeader(c);
-
+        
         //Convert the methods to strings
         for(CustomMethod m : c.getMethods()){
             if(!checkMethod(m, c.isInterface()))
                 return null;
             methods.add(processMethod(m, c.isInterface()));
-            ArrayList<String> importTextArray = getMethodImports(m);
+            //ArrayList<String> importTextArray = getMethodImports(m);
 
             //Add imports if they are not already in the ArrayList of imports
-            if(importTextArray != null){
+            /*if(importTextArray != null){
                 for(String s : importTextArray){
                     if(!imports.contains(s))
                         imports.add(s);
                 }
-            }
+            }*/
         }
 
         //Convert the variables to strings
@@ -728,22 +740,43 @@ public class FileManager {
                 return null;
             
             variables.add(processVariable(v));
-            ArrayList<String> importTextArray = getVariableImports(v);
+            //ArrayList<String> importTextArray = getVariableImports(v);
 
             //Add imports if they are not already in the ArrayList of imports
-            if(importTextArray != null){
+            /*if(importTextArray != null){
                 for(String s : importTextArray){
                     if(!imports.contains(s))
                         imports.add(s);
                 }
-            }
+            }*/
         }
         
-        //TODO: REMOVE THIS
-        return null;
+        //Construct our string to return
+        String toReturn = "";
+        toReturn += "package " + packageName + ";\n\n";
+        
+        //TODO: add imports here
+        
+        toReturn += classHeaderText + "\n";
+        for(String v : variables){
+            toReturn += "\n" + v;
+        }
+        
+        toReturn += "\n";
+        
+        for(String m : methods){
+            toReturn += "\n" + m;
+        }
+        
+        return toReturn;
     }
     
-    private String generateClassHeader(CustomClass c){
+    /**
+     * Generates the header for a given class and returns it as a String.
+     * @param c
+     * @return 
+     */
+    private String generateClassHeader(CustomClass c, ArrayList<CustomClassWrapper> classes){
         String classHeader = "public ";
         if(c.isInterface())
             classHeader += "interface ";
@@ -751,10 +784,32 @@ public class FileManager {
             classHeader += "abstract class ";
         else
             classHeader += "class ";
-        classHeader += c.getClassName();
+        classHeader += c.getClassName() + " ";
         
+        String extended = "";
         ArrayList<String> parents = c.getParents();
         
+        //Check if any of the parents are abstract classes. If one is, set it to the extended string
+        //It will be the only class extended from the current class. All others will be implemented.
+        //TODO: FIX THIS
+        for(CustomClassWrapper wrapper : classes){
+            for(String parent : parents){
+                if(wrapper.getData().getClassName().equals(parent) && !wrapper.getData().isInterface()){
+                    extended = parent;
+                    parents.remove(parent);
+                    break;
+                }
+            }
+            break;
+        }
+        
+        if(!extended.equals(""))
+            classHeader += "extends " + extended + " ";
+        for(String parent : parents){
+            classHeader += "implements " + parent + " ";
+        }
+        
+        classHeader += "{";
         return classHeader;
     }
     
@@ -774,30 +829,33 @@ public class FileManager {
             //If m is static, method should start with "static" modifier
             //Interface methods are public by default, so we can exclude the public access modifier
             if(m.isStatic()){
-                processedMethod += "static ";
+                processedMethod += "\tstatic ";
             }
             
             processedMethod += m.getReturnType() + " ";
             processedMethod += m.getMethodName() + " (";
-            for(String arg : m.getArguments()){
-                String[] splitArg = arg.split(" . ");
-                processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+            if(!m.hasNoArguments()){
+                for(String arg : m.getArguments()){
+                    String[] splitArg = arg.split(" . ");
+                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+                }
+                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
             }
-            processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            
             processedMethod += ")";
             
             //If m is static, need a return statement. If m is abstract, don't even need brackets.
             if(m.isStatic()){
                 processedMethod += "{\n";
-                processedMethod += getReturnStatement(m);
-                processedMethod += "\n}";
+                processedMethod += "\t" + getReturnStatement(m);
+                processedMethod += "\n\t}";
             }else if(m.isAbstract()){
                 processedMethod += ";";
             }
             
         }
         else if(m.isAbstract()){
-            processedMethod += m.getAccess() + " ";
+            processedMethod += "\t" + m.getAccess() + " ";
             if(m.isStatic())
                 processedMethod += "static ";
             processedMethod += "abstract ";
@@ -805,30 +863,35 @@ public class FileManager {
                 processedMethod += m.getReturnType() + " ";
             
             processedMethod += m.getMethodName() + " (";
-            for(String arg : m.getArguments()){
-                String[] splitArg = arg.split(" . ");
-                processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+            if(!m.hasNoArguments()){
+                for(String arg : m.getArguments()){
+                    String[] splitArg = arg.split(" . ");
+                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+                }
+                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
             }
-            processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            
             processedMethod += ");";
         }
         else{
-            processedMethod += m.getAccess() + " ";
+            processedMethod += "\t" + m.getAccess() + " ";
             if(m.isStatic())
                 processedMethod += "static ";
             if(!m.isConstructor())
                 processedMethod += m.getReturnType() + " ";
             
             processedMethod += m.getMethodName() + " (";
-            for(String arg : m.getArguments()){
-                String[] splitArg = arg.split(" . ");
-                processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+            if(!m.hasNoArguments()){
+                for(String arg : m.getArguments()){
+                    String[] splitArg = arg.split(" . ");
+                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+                }
+                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
             }
-            processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
             processedMethod += "){\n";
             if(!m.isConstructor())
-                processedMethod += getReturnStatement(m);
-            processedMethod += "\n}";
+                processedMethod += "\t" + getReturnStatement(m);
+            processedMethod += "\n\t}";
         }
         return processedMethod;
     }
@@ -840,7 +903,7 @@ public class FileManager {
      * @return 
      */
     private String processVariable(CustomVar v){
-        String processedVariable = "";
+        String processedVariable = "\t";
         
         processedVariable += v.getAccess() + " ";
         if(v.isStatic())
@@ -924,13 +987,13 @@ public class FileManager {
      *      The properly-formatted file path
      */
     private String getJavaFilePath(CustomClass c, String filePath){
-        String javaFilePath = filePath;
+        String javaFilePath = filePath + "/";
         
         //Get the path to the directory in which the file will be put
-        String packagePath = c.getPackageName().replaceAll(".", "/");
-        javaFilePath += packagePath;
+        String packagePath = c.getPackageName().replace('.', '/');
+        javaFilePath += packagePath + "/";
         
-        javaFilePath = javaFilePath + c.getClassName() + ".java";
+        javaFilePath = javaFilePath + c.getClassName() + JAVA_FILE_EXTENSION;
         return javaFilePath;
     }
 
@@ -940,5 +1003,11 @@ public class FileManager {
 
     private ArrayList<String> getVariableImports(CustomVar v) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void printPackages(){
+        Package[] packages = Package.getPackages();
+        for(int i = 0; i < packages.length; i++)
+            System.out.println(packages[i].getName());
     }
 }

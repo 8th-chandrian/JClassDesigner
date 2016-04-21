@@ -109,7 +109,7 @@ public class ThreadExampleDesign {
         
         CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300);
         counterTaskExample.getData().setClassName("CounterTask");
-        counterTaskExample.getData().setPackageName("example.task.counter");
+        counterTaskExample.getData().setPackageName("example.task");
         
         CustomVar app = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         CustomVar counter = new CustomVar("counter", "int", false, CustomVar.PRIVATE_VAR_ACCESS);

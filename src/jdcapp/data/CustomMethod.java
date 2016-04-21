@@ -180,7 +180,7 @@ public class CustomMethod {
      *      Otherwise return false.
      */
     public boolean hasNoArguments(){
-        if((arguments.size() == 1 && (arguments.get(1).equals("") || arguments.get(1) == null)) 
+        if((arguments.size() == 1 && (arguments.get(0).equals("") || arguments.get(0) == null)) 
                 || arguments.isEmpty())
             return true;
         return false;
