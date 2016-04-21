@@ -18,7 +18,7 @@ public class TestExportCode {
     
     public static void main(String[] args){
         
-        ThreadExampleDesign test = new ThreadExampleDesign();
+        ThreadExampleDesignInterface test = new ThreadExampleDesignInterface();
         FileManager fileManager = new FileManager();
         String filePath = "/Users/mac/Desktop";
         

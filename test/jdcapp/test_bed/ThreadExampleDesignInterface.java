@@ -34,6 +34,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper threadExample = new CustomClassWrapper(200, 200);
         threadExample.getData().setClassName("ThreadExample");
+        threadExample.getData().setPackageName("example");
         
         CustomVar startText = new CustomVar("START_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
         CustomVar pauseText = new CustomVar("PAUSE_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
@@ -108,7 +109,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300);
         counterTaskExample.getData().setClassName("CounterTask");
-        counterTaskExample.getData().setInterfaceValue(true);
+        counterTaskExample.getData().setPackageName("example.counter");
         
         CustomVar app = new CustomVar("APP", "ThreadExample", true, CustomVar.PUBLIC_VAR_ACCESS);
         CustomVar counter = new CustomVar("COUNTER", "int", true, CustomVar.PUBLIC_VAR_ACCESS);
@@ -144,6 +145,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper dateTaskExample = new CustomClassWrapper(290, 650);
         dateTaskExample.getData().setClassName("DateTask");
+        dateTaskExample.getData().setPackageName("example.counter");
         
         CustomVar appDate = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         CustomVar nowDate = new CustomVar("now", "Date", false, CustomVar.PRIVATE_VAR_ACCESS);
@@ -183,6 +185,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper pauseHandlerExample = new CustomClassWrapper(580, 220);
         pauseHandlerExample.getData().setClassName("PauseHandler");
+        pauseHandlerExample.getData().setPackageName("example.handle");
         
         CustomVar appPause = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> pauseHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appPause));
@@ -221,6 +224,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper startHandlerExample = new CustomClassWrapper(580, 220);
         startHandlerExample.getData().setClassName("StartHandler");
+        startHandlerExample.getData().setPackageName("example.handle");
         
         CustomVar appStart = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> startHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appStart));
@@ -252,6 +256,40 @@ public class ThreadExampleDesignInterface {
         startHandlerExample.setConnections(startHandlerExampleConnections);
         
         testData.getClasses().add(startHandlerExample);
+        
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //  Code for the creation of the CounterTaskInterface interface
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+
+        CustomClassWrapper counterTaskExampleInterface = new CustomClassWrapper(150, 300);
+        counterTaskExampleInterface.getData().setClassName("CounterTaskInterface");
+        counterTaskExampleInterface.getData().setPackageName("example.counter");
+        counterTaskExampleInterface.getData().setInterfaceValue(true);
+
+        CustomVar appInterface = new CustomVar("APP", "ThreadExample", true, CustomVar.PUBLIC_VAR_ACCESS);
+        CustomVar counterInterface = new CustomVar("COUNTER", "int", true, CustomVar.PUBLIC_VAR_ACCESS);
+        ArrayList<CustomVar> counterTaskExampleVarsInterface = new ArrayList<CustomVar>( Arrays.asList(appInterface, counterInterface));
+
+        counterTaskExampleInterface.getData().setVariables(counterTaskExampleVarsInterface);
+
+        CustomMethod counterTaskCallInterface = new CustomMethod("call", "void", false, true,
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
+        ArrayList<CustomMethod> counterTaskExampleMethodsInterface = new ArrayList<CustomMethod>( Arrays.asList(counterTaskCallInterface));
+
+        counterTaskExampleInterface.getData().setMethods(counterTaskExampleMethodsInterface);
+
+        ArrayList<String> counterTaskExampleParentsInterface = new ArrayList<String>(Arrays.asList("Task"));
+        counterTaskExampleInterface.getData().setParents(counterTaskExampleParentsInterface);
+
+        HashMap<String, ConnectorArrayList> counterTaskExampleConnectionsInterface = new HashMap<>();
+        ArrayList<Point2D> taskConnectorCounterTaskArrayInterface = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 500), 
+                new Point2D(300, 500)));
+        ConnectorArrayList taskConnectorCounterTaskInterface = new ConnectorArrayList(taskConnectorCounterTaskArrayInterface, ConnectorArrayList.ARROW_CONNECTOR);
+        counterTaskExampleConnectionsInterface.put("Task", taskConnectorCounterTaskInterface);
+
+        counterTaskExampleInterface.setConnections(counterTaskExampleConnectionsInterface);
+
+        testData.getClasses().add(counterTaskExampleInterface);
     } 
     
     public DataManager getData(){

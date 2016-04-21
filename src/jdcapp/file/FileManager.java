@@ -698,8 +698,7 @@ public class FileManager {
                 return false;
             } 
         }
-        
-        //TODO: REMOVE THIS
+
         return true;
     }
     
@@ -735,20 +734,22 @@ public class FileManager {
         }
 
         //Convert the variables to strings
-        for(CustomVar v : c.getVariables()){
-            if(!checkVariable(v))
-                return null;
-            
-            variables.add(processVariable(v));
-            //ArrayList<String> importTextArray = getVariableImports(v);
+        if(!c.isInterface()){
+            for(CustomVar v : c.getVariables()){
+                if(!checkVariable(v))
+                    return null;
 
-            //Add imports if they are not already in the ArrayList of imports
-            /*if(importTextArray != null){
-                for(String s : importTextArray){
-                    if(!imports.contains(s))
-                        imports.add(s);
-                }
-            }*/
+                variables.add(processVariable(v));
+                //ArrayList<String> importTextArray = getVariableImports(v);
+
+                //Add imports if they are not already in the ArrayList of imports
+                /*if(importTextArray != null){
+                    for(String s : importTextArray){
+                        if(!imports.contains(s))
+                            imports.add(s);
+                    }
+                }*/
+            }
         }
         
         //Construct our string to return
@@ -767,6 +768,8 @@ public class FileManager {
         for(String m : methods){
             toReturn += "\n" + m;
         }
+        
+        toReturn += "\n}";
         
         return toReturn;
     }
@@ -826,10 +829,12 @@ public class FileManager {
         //If method is an interface, it must be either static or abstract
         if(isInterface){
             
+            processedMethod += "\t";
+            
             //If m is static, method should start with "static" modifier
             //Interface methods are public by default, so we can exclude the public access modifier
             if(m.isStatic()){
-                processedMethod += "\tstatic ";
+                processedMethod += "static ";
             }
             
             processedMethod += m.getReturnType() + " ";
