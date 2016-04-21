@@ -3,6 +3,7 @@
  */
 package jdcapp.file;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +13,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,6 +39,7 @@ import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
 import static jdcapp.settings.AppPropertyType.WORK_FILE_EXT;
+import org.apache.commons.lang3.StringUtils;
 import properties_manager.PropertiesManager;
 
 /**
@@ -80,6 +85,11 @@ public class FileManager {
     static final String JSON_METHOD_ABSTRACT_VALUE = "method_abstract_value";
     static final String JSON_METHOD_ACCESS = "method_access";
     static final String JSON_METHOD_ARGUMENTS = "method_arguments";
+    
+    
+    public static final int CODE_EXPORTED_SUCCESSFULLY = 0;
+    public static final int ERROR_CREATING_DIRECTORIES = -1;
+    public static final int ERROR_CREATING_JAVA_FILES = -2;
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -554,5 +564,168 @@ public class FileManager {
 	JsonValue value = json.get(dataName);
 	JsonNumber number = (JsonNumber)value;
 	return number.bigDecimalValue().doubleValue();	
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    //
+    //          CLASSES USED FOR EXPORTING DATA AS CODE
+    //
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Exports the current design to code. 
+     * @param dataManager
+     * @param filePath
+     * @return 
+     *       0 if the code was exported correctly.
+     *      -1 if there was an error creating the package directories.
+     *      -2 if there was an error creating the java files.
+     */
+    public int exportCode(DataManager dataManager, String filePath){
+        ArrayList<CustomClassWrapper> classes = dataManager.getClasses();
+        
+        //First, create all necessary packages to put our java files in.
+        //Get every package contained in the current design.
+        ArrayList<String> packages = getAllPackages(classes);
+        
+        //Then make all the package directories
+        boolean makePackagesReturn = makePackageDirectories(packages, filePath);
+        if(!makePackagesReturn)
+            return ERROR_CREATING_DIRECTORIES;
+        
+        //Then put all the java files in the packages
+        boolean makeJavaFilesReturn = makeJavaFiles(classes, filePath);
+        if(!makeJavaFilesReturn)
+            return ERROR_CREATING_JAVA_FILES;
+    }
+    
+    /**
+     * Helper method which extracts an ArrayList of packages from an ArrayList of 
+     * CustomClassWrappers.
+     * 
+     * @param classes
+     * @return 
+     *      The ArrayList of packages
+     */
+    private ArrayList<String> getAllPackages(ArrayList<CustomClassWrapper> classes){
+        ArrayList<String> packages = new ArrayList<>();
+        for(CustomClassWrapper c : classes){
+            String packageName = c.getData().getPackageName();
+            
+            //If packageName is invalid, set packageName to the default package name
+            if(packageName.equals("") || packageName.equals(null))
+                packageName = c.getData().DEFAULT_PACKAGE_NAME;
+            
+            if(!packages.contains(packageName)){
+                packages.add(packageName);
+            }
+        }
+        return packages;
+    }
+    
+    /**
+     * Helper method to make the package directories.
+     * @param packages
+     * @return 
+     *      True if the directories were created successfully, false otherwise.
+     */
+    private boolean makePackageDirectories(ArrayList<String> packages, String filePath){
+        
+        //Sort the package strings based on how many subdirectories they have
+        //Ex: "jdcapp.data" has 1 more subdirectory than "jdcapp"
+        Collections.sort(packages, new Comparator<String>(){
+            @Override
+            public int compare(String s1, String s2){
+                int s1Subdirectories = StringUtils.countMatches(s1, ".");
+                int s2Subdirectories = StringUtils.countMatches(s1, ".");
+                if(s1Subdirectories > s2Subdirectories)
+                    return 1;
+                else if(s1Subdirectories == s2Subdirectories)
+                    return 0;
+                else
+                    return -1;
+            }
+        });
+        
+        //Now make the directories. Because of the sorting, they should be made in
+        //order so that no subdirectory is made without its parent directory already
+        //existing.
+        for(String packageName : packages){
+            packageName = packageName.replaceAll(".", "/");
+            String filePathPackage = filePath + "/" + packageName;
+            
+            boolean success = (new File(filePathPackage)).mkdirs();
+            if(!success){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Helper method to make all the .java files and put them in their respective
+     * directories.
+     * @param classes
+     * @param filePath
+     * @return 
+     *      True if the files were created successfully, false otherwise.
+     */
+    private boolean makeJavaFiles(ArrayList<CustomClassWrapper> classes, String filePath){
+        for(CustomClassWrapper c : classes){
+            String classFilePath = getJavaFilePath(c.getData(), filePath);
+            
+            //As we traverse our arrays of CustomMethods and CustomVariables, we will
+            //add strings to this ArrayList to account for any classes that might need
+            //to be imported
+            ArrayList<String> imports = new ArrayList<>();
+            
+            //The methods and variables ArrayLists will hold our processed methods and variables,
+            //ready to be written to our java file
+            ArrayList<String> methods = new ArrayList<>();
+            ArrayList<String> variables = new ArrayList<>();
+            
+            //Process the methods
+            for(CustomMethod m : c.getData().getMethods()){
+                if(!checkMethod(m))
+                    return false;
+                methods.add(processMethod(m));
+                ArrayList<String> importTextArray = getMethodImports(m);
+                if(importTextArray != null)
+                    imports.addAll(importTextArray);
+            }
+            
+            //Process the variables
+            for(CustomVar v : c.getData().getVariables()){
+                if(!checkVariable(v))
+                    return false;
+                variables.add(processVariable(v));
+                ArrayList<String> importTextArray = getVariableImports(v);
+                if(importTextArray != null)
+                    imports.addAll(importTextArray);
+            }
+            
+            //Export the imports, variables, and methods to a new file with address classFilePath
+        }
+    }
+    
+    /**
+     * Helper method to get the properly-formatted file path of a .java file from
+     * its CustomClassWrapper object and the directory file path.
+     * @param c
+     * @param filePath
+     * @return 
+     *      The properly-formatted file path
+     */
+    private String getJavaFilePath(CustomClass c, String filePath){
+        String javaFilePath = filePath;
+        
+        //Get the path to the directory in which the file will be put
+        String packagePath = c.getPackageName().replaceAll(".", "/");
+        javaFilePath += packagePath;
+        
+        javaFilePath = javaFilePath + c.getClassName() + ".java";
+        return javaFilePath;
     }
 }
