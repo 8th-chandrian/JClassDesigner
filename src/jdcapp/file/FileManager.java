@@ -34,6 +34,8 @@ import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
+import static jdcapp.settings.AppPropertyType.WORK_FILE_EXT;
+import properties_manager.PropertiesManager;
 
 /**
  *
@@ -150,11 +152,11 @@ public class FileManager {
 	jsonWriter.close();
 
 	// INIT THE WRITER
-	OutputStream os = new FileOutputStream(filePath);
+	OutputStream os = new FileOutputStream(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
 	JsonWriter jsonFileWriter = Json.createWriter(os);
 	jsonFileWriter.writeObject(dataManagerJSO);
 	String prettyPrinted = sw.toString();
-	PrintWriter pw = new PrintWriter(filePath);
+	PrintWriter pw = new PrintWriter(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
 	pw.write(prettyPrinted);
 	pw.close();
     }

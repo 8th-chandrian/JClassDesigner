@@ -20,6 +20,8 @@ import static jdcapp.settings.AppPropertyType.NEW_ERROR_MESSAGE;
 import static jdcapp.settings.AppPropertyType.NEW_ERROR_TITLE;
 import static jdcapp.settings.AppPropertyType.SAVE_COMPLETED_MESSAGE;
 import static jdcapp.settings.AppPropertyType.SAVE_COMPLETED_TITLE;
+import static jdcapp.settings.AppPropertyType.SAVE_ERROR_MESSAGE;
+import static jdcapp.settings.AppPropertyType.SAVE_ERROR_TITLE;
 import static jdcapp.settings.AppPropertyType.SAVE_UNSAVED_WORK_MESSAGE;
 import static jdcapp.settings.AppPropertyType.SAVE_UNSAVED_WORK_TITLE;
 import static jdcapp.settings.AppPropertyType.SAVE_WORK_TITLE;
@@ -112,11 +114,52 @@ public class FileController {
     }
 
     public void handleSaveRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // WE'LL NEED THIS TO GET CUSTOM STUFF
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        try {
+	    // MAYBE WE ALREADY KNOW THE FILE
+	    if (currentWorkFile != null) {
+		saveWork(currentWorkFile);
+	    }
+	    // OTHERWISE WE NEED TO PROMPT THE USER
+	    else {
+		// PROMPT THE USER FOR A FILE NAME
+		FileChooser fc = new FileChooser();
+		fc.setInitialDirectory(new File(PATH_WORK));
+		fc.setTitle(props.getProperty(SAVE_WORK_TITLE));
+		fc.getExtensionFilters().addAll(
+		new FileChooser.ExtensionFilter(props.getProperty(WORK_FILE_EXT_DESC), props.getProperty(WORK_FILE_EXT)));
+
+		File selectedFile = fc.showSaveDialog(app.getWorkspaceManager().getWindow());
+		if (selectedFile != null) {
+		    saveWork(selectedFile);
+		}
+	    }
+        } catch (IOException ioe) {
+	    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	    dialog.show(props.getProperty(SAVE_ERROR_TITLE), props.getProperty(SAVE_ERROR_MESSAGE));
+        }
     }
 
     public void handleSaveAsRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // WE'LL NEED THIS TO GET CUSTOM STUFF
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        try {
+	    // PROMPT THE USER FOR A FILE NAME
+            FileChooser fc = new FileChooser();
+            fc.setInitialDirectory(new File(PATH_WORK));
+            fc.setTitle(props.getProperty(SAVE_WORK_TITLE));
+            fc.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter(props.getProperty(WORK_FILE_EXT_DESC), props.getProperty(WORK_FILE_EXT)));
+
+            File selectedFile = fc.showSaveDialog(app.getWorkspaceManager().getWindow());
+            if (selectedFile != null) {
+                saveWork(selectedFile);
+            }
+        } catch (IOException ioe) {
+	    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	    dialog.show(props.getProperty(SAVE_ERROR_TITLE), props.getProperty(SAVE_ERROR_MESSAGE));
+        }
     }
 
     public void handlePhotoExportRequest() {
@@ -241,6 +284,7 @@ public class FileController {
 		//app.getWorkspaceManager().activateWorkspace(app.getGUI().getAppPane());
                 saved = true;
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
+                app.getWorkspaceManager().wipeSelectedClassData();
             } catch (Exception e) {
                 AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
                 dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));

@@ -29,12 +29,13 @@ public class ComponentController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         //Set class name to text, display class name
-        dataManager.getSelectedClass().getData().setClassName(text);
-        dataManager.getSelectedClass().getNameText().setText(text);
-        
-        //TODO: This is a very clumsy solution with O(n^2) complexity, fix this when you have time
-        dataManager.checkCombinations();
+        if(dataManager.getSelectedClass() != null){
+            dataManager.getSelectedClass().getData().setClassName(text);
+            dataManager.getSelectedClass().getNameText().setText(text);
 
+            //TODO: This is a very clumsy solution with O(n^2) complexity, fix this when you have time
+            dataManager.checkCombinations();
+        }
     }
 
     public void handlePackageNameTextEdited(String text) {
@@ -42,9 +43,11 @@ public class ComponentController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
           
         //Set package name to text
-        dataManager.getSelectedClass().getData().setPackageName(text);
-        
-        dataManager.checkCombinations();
+        if(dataManager.getSelectedClass() != null){
+            dataManager.getSelectedClass().getData().setPackageName(text);
+            
+            dataManager.checkCombinations();
+        }
     }
     
 }

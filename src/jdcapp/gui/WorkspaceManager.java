@@ -811,5 +811,18 @@ public class WorkspaceManager {
         packageNameText.setDisable(false);
     }
     
+    /**
+     * To be called just after selecting a new class.
+     */
+    public void wipeSelectedClassData(){
+        DataManager dataManager = app.getDataManager();
+        
+        classNameText.setText("");
+        packageNameText.setText("");
+        
+        classNameText.setDisable(true);
+        packageNameText.setDisable(true);
+    }
+    
     //TODO: Finish adding methods
 }
