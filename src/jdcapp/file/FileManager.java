@@ -722,8 +722,9 @@ public class FileManager {
             if(!checkMethod(m, c.isInterface()))
                 return null;
             methods.add(processMethod(m, c.isInterface()));
+            
+            //Get imports from methods
             ArrayList<String> importTextArray = getMethodImports(m, classes);
-
             //Add imports if they are not already in the ArrayList of imports
             if(importTextArray != null){
                 for(String s : importTextArray){
@@ -741,16 +742,29 @@ public class FileManager {
             for(CustomVar v : c.getVariables()){
                 if(!checkVariable(v))
                     return null;
-
                 variables.add(processVariable(v));
-                ArrayList<String> importTextArray = getVariableImports(v, classes);
-
-                //Add imports if they are not already in the ArrayList of imports
-                if(importTextArray != null){
-                    for(String s : importTextArray){
-                        if(!imports.contains(s))
-                            imports.add(s);
-                    }
+            }
+        }
+        
+        //Get imports from variables
+        for(CustomVar v : c.getVariables()){
+            ArrayList<String> importTextArray = getVariableImports(v, classes);
+            //Add imports if they are not already in the ArrayList of imports
+            if(importTextArray != null){
+                for(String s : importTextArray){
+                    if(!imports.contains(s))
+                        imports.add(s);
+                }
+            }
+        }
+        
+        for(String p : c.getParents()){
+            ArrayList<String> importTextArray = getParentImports(p, classes);
+            //Add imports if they are not already in the ArrayList of imports
+            if(importTextArray != null){
+                for(String s : importTextArray){
+                    if(!imports.contains(s))
+                        imports.add(s);
                 }
             }
         }
@@ -1056,16 +1070,101 @@ public class FileManager {
 
     private ArrayList<String> getMethodImports(CustomMethod m, ArrayList<CustomClassWrapper> classes) {
         ArrayList<String> imports = new ArrayList<>();
-        Package[] apiPackages = Package.getPackages();
+        
+        //Get an array of strings representing the types to check against the list of classes
+        ArrayList<String> typesToCheck = new ArrayList<>();
+        
+        //First get the types from the return type (could be multiple if return type is an arraylist)
+        //When adding, first check to be sure that typesToCheck does not already contain the type being added
+        ArrayList<String> converted = convertToTypes(m.getReturnType());
+        for(String type : converted){
+            if(!typesToCheck.contains(type))
+                typesToCheck.add(type);
+        }
+        
+        //Then do the same for all the arguments
+        if(!m.hasNoArguments()){
+            for(String uncheckedType : m.getArguments()){
+                String[] splitUncheckedType = uncheckedType.split(" : ");
+                String typeToConvert = splitUncheckedType[1];
+                converted = convertToTypes(typeToConvert);
+                for(String type : converted){
+                    if(!typesToCheck.contains(type))
+                        typesToCheck.add(type);
+                }
+            }
+        }
+        
+        //Get any necessary design imports by comparing typesToCheck to the CustomClasses in the design
+        imports.addAll(checkAgainstDesignClasses(typesToCheck, classes));
+        
+        //Get any necessary api imports by comparing typesToCheck to the packages in Package.getPackages()
+        imports.addAll(checkAgainstAPIClasses(typesToCheck));
         
         return imports;
     }
 
     private ArrayList<String> getVariableImports(CustomVar v, ArrayList<CustomClassWrapper> classes) {
         ArrayList<String> imports = new ArrayList<>();
-        Package[] apiPackages = Package.getPackages();
+        String varType = v.getVarType();
+        ArrayList<String> typesToCheck = convertToTypes(varType);
+        
+        //Get any necessary design imports by comparing typesToCheck to the CustomClasses in the design
+        imports.addAll(checkAgainstDesignClasses(typesToCheck, classes));
+        
+        //Get any necessary api imports by comparing typesToCheck to the packages in Package.getPackages()
+        imports.addAll(checkAgainstAPIClasses(typesToCheck));
         
         return imports;
+    }
+    
+    private ArrayList<String> getParentImports(String s, ArrayList<CustomClassWrapper> classes) {
+        ArrayList<String> imports = new ArrayList<>();
+        ArrayList<String> parentTypes = convertToTypes(s);
+        
+        //Get any necessary design imports by comparing typesToCheck to the CustomClasses in the design
+        imports.addAll(checkAgainstDesignClasses(parentTypes, classes));
+        
+        //Get any necessary api imports by comparing typesToCheck to the packages in Package.getPackages()
+        imports.addAll(checkAgainstAPIClasses(parentTypes));
+        
+        return imports;
+    }
+    
+    /**
+     * Gets an ArrayList of type strings from a given string
+     * @param type
+     * @return
+     *      The ArrayList (note that it may contain duplicate elements or may be empty)
+     */
+    private ArrayList<String> convertToTypes(String type){
+        ArrayList<String> typesReturn = new ArrayList<>();
+        if(type.equals(CustomMethod.BOOLEAN_RETURN_TYPE) || type.equals(CustomMethod.BYTE_RETURN_TYPE) || 
+                type.equals(CustomMethod.CHAR_RETURN_TYPE) || type.equals(CustomMethod.DOUBLE_RETURN_TYPE) || 
+                type.equals(CustomMethod.FLOAT_RETURN_TYPE) || type.equals(CustomMethod.INT_RETURN_TYPE) ||
+                type.equals(CustomMethod.LONG_RETURN_TYPE) || type.equals(CustomMethod.SHORT_RETURN_TYPE) || 
+                type.equals(CustomMethod.VOID_RETURN_TYPE) || type.equals(CustomMethod.CONSTRUCTOR_RETURN_TYPE) || 
+                type.equals("String"))
+            return typesReturn;
+        
+        //If type is like an arraylist or hashtable, get outer type and inner type
+        if(type.contains("<") && type.contains(">")){
+            typesReturn.add(type.substring(0, type.indexOf("<")));
+            String innerType = type.substring(type.indexOf("<") + 1, type.lastIndexOf(">"));
+            
+            //Split the inner type on the ", " regex in case the outer type has more than one
+            //inner type. Then recursively call convertToTypes on all inner types in case they
+            //too hold inner types of their own. (This is probably unnecessary, but fuck it)
+            String[] innerTypeArray = innerType.split(", ");
+            for(String s : innerTypeArray){
+                typesReturn.addAll(convertToTypes(s));
+            }
+        }
+        //Otherwise just add the type
+        else{
+            typesReturn.add(type);
+        }
+        return typesReturn;
     }
     
     //Test method
@@ -1073,5 +1172,13 @@ public class FileManager {
         Package[] packages = Package.getPackages();
         for(int i = 0; i < packages.length; i++)
             System.out.println(packages[i].getName());
+    }
+
+    private ArrayList<String> checkAgainstDesignClasses(ArrayList<String> typesToCheck, ArrayList<CustomClassWrapper> classes) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private ArrayList<String> checkAgainstAPIClasses(ArrayList<String> typesToCheck) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
