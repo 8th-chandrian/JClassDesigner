@@ -43,13 +43,9 @@ public class JDCApp extends Application {
     public WorkspaceManager getWorkspaceManager() { return workspace; }
     
     @Override
-    public void start(Stage primaryStage) {
-        // LET'S START BY INITIALIZING OUR DIALOGS
-        Package[] packages = Package.getPackages();
-        for(Package p : packages){
-            System.out.println(p.getName());
-        }        
-                
+    public void start(Stage primaryStage) {     
+        
+        //Start by initializing the dialogues
 	AppMessageDialogSingleton messageDialog = AppMessageDialogSingleton.getSingleton();
 	messageDialog.init(primaryStage);
 	AppYesNoCancelDialogSingleton yesNoDialog = AppYesNoCancelDialogSingleton.getSingleton();

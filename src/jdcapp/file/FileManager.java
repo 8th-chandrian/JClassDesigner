@@ -773,17 +773,21 @@ public class FileManager {
         String toReturn = "";
         toReturn += "package " + packageName + ";\n\n";
         
-        //TODO: add imports here
+        for(String importString : imports){
+            toReturn += "import " + importString + ";\n";
+        }
         
-        toReturn += classHeaderText + "\n";
+        toReturn += "\n" + classHeaderText + "\n";
         for(String v : variables){
-            toReturn += "\n" + v;
+            if(!v.equals(""))
+                toReturn += "\n" + v;
         }
         
         toReturn += "\n";
         
         for(String m : methods){
-            toReturn += "\n" + m;
+            if(!m.equals(""))
+                toReturn += "\n" + m;
         }
         
         toReturn += "\n}";
@@ -1167,18 +1171,54 @@ public class FileManager {
         return typesReturn;
     }
     
-    //Test method
+    /*Test method
     public void printPackages(){
         Package[] packages = Package.getPackages();
         for(int i = 0; i < packages.length; i++)
             System.out.println(packages[i].getName());
-    }
+    }*/
 
     private ArrayList<String> checkAgainstDesignClasses(ArrayList<String> typesToCheck, ArrayList<CustomClassWrapper> classes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<String> imports = new ArrayList<>();
+        
+        for(CustomClassWrapper c : classes){
+            for(String type : typesToCheck){
+                if(c.getData().getClassName().equals(type)){
+                    String newImport = c.getData().getPackageName() + "." + type;
+                    imports.add(newImport);
+                }
+            }
+        }
+        
+        return imports;
     }
 
     private ArrayList<String> checkAgainstAPIClasses(ArrayList<String> typesToCheck) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<String> imports = new ArrayList<>();
+        
+        Package[] packages = Package.getPackages();
+        for(Package p : packages){
+            for(String type : typesToCheck){
+                try{
+                    Class.forName(p.getName() + "." + type);
+                    imports.add(p.getName() + "." + type); 
+                } catch(ClassNotFoundException e){}
+            }
+        }
+        
+        //Hard-coded to allow Task to be recognized
+        for(String type : typesToCheck){
+            try{
+                Class.forName("javafx.concurrent" + "." + type);
+                imports.add("javafx.concurrent" + "." + type); 
+            } catch(ClassNotFoundException e){}
+        }
+        
+        for(String i : imports){
+            if(i.contains("com.sun.") || i.contains("org.w3c."))
+                imports.remove(i);
+        }
+        
+        return imports;
     }
 }

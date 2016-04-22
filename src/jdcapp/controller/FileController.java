@@ -167,7 +167,12 @@ public class FileController {
     }
 
     public void handleCodeExportRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        FileManager fileManager = app.getFileManager();
+        DataManager dataManager = app.getDataManager();
+        String filePath = "/Users/mac/Desktop/TestJDCApp/src/";     //This string is for testing purposes only
+        
+        int i = fileManager.exportCode(dataManager, filePath);
+        System.out.println(i);
     }
     
     public void handleExitRequest() {
@@ -283,6 +288,7 @@ public class FileController {
 		// MAKE SURE THE WORKSPACE IS ACTIVATED
 		//app.getWorkspaceManager().activateWorkspace(app.getGUI().getAppPane());
                 saved = true;
+                app.getWorkspaceManager().activateWorkspaceControls();
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
                 app.getWorkspaceManager().wipeSelectedClassData();
             } catch (Exception e) {

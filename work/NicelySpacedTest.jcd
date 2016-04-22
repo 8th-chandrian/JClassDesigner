@@ -1,17 +1,17 @@
 
 {
-    "font_name":"SansSerif Regular",
+    "font_name":"System Regular",
     "pixel_height":12.0,
     "class_array":[
         {
-            "start_x":200.0,
-            "start_y":200.0,
+            "start_x":303.0,
+            "start_y":75.0,
             "width":200.0,
-            "height":72.0,
+            "height":336.0,
             "wrapping_width":200.0,
             "custom_class":{
                 "class_name":"ThreadExample",
-                "package_name":"",
+                "package_name":"example",
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
@@ -242,16 +242,16 @@
             ]
         },
         {
-            "start_x":150.0,
-            "start_y":300.0,
+            "start_x":36.0,
+            "start_y":92.0,
             "width":200.0,
-            "height":72.0,
+            "height":96.0,
             "wrapping_width":200.0,
             "custom_class":{
                 "class_name":"CounterTask",
-                "package_name":"",
+                "package_name":"example.task",
                 "interface_value":false,
-                "abstract_value":true,
+                "abstract_value":false,
                 "parents":[
                     "Task"
                 ],
@@ -284,7 +284,7 @@
                         "method_name":"call",
                         "method_return":"void",
                         "method_static_value":false,
-                        "method_abstract_value":true,
+                        "method_abstract_value":false,
                         "method_access":"protected",
                         "method_arguments":[
                             ""
@@ -310,14 +310,14 @@
             ]
         },
         {
-            "start_x":290.0,
-            "start_y":650.0,
+            "start_x":34.0,
+            "start_y":266.0,
             "width":200.0,
-            "height":72.0,
+            "height":96.0,
             "wrapping_width":200.0,
             "custom_class":{
                 "class_name":"DateTask",
-                "package_name":"",
+                "package_name":"example.task",
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
@@ -393,14 +393,14 @@
             ]
         },
         {
-            "start_x":580.0,
-            "start_y":220.0,
+            "start_x":582.0,
+            "start_y":145.0,
             "width":200.0,
-            "height":72.0,
+            "height":84.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"PauseHandler",
-                "package_name":"",
+                "class_name":"StartHandler",
+                "package_name":"example.handler",
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
@@ -417,7 +417,7 @@
                 ],
                 "methods":[
                     {
-                        "method_name":"PauseHandler",
+                        "method_name":"StartHandler",
                         "method_return":"",
                         "method_static_value":false,
                         "method_abstract_value":false,
@@ -470,14 +470,14 @@
             ]
         },
         {
-            "start_x":580.0,
-            "start_y":220.0,
+            "start_x":586.0,
+            "start_y":272.0,
             "width":200.0,
-            "height":72.0,
+            "height":84.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"StartHandler",
-                "package_name":"",
+                "class_name":"PauseHandler",
+                "package_name":"example.handler",
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
@@ -494,7 +494,7 @@
                 ],
                 "methods":[
                     {
-                        "method_name":"StartHandler",
+                        "method_name":"PauseHandler",
                         "method_return":"",
                         "method_static_value":false,
                         "method_abstract_value":false,
