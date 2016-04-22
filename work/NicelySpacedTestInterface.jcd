@@ -1,13 +1,13 @@
 
 {
-    "font_name":"SansSerif Regular",
+    "font_name":"System Regular",
     "pixel_height":12.0,
     "class_array":[
         {
-            "start_x":200.0,
-            "start_y":200.0,
+            "start_x":304.0,
+            "start_y":84.0,
             "width":200.0,
-            "height":72.0,
+            "height":336.0,
             "wrapping_width":200.0,
             "custom_class":{
                 "class_name":"ThreadExample",
@@ -242,49 +242,39 @@
             ]
         },
         {
-            "start_x":150.0,
-            "start_y":300.0,
+            "start_x":51.0,
+            "start_y":148.0,
             "width":200.0,
-            "height":72.0,
+            "height":84.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"CounterTask",
-                "package_name":"example.task",
-                "interface_value":false,
+                "class_name":"CounterTaskInterface",
+                "package_name":"example.counter",
+                "interface_value":true,
                 "abstract_value":false,
                 "parents":[
                     "Task"
                 ],
                 "variables":[
                     {
-                        "var_name":"app",
+                        "var_name":"APP",
                         "var_type":"ThreadExample",
-                        "var_static_value":false,
-                        "var_access":"private"
+                        "var_static_value":true,
+                        "var_access":"public"
                     },
                     {
-                        "var_name":"counter",
+                        "var_name":"COUNTER",
                         "var_type":"int",
-                        "var_static_value":false,
-                        "var_access":"private"
+                        "var_static_value":true,
+                        "var_access":"public"
                     }
                 ],
                 "methods":[
                     {
-                        "method_name":"CounterTask",
-                        "method_return":"",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "initApp : ThreadExample"
-                        ]
-                    },
-                    {
-                        "method_name":"call",
+                        "method_name":"callInterface",
                         "method_return":"void",
                         "method_static_value":false,
-                        "method_abstract_value":false,
+                        "method_abstract_value":true,
                         "method_access":"public",
                         "method_arguments":[
                             ""
@@ -310,18 +300,242 @@
             ]
         },
         {
-            "start_x":290.0,
-            "start_y":650.0,
+            "start_x":51.0,
+            "start_y":298.0,
             "width":200.0,
-            "height":72.0,
+            "height":96.0,
             "wrapping_width":200.0,
             "custom_class":{
-                "class_name":"DateTask",
-                "package_name":"example.task",
+                "class_name":"CounterTask",
+                "package_name":"example.counter",
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
-                    "Task"
+                    "Task",
+                    "CounterTaskInterface"
+                ],
+                "variables":[
+                    {
+                        "var_name":"APP",
+                        "var_type":"ThreadExample",
+                        "var_static_value":true,
+                        "var_access":"public"
+                    },
+                    {
+                        "var_name":"COUNTER",
+                        "var_type":"int",
+                        "var_static_value":true,
+                        "var_access":"public"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"CounterTask",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"call",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"protected",
+                        "method_arguments":[
+                            ""
+                        ]
+                    }
+                ]
+            },
+            "connections":[
+                {
+                    "key":"Task",
+                    "point_array":[
+                        {
+                            "point_x":200.0,
+                            "point_y":500.0
+                        },
+                        {
+                            "point_x":300.0,
+                            "point_y":500.0
+                        }
+                    ],
+                    "connector_type":"arrow"
+                }
+            ]
+        },
+        {
+            "start_x":553.0,
+            "start_y":155.0,
+            "width":200.0,
+            "height":84.0,
+            "wrapping_width":200.0,
+            "custom_class":{
+                "class_name":"StartHandler",
+                "package_name":"example.handle",
+                "interface_value":false,
+                "abstract_value":false,
+                "parents":[
+                    "EventHandler",
+                    "ThreadExample"
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"StartHandler",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"handle",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"protected",
+                        "method_arguments":[
+                            "event : Event"
+                        ]
+                    }
+                ]
+            },
+            "connections":[
+                {
+                    "key":"EventHandler",
+                    "point_array":[
+                        {
+                            "point_x":600.0,
+                            "point_y":540.0
+                        },
+                        {
+                            "point_x":800.0,
+                            "point_y":760.0
+                        }
+                    ],
+                    "connector_type":"arrow"
+                },
+                {
+                    "key":"ThreadExample",
+                    "point_array":[
+                        {
+                            "point_x":600.0,
+                            "point_y":650.0
+                        },
+                        {
+                            "point_x":600.0,
+                            "point_y":800.0
+                        }
+                    ],
+                    "connector_type":"diamond"
+                }
+            ]
+        },
+        {
+            "start_x":560.0,
+            "start_y":319.0,
+            "width":200.0,
+            "height":84.0,
+            "wrapping_width":200.0,
+            "custom_class":{
+                "class_name":"PauseHandler",
+                "package_name":"example.handle",
+                "interface_value":false,
+                "abstract_value":false,
+                "parents":[
+                    "EventHandler",
+                    "ThreadExample"
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"PauseHandler",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"handle",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"protected",
+                        "method_arguments":[
+                            "event : Event"
+                        ]
+                    }
+                ]
+            },
+            "connections":[
+                {
+                    "key":"EventHandler",
+                    "point_array":[
+                        {
+                            "point_x":600.0,
+                            "point_y":540.0
+                        },
+                        {
+                            "point_x":800.0,
+                            "point_y":760.0
+                        }
+                    ],
+                    "connector_type":"arrow"
+                },
+                {
+                    "key":"ThreadExample",
+                    "point_array":[
+                        {
+                            "point_x":600.0,
+                            "point_y":650.0
+                        },
+                        {
+                            "point_x":600.0,
+                            "point_y":800.0
+                        }
+                    ],
+                    "connector_type":"diamond"
+                }
+            ]
+        },
+        {
+            "start_x":48.0,
+            "start_y":435.0,
+            "width":200.0,
+            "height":96.0,
+            "wrapping_width":200.0,
+            "custom_class":{
+                "class_name":"DateTask",
+                "package_name":"example.counter",
+                "interface_value":false,
+                "abstract_value":false,
+                "parents":[
+                    "Task",
+                    "Date"
                 ],
                 "variables":[
                     {
@@ -353,7 +567,7 @@
                         "method_return":"void",
                         "method_static_value":false,
                         "method_abstract_value":false,
-                        "method_access":"public",
+                        "method_access":"protected",
                         "method_arguments":[
                             ""
                         ]
@@ -377,160 +591,6 @@
                 },
                 {
                     "key":"Date",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":650.0
-                        },
-                        {
-                            "point_x":600.0,
-                            "point_y":800.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                }
-            ]
-        },
-        {
-            "start_x":580.0,
-            "start_y":220.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
-            "custom_class":{
-                "class_name":"PauseHandler",
-                "package_name":"example.handler",
-                "interface_value":false,
-                "abstract_value":false,
-                "parents":[
-                    "EventHandler",
-                    "ThreadExample"
-                ],
-                "variables":[
-                    {
-                        "var_name":"app",
-                        "var_type":"ThreadExample",
-                        "var_static_value":false,
-                        "var_access":"private"
-                    }
-                ],
-                "methods":[
-                    {
-                        "method_name":"PauseHandler",
-                        "method_return":"",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "initApp : ThreadExample"
-                        ]
-                    },
-                    {
-                        "method_name":"handle",
-                        "method_return":"void",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "event : Event"
-                        ]
-                    }
-                ]
-            },
-            "connections":[
-                {
-                    "key":"EventHandler",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":540.0
-                        },
-                        {
-                            "point_x":800.0,
-                            "point_y":760.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                },
-                {
-                    "key":"ThreadExample",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":650.0
-                        },
-                        {
-                            "point_x":600.0,
-                            "point_y":800.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                }
-            ]
-        },
-        {
-            "start_x":580.0,
-            "start_y":220.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
-            "custom_class":{
-                "class_name":"StartHandler",
-                "package_name":"example.handler",
-                "interface_value":false,
-                "abstract_value":false,
-                "parents":[
-                    "EventHandler",
-                    "ThreadExample"
-                ],
-                "variables":[
-                    {
-                        "var_name":"app",
-                        "var_type":"ThreadExample",
-                        "var_static_value":false,
-                        "var_access":"private"
-                    }
-                ],
-                "methods":[
-                    {
-                        "method_name":"StartHandler",
-                        "method_return":"",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "initApp : ThreadExample"
-                        ]
-                    },
-                    {
-                        "method_name":"handle",
-                        "method_return":"void",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "event : Event"
-                        ]
-                    }
-                ]
-            },
-            "connections":[
-                {
-                    "key":"EventHandler",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":540.0
-                        },
-                        {
-                            "point_x":800.0,
-                            "point_y":760.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                },
-                {
-                    "key":"ThreadExample",
                     "point_array":[
                         {
                             "point_x":600.0,

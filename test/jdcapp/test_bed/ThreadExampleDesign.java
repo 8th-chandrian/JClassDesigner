@@ -162,7 +162,7 @@ public class ThreadExampleDesign {
         
         dateTaskExample.getData().setMethods(dateTaskExampleMethods);
         
-        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task", "Date"));
+        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task"));
         dateTaskExample.getData().setParents(dateTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> dateTaskExampleConnections = new HashMap<>();
@@ -195,7 +195,7 @@ public class ThreadExampleDesign {
         CustomMethod pauseHandlerConstructor = new CustomMethod("PauseHandler", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
         CustomMethod pauseHandlerHandle = new CustomMethod("handle", "void", false, false,
-            CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
         ArrayList<CustomMethod> pauseHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(pauseHandlerConstructor,
                 pauseHandlerHandle));
         
@@ -234,7 +234,7 @@ public class ThreadExampleDesign {
         CustomMethod startHandlerConstructor = new CustomMethod("StartHandler", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
         CustomMethod startHandlerHandle = new CustomMethod("handle", "void", false, false,
-            CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
         ArrayList<CustomMethod> startHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(startHandlerConstructor,
                 startHandlerHandle));
         

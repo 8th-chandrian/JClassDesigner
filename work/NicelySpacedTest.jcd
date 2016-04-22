@@ -4,8 +4,8 @@
     "pixel_height":12.0,
     "class_array":[
         {
-            "start_x":303.0,
-            "start_y":75.0,
+            "start_x":354.0,
+            "start_y":63.0,
             "width":200.0,
             "height":336.0,
             "wrapping_width":200.0,
@@ -242,8 +242,8 @@
             ]
         },
         {
-            "start_x":36.0,
-            "start_y":92.0,
+            "start_x":59.0,
+            "start_y":126.0,
             "width":200.0,
             "height":96.0,
             "wrapping_width":200.0,
@@ -285,7 +285,7 @@
                         "method_return":"void",
                         "method_static_value":false,
                         "method_abstract_value":false,
-                        "method_access":"protected",
+                        "method_access":"public",
                         "method_arguments":[
                             ""
                         ]
@@ -310,91 +310,8 @@
             ]
         },
         {
-            "start_x":34.0,
-            "start_y":266.0,
-            "width":200.0,
-            "height":96.0,
-            "wrapping_width":200.0,
-            "custom_class":{
-                "class_name":"DateTask",
-                "package_name":"example.task",
-                "interface_value":false,
-                "abstract_value":false,
-                "parents":[
-                    "Task",
-                    "Date"
-                ],
-                "variables":[
-                    {
-                        "var_name":"app",
-                        "var_type":"ThreadExample",
-                        "var_static_value":false,
-                        "var_access":"private"
-                    },
-                    {
-                        "var_name":"now",
-                        "var_type":"Date",
-                        "var_static_value":false,
-                        "var_access":"private"
-                    }
-                ],
-                "methods":[
-                    {
-                        "method_name":"DateTask",
-                        "method_return":"",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "initApp : ThreadExample"
-                        ]
-                    },
-                    {
-                        "method_name":"call",
-                        "method_return":"void",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"protected",
-                        "method_arguments":[
-                            ""
-                        ]
-                    }
-                ]
-            },
-            "connections":[
-                {
-                    "key":"Task",
-                    "point_array":[
-                        {
-                            "point_x":500.0,
-                            "point_y":550.0
-                        },
-                        {
-                            "point_x":500.0,
-                            "point_y":700.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                },
-                {
-                    "key":"Date",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":650.0
-                        },
-                        {
-                            "point_x":600.0,
-                            "point_y":800.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                }
-            ]
-        },
-        {
-            "start_x":582.0,
-            "start_y":145.0,
+            "start_x":586.0,
+            "start_y":132.0,
             "width":200.0,
             "height":84.0,
             "wrapping_width":200.0,
@@ -431,7 +348,7 @@
                         "method_return":"void",
                         "method_static_value":false,
                         "method_abstract_value":false,
-                        "method_access":"protected",
+                        "method_access":"public",
                         "method_arguments":[
                             "event : Event"
                         ]
@@ -470,8 +387,8 @@
             ]
         },
         {
-            "start_x":586.0,
-            "start_y":272.0,
+            "start_x":606.0,
+            "start_y":278.0,
             "width":200.0,
             "height":84.0,
             "wrapping_width":200.0,
@@ -508,7 +425,7 @@
                         "method_return":"void",
                         "method_static_value":false,
                         "method_abstract_value":false,
-                        "method_access":"protected",
+                        "method_access":"public",
                         "method_arguments":[
                             "event : Event"
                         ]
@@ -532,6 +449,88 @@
                 },
                 {
                     "key":"ThreadExample",
+                    "point_array":[
+                        {
+                            "point_x":600.0,
+                            "point_y":650.0
+                        },
+                        {
+                            "point_x":600.0,
+                            "point_y":800.0
+                        }
+                    ],
+                    "connector_type":"diamond"
+                }
+            ]
+        },
+        {
+            "start_x":54.0,
+            "start_y":265.0,
+            "width":200.0,
+            "height":96.0,
+            "wrapping_width":200.0,
+            "custom_class":{
+                "class_name":"DateTask",
+                "package_name":"example.task",
+                "interface_value":false,
+                "abstract_value":false,
+                "parents":[
+                    "Task"
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    },
+                    {
+                        "var_name":"now",
+                        "var_type":"Date",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"DateTask",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"call",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            ""
+                        ]
+                    }
+                ]
+            },
+            "connections":[
+                {
+                    "key":"Task",
+                    "point_array":[
+                        {
+                            "point_x":500.0,
+                            "point_y":550.0
+                        },
+                        {
+                            "point_x":500.0,
+                            "point_y":700.0
+                        }
+                    ],
+                    "connector_type":"arrow"
+                },
+                {
+                    "key":"Date",
                     "point_array":[
                         {
                             "point_x":600.0,

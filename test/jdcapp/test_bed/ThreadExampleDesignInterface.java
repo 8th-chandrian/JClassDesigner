@@ -103,16 +103,16 @@ public class ThreadExampleDesignInterface {
         
         testData.getClasses().add(threadExample);
         
-        //////////////////////////////////////////////////////////////////////////////////////////////////
-        //  Code for the creation of the CounterTask class (In this example, this class is an INTERFACE)
-        //////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////
+        //  Code for the creation of the CounterTask class
+        //////////////////////////////////////////////////////////////////////
         
         CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300);
         counterTaskExample.getData().setClassName("CounterTask");
-        counterTaskExample.getData().setPackageName("example.counter");
+        counterTaskExample.getData().setPackageName("example.task");
         
-        CustomVar app = new CustomVar("APP", "ThreadExample", true, CustomVar.PUBLIC_VAR_ACCESS);
-        CustomVar counter = new CustomVar("COUNTER", "int", true, CustomVar.PUBLIC_VAR_ACCESS);
+        CustomVar app = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
+        CustomVar counter = new CustomVar("counter", "int", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> counterTaskExampleVars = new ArrayList<CustomVar>( Arrays.asList(app, counter));
         
         counterTaskExample.getData().setVariables(counterTaskExampleVars);
@@ -126,7 +126,7 @@ public class ThreadExampleDesignInterface {
         
         counterTaskExample.getData().setMethods(counterTaskExampleMethods);
         
-        ArrayList<String> counterTaskExampleParents = new ArrayList<String>(Arrays.asList("Task", "CounterTaskInterface"));
+        ArrayList<String> counterTaskExampleParents = new ArrayList<String>( Arrays.asList("Task"));
         counterTaskExample.getData().setParents(counterTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> counterTaskExampleConnections = new HashMap<>();
@@ -145,7 +145,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper dateTaskExample = new CustomClassWrapper(290, 650);
         dateTaskExample.getData().setClassName("DateTask");
-        dateTaskExample.getData().setPackageName("example.counter");
+        dateTaskExample.getData().setPackageName("example.task");
         
         CustomVar appDate = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         CustomVar nowDate = new CustomVar("now", "Date", false, CustomVar.PRIVATE_VAR_ACCESS);
@@ -162,7 +162,7 @@ public class ThreadExampleDesignInterface {
         
         dateTaskExample.getData().setMethods(dateTaskExampleMethods);
         
-        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task", "Date"));
+        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task"));
         dateTaskExample.getData().setParents(dateTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> dateTaskExampleConnections = new HashMap<>();
@@ -185,7 +185,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper pauseHandlerExample = new CustomClassWrapper(580, 220);
         pauseHandlerExample.getData().setClassName("PauseHandler");
-        pauseHandlerExample.getData().setPackageName("example.handle");
+        pauseHandlerExample.getData().setPackageName("example.handler");
         
         CustomVar appPause = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> pauseHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appPause));
@@ -195,7 +195,7 @@ public class ThreadExampleDesignInterface {
         CustomMethod pauseHandlerConstructor = new CustomMethod("PauseHandler", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
         CustomMethod pauseHandlerHandle = new CustomMethod("handle", "void", false, false,
-            CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
         ArrayList<CustomMethod> pauseHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(pauseHandlerConstructor,
                 pauseHandlerHandle));
         
@@ -224,7 +224,7 @@ public class ThreadExampleDesignInterface {
         
         CustomClassWrapper startHandlerExample = new CustomClassWrapper(580, 220);
         startHandlerExample.getData().setClassName("StartHandler");
-        startHandlerExample.getData().setPackageName("example.handle");
+        startHandlerExample.getData().setPackageName("example.handler");
         
         CustomVar appStart = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         ArrayList<CustomVar> startHandlerExampleVars = new ArrayList<CustomVar>( Arrays.asList(appStart));
@@ -234,7 +234,7 @@ public class ThreadExampleDesignInterface {
         CustomMethod startHandlerConstructor = new CustomMethod("StartHandler", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
         CustomMethod startHandlerHandle = new CustomMethod("handle", "void", false, false,
-            CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
+            CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
         ArrayList<CustomMethod> startHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(startHandlerConstructor,
                 startHandlerHandle));
         
@@ -278,7 +278,7 @@ public class ThreadExampleDesignInterface {
 
         counterTaskExampleInterface.getData().setMethods(counterTaskExampleMethodsInterface);
 
-        ArrayList<String> counterTaskExampleParentsInterface = new ArrayList<String>(Arrays.asList("Task"));
+        ArrayList<String> counterTaskExampleParentsInterface = new ArrayList<String>(Arrays.asList(""));
         counterTaskExampleInterface.getData().setParents(counterTaskExampleParentsInterface);
 
         HashMap<String, ConnectorArrayList> counterTaskExampleConnectionsInterface = new HashMap<>();
