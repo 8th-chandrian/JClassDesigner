@@ -8,7 +8,6 @@ import java.io.IOException;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
-import static jdcapp.test_bed.TestLoad.FILE_PATH;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,7 +37,7 @@ public class DesignJUnitTest {
         
         //Save the data
         try{
-            File saveFile = new File(FILE_PATH);
+            File saveFile = new File(design.getFilePath());
             fileManager.saveData(design.getData(), saveFile.getPath());
         } catch (IOException e){
             e.printStackTrace();
@@ -46,7 +45,7 @@ public class DesignJUnitTest {
         
         //Load the data
         try{
-            fileManager.loadData(dataManager, FILE_PATH);
+            fileManager.loadData(dataManager, design.getFilePath());
         } catch (IOException e){
             e.printStackTrace();
         } 

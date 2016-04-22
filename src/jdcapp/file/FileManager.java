@@ -165,11 +165,14 @@ public class FileManager {
 	jsonWriter.close();
 
 	// INIT THE WRITER
-	OutputStream os = new FileOutputStream(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
+        //TODO: CHANGE EXTENSION TYPE BACK TO .jcd
+	//OutputStream os = new FileOutputStream(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
+        OutputStream os = new FileOutputStream(filePath + ".json");
 	JsonWriter jsonFileWriter = Json.createWriter(os);
 	jsonFileWriter.writeObject(dataManagerJSO);
 	String prettyPrinted = sw.toString();
-	PrintWriter pw = new PrintWriter(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
+	//PrintWriter pw = new PrintWriter(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
+        PrintWriter pw = new PrintWriter(filePath + ".json");
 	pw.write(prettyPrinted);
 	pw.close();
     }
@@ -412,7 +415,7 @@ public class FileManager {
 	dataManager.reset();
 	
 	// LOAD THE JSON FILE WITH ALL THE DATA
-	JsonObject json = loadJSONFile(filePath);
+	JsonObject json = loadJSONFile(filePath + ".json");
 	
 	// Load the font data
 	String fontName = json.getString(JSON_FONT_NAME);
@@ -826,6 +829,14 @@ public class FileManager {
         
         if(!extended.equals(""))
             classHeader += "extends " + extended + " ";
+        else{
+            //NOTE: THIS IS HARDCODED SO THAT EXPORTED CODE WILL COMPILE
+            if(c.getParents().size() > 0 && !c.getParents().get(0).equals("") && !c.getParents().get(0).equals("EventHandler")){
+                classHeader += "extends " + c.getParents().get(0) + " ";
+                extended = c.getParents().get(0);
+            }
+        }
+        
         for(String parent : c.getParents()){
             if(!parent.equals(extended))
                 classHeader += "implements " + parent + " ";
@@ -858,8 +869,7 @@ public class FileManager {
                     }
                 }
                 else if(wrapper.getData().getClassName().equals(parent)){
-                    ArrayList<CustomMethod> abstractMethods = getAbstractMethods(wrapper.getData().getMethods());
-                    for(CustomMethod m : abstractMethods){
+                    for(CustomMethod m : wrapper.getData().getMethods()){
                         CustomMethod cloneMethod = m.clone();
                         cloneMethod.setAbstractValue(false);
                         String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
@@ -1147,7 +1157,7 @@ public class FileManager {
                 type.equals(CustomMethod.CHAR_RETURN_TYPE) || type.equals(CustomMethod.DOUBLE_RETURN_TYPE) || 
                 type.equals(CustomMethod.FLOAT_RETURN_TYPE) || type.equals(CustomMethod.INT_RETURN_TYPE) ||
                 type.equals(CustomMethod.LONG_RETURN_TYPE) || type.equals(CustomMethod.SHORT_RETURN_TYPE) || 
-                type.equals(CustomMethod.VOID_RETURN_TYPE) || type.equals(CustomMethod.CONSTRUCTOR_RETURN_TYPE) || 
+                type.equalsIgnoreCase(CustomMethod.VOID_RETURN_TYPE) || type.equals(CustomMethod.CONSTRUCTOR_RETURN_TYPE) || 
                 type.equals("String"))
             return typesReturn;
         
@@ -1206,7 +1216,7 @@ public class FileManager {
             }
         }
         
-        //Hard-coded to allow Task to be recognized
+        //NOTE: THIS IS HARDCODED SO THAT EXPORTED CODE WILL COMPILE
         for(String type : typesToCheck){
             try{
                 Class.forName("javafx.concurrent" + "." + type);

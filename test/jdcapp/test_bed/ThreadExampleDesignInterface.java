@@ -21,6 +21,7 @@ import jdcapp.data.DataManager;
 public class ThreadExampleDesignInterface {
     
     private DataManager testData;
+    private static final String filePath = "./work/DesignSaveTestInterface";
     
     public ThreadExampleDesignInterface(){
         
@@ -119,14 +120,14 @@ public class ThreadExampleDesignInterface {
         
         CustomMethod counterTaskConstructor = new CustomMethod("CounterTask", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
-        CustomMethod counterTaskCall = new CustomMethod("call", "void", false, false,
+        CustomMethod counterTaskCall = new CustomMethod("call", "Void", false, false,
             CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> counterTaskExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(counterTaskConstructor,
                 counterTaskCall));
         
         counterTaskExample.getData().setMethods(counterTaskExampleMethods);
         
-        ArrayList<String> counterTaskExampleParents = new ArrayList<String>( Arrays.asList("Task"));
+        ArrayList<String> counterTaskExampleParents = new ArrayList<String>( Arrays.asList("Task<Void>", "CounterTaskInterface"));
         counterTaskExample.getData().setParents(counterTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> counterTaskExampleConnections = new HashMap<>();
@@ -155,14 +156,14 @@ public class ThreadExampleDesignInterface {
         
         CustomMethod dateTaskConstructor = new CustomMethod("DateTask", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
-        CustomMethod dateTaskCall = new CustomMethod("call", "void", false, false,
+        CustomMethod dateTaskCall = new CustomMethod("call", "Void", false, false,
             CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> dateTaskExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(dateTaskConstructor,
                 dateTaskCall));
         
         dateTaskExample.getData().setMethods(dateTaskExampleMethods);
         
-        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task"));
+        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task<Void>"));
         dateTaskExample.getData().setParents(dateTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> dateTaskExampleConnections = new HashMap<>();
@@ -201,7 +202,7 @@ public class ThreadExampleDesignInterface {
         
         pauseHandlerExample.getData().setMethods(pauseHandlerExampleMethods);
         
-        ArrayList<String> pauseHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler", "ThreadExample"));
+        ArrayList<String> pauseHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler"));
         pauseHandlerExample.getData().setParents(pauseHandlerExampleParents);
         
         HashMap<String, ConnectorArrayList> pauseHandlerExampleConnections = new HashMap<>();
@@ -240,7 +241,7 @@ public class ThreadExampleDesignInterface {
         
         startHandlerExample.getData().setMethods(startHandlerExampleMethods);
         
-        ArrayList<String> startHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler", "ThreadExample"));
+        ArrayList<String> startHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler"));
         startHandlerExample.getData().setParents(startHandlerExampleParents);
         
         HashMap<String, ConnectorArrayList> startHandlerExampleConnections = new HashMap<>();
@@ -294,5 +295,9 @@ public class ThreadExampleDesignInterface {
     
     public DataManager getData(){
         return testData;
+    }
+    
+    public String getFilePath(){
+        return filePath;
     }
 }

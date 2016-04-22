@@ -15,10 +15,10 @@ public class TestSave {
     
     public static void main(String[] args){
         
-        ThreadExampleDesign toSave = new ThreadExampleDesign();
+        ThreadExampleDesignAbstract toSave = new ThreadExampleDesignAbstract();
         
         try{
-            File saveFile = new File("./work/DesignSaveTest.json");
+            File saveFile = new File(toSave.getFilePath());
             FileManager testFileManager = new FileManager();
             testFileManager.saveData(toSave.getData(), saveFile.getPath());
         } catch (IOException e){

@@ -1,6 +1,6 @@
 
 {
-    "font_name":"SansSerif Regular",
+    "font_name":"System Regular",
     "pixel_height":12.0,
     "class_array":[
         {
@@ -253,7 +253,7 @@
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
-                    "Task"
+                    "Task<Void>"
                 ],
                 "variables":[
                     {
@@ -282,10 +282,10 @@
                     },
                     {
                         "method_name":"call",
-                        "method_return":"void",
+                        "method_return":"Void",
                         "method_static_value":false,
                         "method_abstract_value":false,
-                        "method_access":"public",
+                        "method_access":"protected",
                         "method_arguments":[
                             ""
                         ]
@@ -321,7 +321,7 @@
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
-                    "Task"
+                    "Task<Void>"
                 ],
                 "variables":[
                     {
@@ -350,10 +350,10 @@
                     },
                     {
                         "method_name":"call",
-                        "method_return":"void",
+                        "method_return":"Void",
                         "method_static_value":false,
                         "method_abstract_value":false,
-                        "method_access":"public",
+                        "method_access":"protected",
                         "method_arguments":[
                             ""
                         ]
@@ -403,8 +403,7 @@
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
-                    "EventHandler",
-                    "ThreadExample"
+                    "EventHandler"
                 ],
                 "variables":[
                     {
@@ -480,8 +479,7 @@
                 "interface_value":false,
                 "abstract_value":false,
                 "parents":[
-                    "EventHandler",
-                    "ThreadExample"
+                    "EventHandler"
                 ],
                 "variables":[
                     {

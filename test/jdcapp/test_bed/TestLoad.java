@@ -21,15 +21,16 @@ import jdcapp.file.FileManager;
  */
 public class TestLoad {
     
-    static final String FILE_PATH = "./work/DesignSaveTest.json";
-    
     public static void main(String[] args){
         
         DataManager dataManager = new DataManager(new JDCApp());
         FileManager fileManager = new FileManager();
         
+        //NOTE: Change this to ThreadExampleDesignAbstract or ThreadExampleDesignInterface to test other designs
+        ThreadExampleDesign toLoad = new ThreadExampleDesign();
+        
         try{
-            fileManager.loadData(dataManager, FILE_PATH);
+            fileManager.loadData(dataManager, toLoad.getFilePath());
         } catch (IOException e){
             e.printStackTrace();
         }

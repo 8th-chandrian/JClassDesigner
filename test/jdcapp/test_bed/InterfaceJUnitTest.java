@@ -8,7 +8,6 @@ import java.io.IOException;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
-import static jdcapp.test_bed.TestLoad.FILE_PATH;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,7 +21,7 @@ import static org.junit.Assert.*;
  */
 public class InterfaceJUnitTest {
     
-    private ThreadExampleDesign design;
+    private ThreadExampleDesignInterface design;
     private DataManager dataManager;
     
     public InterfaceJUnitTest() {
@@ -32,13 +31,13 @@ public class InterfaceJUnitTest {
     public void setUp(){
         System.out.println("* DesignJUnitTest: @BeforeClass method");
         
-        design = new ThreadExampleDesign();
+        design = new ThreadExampleDesignInterface();
         dataManager = new DataManager(new JDCApp());
         FileManager fileManager = new FileManager();
         
         //Save the data
         try{
-            File saveFile = new File(FILE_PATH);
+            File saveFile = new File(design.getFilePath());
             fileManager.saveData(design.getData(), saveFile.getPath());
         } catch (IOException e){
             e.printStackTrace();
@@ -46,7 +45,7 @@ public class InterfaceJUnitTest {
         
         //Load the data
         try{
-            fileManager.loadData(dataManager, FILE_PATH);
+            fileManager.loadData(dataManager, design.getFilePath());
         } catch (IOException e){
             e.printStackTrace();
         } 
