@@ -722,16 +722,19 @@ public class FileManager {
             if(!checkMethod(m, c.isInterface()))
                 return null;
             methods.add(processMethod(m, c.isInterface()));
-            //ArrayList<String> importTextArray = getMethodImports(m);
+            ArrayList<String> importTextArray = getMethodImports(m, classes);
 
             //Add imports if they are not already in the ArrayList of imports
-            /*if(importTextArray != null){
+            if(importTextArray != null){
                 for(String s : importTextArray){
                     if(!imports.contains(s))
                         imports.add(s);
                 }
-            }*/
+            }
         }
+        
+        //Use this method to add in all methods inherited from parents WITHIN THE DESIGN
+        methods.addAll(processInheritedMethods(c, classes));
 
         //Convert the variables to strings
         if(!c.isInterface()){
@@ -740,15 +743,15 @@ public class FileManager {
                     return null;
 
                 variables.add(processVariable(v));
-                //ArrayList<String> importTextArray = getVariableImports(v);
+                ArrayList<String> importTextArray = getVariableImports(v, classes);
 
                 //Add imports if they are not already in the ArrayList of imports
-                /*if(importTextArray != null){
+                if(importTextArray != null){
                     for(String s : importTextArray){
                         if(!imports.contains(s))
                             imports.add(s);
                     }
-                }*/
+                }
             }
         }
         
@@ -790,16 +793,13 @@ public class FileManager {
         classHeader += c.getClassName() + " ";
         
         String extended = "";
-        ArrayList<String> parents = c.getParents();
         
         //Check if any of the parents are abstract classes. If one is, set it to the extended string
         //It will be the only class extended from the current class. All others will be implemented.
-        //TODO: FIX THIS
         for(CustomClassWrapper wrapper : classes){
-            for(String parent : parents){
+            for(String parent : c.getParents()){
                 if(wrapper.getData().getClassName().equals(parent) && !wrapper.getData().isInterface()){
                     extended = parent;
-                    parents.remove(parent);
                     break;
                 }
             }
@@ -808,12 +808,64 @@ public class FileManager {
         
         if(!extended.equals(""))
             classHeader += "extends " + extended + " ";
-        for(String parent : parents){
-            classHeader += "implements " + parent + " ";
+        for(String parent : c.getParents()){
+            if(!parent.equals(extended))
+                classHeader += "implements " + parent + " ";
         }
         
         classHeader += "{";
         return classHeader;
+    }
+    
+    /**
+     * Helper method that iterates through a class's parents. If the parents are contained
+     * within the design, adds an @Override method for each of the parents' methods which need to
+     * be overridden.
+     * @param c
+     * @param classes
+     * @return 
+     */
+    private ArrayList<String> processInheritedMethods(CustomClass c, ArrayList<CustomClassWrapper> classes){
+        ArrayList<String> processedOverrideMethods = new ArrayList<>();
+        
+        for(CustomClassWrapper wrapper : classes){
+            for(String parent : c.getParents()){
+                if(wrapper.getData().getClassName().equals(parent) && !wrapper.getData().isInterface()){
+                    ArrayList<CustomMethod> abstractMethods = getAbstractMethods(wrapper.getData().getMethods());
+                    for(CustomMethod m : abstractMethods){
+                        CustomMethod cloneMethod = m.clone();
+                        cloneMethod.setAbstractValue(false);
+                        String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
+                        processedOverrideMethods.add(processed);
+                    }
+                }
+                else if(wrapper.getData().getClassName().equals(parent)){
+                    ArrayList<CustomMethod> abstractMethods = getAbstractMethods(wrapper.getData().getMethods());
+                    for(CustomMethod m : abstractMethods){
+                        CustomMethod cloneMethod = m.clone();
+                        cloneMethod.setAbstractValue(false);
+                        String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
+                        processedOverrideMethods.add(processed);
+                    }
+                }
+            }
+        }
+        
+        return processedOverrideMethods;
+    }
+    
+    /**
+     * Helper method to get all abstract methods in an ArrayList of CustomMethods.
+     * @param methods
+     * @return 
+     */
+    private ArrayList<CustomMethod> getAbstractMethods(ArrayList<CustomMethod> methods){
+        ArrayList<CustomMethod> abstractMethods = new ArrayList<>();
+        for(CustomMethod m : methods){
+            if(m.isAbstract())
+                abstractMethods.add(m);
+        }
+        return abstractMethods;
     }
     
     /**
@@ -1002,14 +1054,21 @@ public class FileManager {
         return javaFilePath;
     }
 
-    private ArrayList<String> getMethodImports(CustomMethod m) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private ArrayList<String> getMethodImports(CustomMethod m, ArrayList<CustomClassWrapper> classes) {
+        ArrayList<String> imports = new ArrayList<>();
+        Package[] apiPackages = Package.getPackages();
+        
+        return imports;
     }
 
-    private ArrayList<String> getVariableImports(CustomVar v) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private ArrayList<String> getVariableImports(CustomVar v, ArrayList<CustomClassWrapper> classes) {
+        ArrayList<String> imports = new ArrayList<>();
+        Package[] apiPackages = Package.getPackages();
+        
+        return imports;
     }
     
+    //Test method
     public void printPackages(){
         Package[] packages = Package.getPackages();
         for(int i = 0; i < packages.length; i++)

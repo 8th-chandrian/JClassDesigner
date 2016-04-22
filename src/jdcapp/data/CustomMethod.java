@@ -186,4 +186,9 @@ public class CustomMethod {
         return false;
     }
     
+    @Override
+    public CustomMethod clone(){
+        CustomMethod m = new CustomMethod(methodName, returnType, staticValue, abstractValue, access, arguments);
+        return m;
+    }
 }

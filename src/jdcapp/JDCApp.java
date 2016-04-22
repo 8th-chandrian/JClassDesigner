@@ -44,7 +44,12 @@ public class JDCApp extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        	// LET'S START BY INITIALIZING OUR DIALOGS
+        // LET'S START BY INITIALIZING OUR DIALOGS
+        Package[] packages = Package.getPackages();
+        for(Package p : packages){
+            System.out.println(p.getName());
+        }        
+                
 	AppMessageDialogSingleton messageDialog = AppMessageDialogSingleton.getSingleton();
 	messageDialog.init(primaryStage);
 	AppYesNoCancelDialogSingleton yesNoDialog = AppYesNoCancelDialogSingleton.getSingleton();

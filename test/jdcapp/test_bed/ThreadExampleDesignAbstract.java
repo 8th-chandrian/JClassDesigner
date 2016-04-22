@@ -35,6 +35,7 @@ public class ThreadExampleDesignAbstract {
         CustomClassWrapper threadExample = new CustomClassWrapper(200, 200);
         threadExample.getData().setClassName("ThreadExample");
         threadExample.getData().setPackageName("example");
+        threadExample.getData().setAbstractValue(true);
         
         CustomVar startText = new CustomVar("START_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
         CustomVar pauseText = new CustomVar("PAUSE_TEXT", "String", true, CustomVar.PUBLIC_VAR_ACCESS);
@@ -59,9 +60,9 @@ public class ThreadExampleDesignAbstract {
         
         CustomMethod start = new CustomMethod("start", "void", false, false, 
                 CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("primaryStage : Stage")));
-        CustomMethod startWork = new CustomMethod("startWork", "void", false, false, 
+        CustomMethod startWork = new CustomMethod("startWork", "void", false, true, 
                 CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
-        CustomMethod doWork = new CustomMethod("doWork", "boolean", false, false, 
+        CustomMethod doWork = new CustomMethod("doWork", "boolean", false, true, 
                 CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         CustomMethod appendText = new CustomMethod("appendText", "void", false, false, 
                 CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("textToAppend : String")));
@@ -110,7 +111,6 @@ public class ThreadExampleDesignAbstract {
         CustomClassWrapper counterTaskExample = new CustomClassWrapper(150, 300);
         counterTaskExample.getData().setClassName("CounterTask");
         counterTaskExample.getData().setPackageName("example.counter");
-        counterTaskExample.getData().setAbstractValue(true);
         
         CustomVar app = new CustomVar("app", "ThreadExample", false, CustomVar.PRIVATE_VAR_ACCESS);
         CustomVar counter = new CustomVar("counter", "int", false, CustomVar.PRIVATE_VAR_ACCESS);
@@ -120,7 +120,7 @@ public class ThreadExampleDesignAbstract {
         
         CustomMethod counterTaskConstructor = new CustomMethod("CounterTask", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
-        CustomMethod counterTaskCall = new CustomMethod("call", "void", false, true,
+        CustomMethod counterTaskCall = new CustomMethod("call", "void", false, false,
             CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> counterTaskExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(counterTaskConstructor,
                 counterTaskCall));

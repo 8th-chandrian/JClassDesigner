@@ -117,16 +117,16 @@ public class ThreadExampleDesignInterface {
         
         counterTaskExample.getData().setVariables(counterTaskExampleVars);
         
-        CustomMethod counterTaskConstructor = new CustomMethod("CounterTask", "", false, true,
+        CustomMethod counterTaskConstructor = new CustomMethod("CounterTask", "", false, false,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("initApp : ThreadExample")));
-        CustomMethod counterTaskCall = new CustomMethod("call", "void", false, true,
+        CustomMethod counterTaskCall = new CustomMethod("call", "void", false, false,
             CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> counterTaskExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(counterTaskConstructor,
                 counterTaskCall));
         
         counterTaskExample.getData().setMethods(counterTaskExampleMethods);
         
-        ArrayList<String> counterTaskExampleParents = new ArrayList<String>(Arrays.asList("Task"));
+        ArrayList<String> counterTaskExampleParents = new ArrayList<String>(Arrays.asList("Task", "CounterTaskInterface"));
         counterTaskExample.getData().setParents(counterTaskExampleParents);
         
         HashMap<String, ConnectorArrayList> counterTaskExampleConnections = new HashMap<>();
@@ -272,7 +272,7 @@ public class ThreadExampleDesignInterface {
 
         counterTaskExampleInterface.getData().setVariables(counterTaskExampleVarsInterface);
 
-        CustomMethod counterTaskCallInterface = new CustomMethod("call", "void", false, true,
+        CustomMethod counterTaskCallInterface = new CustomMethod("callInterface", "void", false, true,
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> counterTaskExampleMethodsInterface = new ArrayList<CustomMethod>( Arrays.asList(counterTaskCallInterface));
 
