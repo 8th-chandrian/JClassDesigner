@@ -30,7 +30,7 @@ public class TestLoad {
         ThreadExampleDesign toLoad = new ThreadExampleDesign();
         
         try{
-            fileManager.loadData(dataManager, toLoad.getFilePath());
+            fileManager.loadData(dataManager, toLoad.getFilePath() + ".json");
         } catch (IOException e){
             e.printStackTrace();
         }

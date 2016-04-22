@@ -167,12 +167,12 @@ public class FileManager {
 	// INIT THE WRITER
         //TODO: CHANGE EXTENSION TYPE BACK TO .jcd
 	//OutputStream os = new FileOutputStream(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
-        OutputStream os = new FileOutputStream(filePath + ".json");
+        OutputStream os = new FileOutputStream(filePath + "json");
 	JsonWriter jsonFileWriter = Json.createWriter(os);
 	jsonFileWriter.writeObject(dataManagerJSO);
 	String prettyPrinted = sw.toString();
 	//PrintWriter pw = new PrintWriter(filePath + PropertiesManager.getPropertiesManager().getProperty(WORK_FILE_EXT));
-        PrintWriter pw = new PrintWriter(filePath + ".json");
+        PrintWriter pw = new PrintWriter(filePath + "json");
 	pw.write(prettyPrinted);
 	pw.close();
     }
@@ -415,7 +415,7 @@ public class FileManager {
 	dataManager.reset();
 	
 	// LOAD THE JSON FILE WITH ALL THE DATA
-	JsonObject json = loadJSONFile(filePath + ".json");
+	JsonObject json = loadJSONFile(filePath);
 	
 	// Load the font data
 	String fontName = json.getString(JSON_FONT_NAME);
