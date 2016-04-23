@@ -109,6 +109,16 @@
 	<property name="LOAD_WORK_TITLE"		value="Select work file to load"></property>
 	<property name="WORK_FILE_EXT"			value="jcd"></property>
 	<property name="WORK_FILE_EXT_DESC"		value="jClass Designer Files"></property>
+        
+        <property name="EXPORT_CODE_TITLE"                  value="Export Your Design To Code"></property>
+        <property name="EXPORT_SUCCESS_TITLE"               value="Successful Export"></property>
+        <property name="EXPORT_ERROR_TITLE"                 value="Export Error"></property>
+        <property name="EXPORT_ERROR_MESSAGE_DIRECTORIES"   value="Error: Design Packages Were Not Created Successfully"></property>
+        <property name="EXPORT_ERROR_MESSAGE_FILES"         value="Error: Invalid Method/Variable, Export Failed"></property>
+        <property name="EXPORT_ERROR_UNKNOWN"               value="Error: An Unknown Error Occurred"></property>
+        <property name="EXPORT_SUCCESS_MESSAGE"             value="Code Successfully Exported To Directory!"></property>
+        
+        
     </property_list>
     <property_options_list>
     </property_options_list>

@@ -5,12 +5,20 @@ package jdcapp.controller;
 
 import java.io.File;
 import java.io.IOException;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
+import static jdcapp.settings.AppPropertyType.EXPORT_CODE_TITLE;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_DIRECTORIES;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_FILES;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_UNKNOWN;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_TITLE;
+import static jdcapp.settings.AppPropertyType.EXPORT_SUCCESS_MESSAGE;
+import static jdcapp.settings.AppPropertyType.EXPORT_SUCCESS_TITLE;
 import static jdcapp.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
 import static jdcapp.settings.AppPropertyType.LOAD_ERROR_TITLE;
 import static jdcapp.settings.AppPropertyType.LOAD_WORK_TITLE;
@@ -167,12 +175,30 @@ public class FileController {
     }
 
     public void handleCodeExportRequest() {
-        FileManager fileManager = app.getFileManager();
-        DataManager dataManager = app.getDataManager();
-        String filePath = "/Users/mac/Desktop/TestJDCApp/src/";     //This string is for testing purposes only
         
-        int i = fileManager.exportCode(dataManager, filePath);
-        System.out.println(i);
+        // WE'LL NEED THIS TO GET CUSTOM STUFF
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        DataManager dataManager = app.getDataManager();
+        FileManager fileManager = app.getFileManager();
+        
+        // PROMPT THE USER FOR A FILE NAME
+        DirectoryChooser dc = new DirectoryChooser();
+        dc.setInitialDirectory(new File(PATH_WORK));
+        dc.setTitle(props.getProperty(EXPORT_CODE_TITLE));
+
+        File selectedDirectory = dc.showDialog(app.getWorkspaceManager().getWindow());
+        if (selectedDirectory != null) {
+            int result = fileManager.exportCode(dataManager, selectedDirectory.getPath());
+            AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+            if(result == FileManager.CODE_EXPORTED_SUCCESSFULLY)
+                dialog.show(props.getProperty(EXPORT_SUCCESS_TITLE), props.getProperty(EXPORT_SUCCESS_MESSAGE));
+            else if(result == FileManager.ERROR_CREATING_DIRECTORIES)
+                dialog.show(props.getProperty(EXPORT_ERROR_TITLE), props.getProperty(EXPORT_ERROR_MESSAGE_DIRECTORIES));
+            else if(result == FileManager.ERROR_CREATING_JAVA_FILES)
+                dialog.show(props.getProperty(EXPORT_ERROR_TITLE), props.getProperty(EXPORT_ERROR_MESSAGE_FILES));
+            else
+                dialog.show(props.getProperty(EXPORT_ERROR_TITLE), props.getProperty(EXPORT_ERROR_MESSAGE_UNKNOWN));
+        }
     }
     
     public void handleExitRequest() {
