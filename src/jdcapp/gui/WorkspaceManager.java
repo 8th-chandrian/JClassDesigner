@@ -3,7 +3,10 @@
  */
 package jdcapp.gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +22,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -538,11 +542,36 @@ public class WorkspaceManager {
         //Set up the handlers for the component toolbar using ComponentController
         componentController = new ComponentController(app);
         
-        classNameText.textProperty().addListener(e -> {
-            componentController.handleClassNameTextEdited(classNameText.getText());
+        //Handlers for classNameText. A change is logged if enter is pressed or focus
+        //is lost.
+        classNameText.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER)){
+                componentController.handleClassNameTextEdited(classNameText.getText());
+                canvas.requestFocus();
+            }
         });
-        packageNameText.textProperty().addListener(e -> {
-            componentController.handlePackageNameTextEdited(packageNameText.getText());
+        classNameText.focusedProperty().addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> change, Boolean oldFocus, Boolean newFocus){
+                if(!newFocus)
+                    componentController.handleClassNameTextEdited(classNameText.getText());
+            }
+        });
+        
+        //Handlers for packageNameText. A change is logged if enter is pressed or focus
+        //is lost.
+        packageNameText.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER)){
+                componentController.handlePackageNameTextEdited(packageNameText.getText());
+                canvas.requestFocus();
+            }
+        });
+        packageNameText.focusedProperty().addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> change, Boolean oldFocus, Boolean newFocus){
+                if(!newFocus)
+                    componentController.handlePackageNameTextEdited(packageNameText.getText());
+            }
         });
         
         //TODO: Finish adding handlers for other events

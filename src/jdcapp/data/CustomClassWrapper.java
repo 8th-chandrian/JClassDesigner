@@ -5,15 +5,15 @@ package jdcapp.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import static jdcapp.data.CustomVar.PRIVATE_VAR_ACCESS;
+import static jdcapp.data.CustomVar.PUBLIC_VAR_ACCESS;
 
 /**
  * Contains a reference to a CustomClass object as data, and holds all requisite
@@ -21,12 +21,18 @@ import javafx.scene.text.Text;
  * @author Noah
  */
 public class CustomClassWrapper extends CustomBox{
-
-    static final double DEFAULT_WRAPPING_WIDTH = 200;
+    
+    //public static final double DEFAULT_WRAPPING_WIDTH = 200;
+    
+    public static final String INTERFACE_TEXT_HEADER = "<<interface>>";
+    public static final String ABSTRACT_TEXT_HEADER = "<<abstract>>";
     
     //The height of the pixels, to be used when setting the text size and calculating the size of the 
     //encompassing rectangles
     static double pixelHeight = 12;
+    
+    //The maximum width of any letter of text
+    static double maxPixelWidth = 8;
     
     //The text font, to be used with toDisplay (lets us alter the font size when zooming)
     static Font textFont = Font.font("sans-serif", FontWeight.NORMAL, pixelHeight);
@@ -41,8 +47,8 @@ public class CustomClassWrapper extends CustomBox{
     private double width;
     private double height;
     
-    //The wrapping width, to be used with the toDisplay method (can be changed when class is resized)
-    private double wrappingWidth;
+    //The maximum number of characters in any line in the display
+    private double maxCharacters;
     
     //The HashMap containing lists of points on the lines connecting this class and its associated classes
     //Note: The String used for hashing contains the connected class's name
@@ -51,7 +57,6 @@ public class CustomClassWrapper extends CustomBox{
     public CustomClassWrapper(double initX, double initY){
         super(initX, initY);
         data = new CustomClass();
-        wrappingWidth = DEFAULT_WRAPPING_WIDTH;
         connections = new HashMap<>();
         display = new Group();
         toDisplay();
@@ -64,6 +69,7 @@ public class CustomClassWrapper extends CustomBox{
      * TODO: Clean up this method and make it more adaptable (it will need serious editing to 
      * support resizing and abstract classes/interfaces)
      */
+    /*
     @Override
     public void toDisplay(){
         //Call clear first, to remove any old display objects from the Group
@@ -160,6 +166,126 @@ public class CustomClassWrapper extends CustomBox{
         display.getChildren().add(nameText);
         display.getChildren().add(varsText);
         display.getChildren().add(methodsText);
+    } */
+    
+    @Override
+    public void toDisplay(){
+        //Call clear first, to remove any old display objects from the Group
+        display.getChildren().clear();
+        
+        Rectangle outline = new Rectangle();
+        Text nameText = new Text();
+        Text varsText = new Text();
+        Text methodsText = new Text();
+        
+        //Set the id of the Text objects so that the text is formatted by the CSS
+        nameText.setFont(textFont);
+        varsText.setFont(textFont);
+        methodsText.setFont(textFont);
+        
+        //Create the name text display
+        double numLinesName = 1.5;
+        if(data.isInterface()){
+            nameText.setText(" " + INTERFACE_TEXT_HEADER + "\n " + data.getClassName());
+            maxCharacters = Math.max(INTERFACE_TEXT_HEADER.length(), data.getClassName().length());
+            numLinesName = 2.5;
+        }
+        else if(data.isAbstract()){
+            nameText.setText(" " + ABSTRACT_TEXT_HEADER + "\n " + data.getClassName());
+            maxCharacters = Math.max(ABSTRACT_TEXT_HEADER.length(), data.getClassName().length());
+            numLinesName = 2.5;
+        }
+        else{
+            nameText.setText(data.getClassName());
+            maxCharacters = data.getClassName().length();
+        }
+        nameText.setX(startX);
+        nameText.setY(startY + pixelHeight);
+        
+        //Create the vars text display
+        String totalVarsString = "";
+        double numLinesVars = 1;
+        for(CustomVar v : data.getVariables()){
+            String varsString = "";
+            //Add bullets for different access types
+            if(v.getAccess().equals(PRIVATE_VAR_ACCESS)){
+                varsString += " -";
+            }
+            else if(v.getAccess().equals(PUBLIC_VAR_ACCESS)){
+                varsString += " +";
+            }
+            else{
+                varsString += " #";
+            }
+            
+            //Add static indicator if variable is static
+            if(v.isStatic())
+                varsString += "$ ";
+            
+            varsString += v.getVarName() + " : " + v.getVarType() + "\n";
+            totalVarsString += varsString;
+            maxCharacters = Math.max(maxCharacters, varsString.length());
+            numLinesVars++;
+        }
+        varsText.setText(totalVarsString);
+        varsText.setX(startX);
+        varsText.setY(startY + ((numLinesName + 1) * pixelHeight));
+        
+        //Create the methods text display
+        String totalMethodsString = "";
+        double numLinesMethods = 1;
+        for(CustomMethod m : data.getMethods()){
+            String methodString = "";
+            //Add bullets for different access types
+            if(m.getAccess().equals(PRIVATE_VAR_ACCESS)){
+                methodString += " -";
+            }
+            else if(m.getAccess().equals(PUBLIC_VAR_ACCESS)){
+                methodString += " +";
+            }
+            else{
+                methodString += " #";
+            }
+            
+            //Add static indicator if variable is static
+            if(m.isStatic())
+                methodString += "$ ";
+            
+            methodString += m.getMethodName() + "(";
+            for(String arg : m.getArguments()){
+                methodString += arg + ", ";
+            }
+            methodString = methodString.substring(0, methodString.length() - 2);
+            methodString += ")";
+            if(!m.isConstructor())
+                methodString += " : " + m.getReturnType();
+            methodString += "\n";
+            
+            totalMethodsString += methodString;
+            maxCharacters = Math.max(maxCharacters, methodString.length());
+            numLinesMethods++;
+        }
+        methodsText.setText(totalMethodsString);
+        methodsText.setX(startX);
+        methodsText.setY(startY + ((numLinesName + numLinesVars + 1) * pixelHeight));
+        
+        //Create the overlaying rectangle
+        outline.setX(startX);
+        outline.setY(startY);
+        outline.setWidth(maxCharacters * maxPixelWidth);
+        outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
+        outline.setStroke(Color.BLACK);
+        outline.setStrokeWidth(1);
+        outline.setFill(Color.WHITE);
+        
+        //Set the width and height of the CustomClass to the width and height of the overlaying rectangle
+        width = maxCharacters * maxPixelWidth;
+        height = (numLinesName + numLinesVars + numLinesMethods) * pixelHeight;
+        
+        display.getChildren().add(outline);
+        display.getChildren().add(nameText);
+        display.getChildren().add(varsText);
+        display.getChildren().add(methodsText);
     }
     
     @Override
@@ -173,15 +299,15 @@ public class CustomClassWrapper extends CustomBox{
     }
     
     public Text getNameText(){
-        return (Text)display.getChildren().get(4);
+        return (Text)display.getChildren().get(1);
     }
     
     public Text getVarsText(){
-        return (Text)display.getChildren().get(5);
+        return (Text)display.getChildren().get(2);
     }
     
     public Text getMethodsText(){
-        return (Text)display.getChildren().get(6);
+        return (Text)display.getChildren().get(3);
     }
     
     public CustomClass getData(){
@@ -212,9 +338,9 @@ public class CustomClassWrapper extends CustomBox{
 
     public void setConnections(HashMap<String, ConnectorArrayList> connections) { this.connections = connections; }
 
-    public double getWrappingWidth() { return wrappingWidth; }
+    //public double getWrappingWidth() { return wrappingWidth; }
     
-    public void setWrappingWidth(double w) { wrappingWidth = w; }
+    //public void setWrappingWidth(double w) { wrappingWidth = w; }
     
     //Static getters and setters
     public static double getPixelHeight(){

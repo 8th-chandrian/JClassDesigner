@@ -31,9 +31,9 @@ public class ComponentController {
         //Set class name to text, display class name
         if(dataManager.getSelectedClass() != null){
             dataManager.getSelectedClass().getData().setClassName(text);
-            dataManager.getSelectedClass().getNameText().setText(text);
+            workspaceManager.reloadSelectedClass();
 
-            //TODO: This is a very clumsy solution with O(n^2) complexity, fix this when you have time
+            //Checks to ensure that no other classes have that same name/package combination
             dataManager.checkCombinations();
         }
     }
@@ -46,6 +46,7 @@ public class ComponentController {
         if(dataManager.getSelectedClass() != null){
             dataManager.getSelectedClass().getData().setPackageName(text);
             
+            //Checks to ensure that no other classes have that same name/package combination
             dataManager.checkCombinations();
         }
     }
