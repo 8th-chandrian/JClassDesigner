@@ -8,6 +8,7 @@ import java.util.HashMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -19,7 +20,7 @@ import javafx.scene.text.Text;
  * values needed to generate the display for that CustomClass object in the workspace.
  * @author Noah
  */
-public class CustomClassWrapper extends Group{
+public class CustomClassWrapper extends CustomBox{
 
     static final double DEFAULT_WRAPPING_WIDTH = 200;
     
@@ -32,10 +33,9 @@ public class CustomClassWrapper extends Group{
     
     //The data contained within this wrapper class
     private CustomClass data;
-
-    //The starting locations from which the CustomClass will be drawn
-    private double startX;
-    private double startY;
+    
+    //The group holding the text objects and rectangles for displaying the class
+    private Group display;
     
     //The width and height of the CustomClass
     private double width;
@@ -49,12 +49,11 @@ public class CustomClassWrapper extends Group{
     private HashMap<String, ConnectorArrayList> connections;
     
     public CustomClassWrapper(double initX, double initY){
-        super();
+        super(initX, initY);
         data = new CustomClass();
-        startX = initX;
-        startY = initY;
         wrappingWidth = DEFAULT_WRAPPING_WIDTH;
         connections = new HashMap<>();
+        display = new Group();
         toDisplay();
     }
     
@@ -65,9 +64,10 @@ public class CustomClassWrapper extends Group{
      * TODO: Clean up this method and make it more adaptable (it will need serious editing to 
      * support resizing and abstract classes/interfaces)
      */
+    @Override
     public void toDisplay(){
         //Call clear first, to remove any old display objects from the Group
-        super.getChildren().clear();
+        display.getChildren().clear();
         
         Rectangle outline = new Rectangle();
         Text nameText = new Text();
@@ -153,29 +153,35 @@ public class CustomClassWrapper extends Group{
         setWidth(wrappingWidth);
         setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
         
-        super.getChildren().add(outline);
-        super.getChildren().add(nameOutline);
-        super.getChildren().add(varsOutline);
-        super.getChildren().add(methodsOutline);
-        super.getChildren().add(nameText);
-        super.getChildren().add(varsText);
-        super.getChildren().add(methodsText);
+        display.getChildren().add(outline);
+        display.getChildren().add(nameOutline);
+        display.getChildren().add(varsOutline);
+        display.getChildren().add(methodsOutline);
+        display.getChildren().add(nameText);
+        display.getChildren().add(varsText);
+        display.getChildren().add(methodsText);
     }
     
+    @Override
+    public void highlight(Effect e) {
+        display.getChildren().get(0).setEffect(e);
+    }
+    
+    @Override
     public Rectangle getOutlineRectangle(){
-        return (Rectangle)super.getChildren().get(0);
+        return (Rectangle)display.getChildren().get(0);
     }
     
     public Text getNameText(){
-        return (Text)super.getChildren().get(4);
+        return (Text)display.getChildren().get(4);
     }
     
     public Text getVarsText(){
-        return (Text)super.getChildren().get(5);
+        return (Text)display.getChildren().get(5);
     }
     
     public Text getMethodsText(){
-        return (Text)super.getChildren().get(6);
+        return (Text)display.getChildren().get(6);
     }
     
     public CustomClass getData(){
@@ -225,6 +231,10 @@ public class CustomClassWrapper extends Group{
     
     public static void setFont(Font f){
         textFont = f;
+    }
+    
+    public Group getDisplay(){
+        return display;
     }
     
     //TODO: Finish coding this class

@@ -72,9 +72,11 @@
         <property name="REMOVE_METHOD_TOOLTIP"          value="Remove Method"></property>
         
         <!-- LABELS/DEFAULT TEXT FOR COMPONENT TOOLBAR -->
-        <property name="CLASS_NAME_LABEL"               value="Class Name:"></property>
-        <property name="PACKAGE_NAME_LABEL"             value="Package:"></property>
-        <property name="PARENT_NAME_LABEL"              value="Parent:"></property>
+        <property name="CLASS_NAME_LABEL"                   value="Class Name:"></property>
+        <property name="PACKAGE_NAME_LABEL"                 value="Package:"></property>
+        <property name="ADD_NEW_PARENT_LABEL"               value="Add New Parent:"></property>
+        <property name="IMPLEMENTED_CLASS_NAME_LABEL"       value="Implemented Classes:"></property>
+        <property name="EXTENDED_CLASS_NAME_LABEL"          value="Extended Class:"></property>
         <!-- TODO: finish putting in default text values here -->
         
         <!-- ERROR MESSAGES -->

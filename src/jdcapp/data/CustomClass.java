@@ -4,15 +4,6 @@
 package jdcapp.data;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -22,6 +13,7 @@ public class CustomClass{
     
     public static final String DEFAULT_CLASS_NAME = "DefaultClass";
     public static final String DEFAULT_PACKAGE_NAME = "default_package";
+    public static final String DEFAULT_EXTENDED_CLASS = "";
     
     //The class's name and the name of its package
     private String className;
@@ -32,8 +24,9 @@ public class CustomClass{
     
     private boolean abstractValue;
     
-    //The ArrayList of the class's parents (Strings are the parent names)
-    private ArrayList<String> parents;
+    //The ArrayList of the class's implemented parents (Strings are the parent names)
+    private ArrayList<String> implementedClasses;
+    private String extendedClass;
     
     //The lists of all the variables and methods contained within the class
     private ArrayList<CustomVar> variables;
@@ -47,7 +40,8 @@ public class CustomClass{
         abstractValue = false;
         className = DEFAULT_CLASS_NAME;
         packageName = DEFAULT_PACKAGE_NAME;
-        parents = new ArrayList<>();
+        implementedClasses = new ArrayList<>();
+        extendedClass = DEFAULT_EXTENDED_CLASS;
         variables = new ArrayList<>();
         methods = new ArrayList<>();
     }
@@ -68,12 +62,20 @@ public class CustomClass{
         this.packageName = packageName;
     }
 
-    public ArrayList<String> getParents() {
-        return parents;
+    public ArrayList<String> getImplementedClasses() {
+        return implementedClasses;
     }
     
-    public void setParents(ArrayList<String> parents){
-        this.parents = parents;
+    public void setParents(ArrayList<String> implementedClasses){
+        this.implementedClasses = implementedClasses;
+    }
+    
+    public String getExtendedClass(){
+        return extendedClass;
+    }
+    
+    public void setExtendedClass(String extendedClass){
+        this.extendedClass = extendedClass;
     }
 
     public ArrayList<CustomVar> getVariables() {

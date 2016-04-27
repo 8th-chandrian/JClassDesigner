@@ -4,13 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/controller/ComponentController.java</file>
+            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/data/jdc_app_properties.xml</file>
             <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/file/FileManager.java</file>
             <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/controller/FileController.java</file>
-            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/data/DataManager.java</file>
-            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/test/jdcapp/test_bed/TestMakeDirectories.java</file>
-            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/test/jdcapp/test_bed/TestSave.java</file>
+            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/settings/AppPropertyType.java</file>
+            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/test/jdcapp/test_bed/TestExportCode.java</file>
             <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/data/CustomClass.java</file>
-            <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/test/jdcapp/test_bed/ThreadExampleDesign.java</file>
             <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/data/CustomClassWrapper.java</file>
             <file>file:/Users/mac/Documents/Year%202/Semester%202/CSE%20219/Final%20Project/JDCApp/src/jdcapp/data/CustomMethod.java</file>
         </group>

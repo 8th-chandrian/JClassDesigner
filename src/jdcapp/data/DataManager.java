@@ -4,7 +4,6 @@
 package jdcapp.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import javafx.scene.paint.Color;
 import jdcapp.JDCApp;
 import static jdcapp.data.JDCAppState.SELECTING;
@@ -22,17 +21,22 @@ public class DataManager {
     //The ArrayList containing all class objects created
     ArrayList<CustomClassWrapper> classes;
     
+    //TODO: PUT ARRAYLIST OF CUSTOM IMPORTED CLASSES HERE
+    
     //The class currently selected
     CustomClassWrapper selectedClass;
     
     //The state of the application
     JDCAppState state;
     
+    //Whether or not the code could currently be exported
+    boolean isExportable;
+    
     public DataManager(JDCApp init){
         app = init;
         selectedClass = null;
         classes = new ArrayList<>();
-        
+        isExportable = false;
         //TODO: Finish coding constructor (is this all we need here?)
     }
     
@@ -120,14 +124,28 @@ public class DataManager {
         return selectedClass;
     }
     
-    //TODO: INEFFICIENT METHOD, FIND A BETTER WAY TO DO THIS (AT SOME POINT)
+    /**
+     * Checks whether or not all combinations of names and packages in the design
+     * are unique. If they are, sets isExportable to true, otherwise sets it to
+     * false. Updates the codeExportButton in the file toolbar to be enabled or 
+     * disabled accordingly.
+     */
     public void checkCombinations(){
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        int tally = 0;
         for(CustomClassWrapper c : classes){
-            if(isCombinationUnique(c.getData().getClassName(), c.getData().getPackageName()))
+            if(isCombinationUnique(c.getData().getClassName(), c.getData().getPackageName())){
                 c.getNameText().setFill(Color.BLACK);
+                tally++;
+            }
             else
                 c.getNameText().setFill(Color.RED);
         }
+        if(tally == classes.size())
+            isExportable = true;
+        else
+            isExportable = false;
+        workspaceManager.updateCodeExportButton(isExportable);
     }
     
     /**
@@ -140,15 +158,17 @@ public class DataManager {
     public boolean isCombinationUnique(String className, String packageName){
         int numOccurances = 0;
         if(className.equals(CustomClass.DEFAULT_CLASS_NAME) || packageName.equals(CustomClass.DEFAULT_PACKAGE_NAME))
-                return true;
+                return false;
         for(CustomClassWrapper c : classes){
             if(c.getData().getClassName().equals(className) && c.getData().getPackageName().equals(packageName))
                 numOccurances++;
-            
         }
         if(numOccurances > 1)
             return false;
         else
             return true;
     }
+    
+    //TODO: Make more classes here to check whether or not variables/methods are not default
+    //Use isExportable and updateCodeExportButton() to set text to red/black and enable/disable button.
 }

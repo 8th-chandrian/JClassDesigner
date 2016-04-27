@@ -79,7 +79,9 @@ public enum AppPropertyType {
         // LABELS/DEFAULT TEXT FOR COMPONENT TOOLBAR
         CLASS_NAME_LABEL,
         PACKAGE_NAME_LABEL,
-        PARENT_NAME_LABEL,
+        ADD_NEW_PARENT_LABEL,
+        IMPLEMENTED_CLASS_NAME_LABEL,
+        EXTENDED_CLASS_NAME_LABEL,
         //TODO: Finish putting in default text values here
         
 	

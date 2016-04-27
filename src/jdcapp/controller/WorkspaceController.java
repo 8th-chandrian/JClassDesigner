@@ -19,18 +19,9 @@ public class WorkspaceController {
     JDCApp app;
     
     //Set when a mouse is pressed, referenced when it is dragged, and reset to -1 when it is released
-    //TODO: FIGURE OUT A BETTER WAY TO DO THIS
-    private double startXLocation;
-    private double startYLocation;
-    private double origXLocation;
-    private double origYLocation;
     
     public WorkspaceController(JDCApp initApp) {
         app = initApp;
-        startXLocation = -1;
-        startYLocation = -1;
-        origXLocation = -1;
-        origYLocation = -1;
     }
 
     public void handleMouseEntered() {
@@ -48,11 +39,8 @@ public class WorkspaceController {
         if(dataManager.getState() == JDCAppState.SELECTING){
             CustomClassWrapper c = dataManager.selectTopClass(x, y);
             if(c != null){
+                dataManager.getSelectedClass().initDrag(x, y);
                 dataManager.setState(JDCAppState.DRAGGING_CLASS);
-                startXLocation = x;
-                startYLocation = y;
-                origXLocation = dataManager.getSelectedClass().getStartX();
-                origYLocation = dataManager.getSelectedClass().getStartY();
             }
             else{
                 dataManager.setState(JDCAppState.DRAGGING_NOTHING);
@@ -66,8 +54,7 @@ public class WorkspaceController {
         
         //Set the starting x and y values of the selected class, then reload it into canvas
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
-            dataManager.getSelectedClass().setStartX(origXLocation + (x - startXLocation));
-            dataManager.getSelectedClass().setStartY(origYLocation + (y - startYLocation));
+            dataManager.getSelectedClass().drag(x, y);
             workspaceManager.reloadSelectedClass();
         }
         else if(dataManager.getState() == JDCAppState.RESIZING_CLASS){
@@ -78,13 +65,11 @@ public class WorkspaceController {
     public void handleMouseReleased(double x, double y) {
         DataManager dataManager = app.getDataManager();
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
-            startXLocation = -1;
-            startYLocation = -1;
-            origXLocation = -1;
-            origYLocation = -1;
+            dataManager.getSelectedClass().endDrag();
             dataManager.setState(JDCAppState.SELECTING);
         }
         else if(dataManager.getState() == JDCAppState.DRAGGING_NOTHING){
+            dataManager.getSelectedClass().endDrag();
             dataManager.setState(JDCAppState.SELECTING);
         }
     }

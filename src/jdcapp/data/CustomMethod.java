@@ -126,8 +126,9 @@ public class CustomMethod {
     /**
      * @param abstractValue the abstractValue to set
      */
-    public void setAbstractValue(boolean abstractValue) {
+    public boolean setAbstractValue(boolean abstractValue) {
         this.abstractValue = abstractValue;
+        return this.abstractValue;
     }
 
     /**

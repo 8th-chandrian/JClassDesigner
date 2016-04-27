@@ -11,6 +11,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
@@ -43,6 +44,7 @@ import static jdcapp.settings.AppPropertyType.ADD_ELEMENT_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.ADD_METHOD_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.ADD_NEW_PARENT_LABEL;
 import static jdcapp.settings.AppPropertyType.ADD_VARIABLE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.APP_LOGO;
 import static jdcapp.settings.AppPropertyType.CLASS_NAME_LABEL;
@@ -57,7 +59,6 @@ import static jdcapp.settings.AppPropertyType.METHOD_LABEL;
 import static jdcapp.settings.AppPropertyType.NEW_ICON;
 import static jdcapp.settings.AppPropertyType.NEW_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.PACKAGE_NAME_LABEL;
-import static jdcapp.settings.AppPropertyType.PARENT_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_ICON;
 import static jdcapp.settings.AppPropertyType.PHOTO_EXPORT_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.REDO_ICON;
@@ -85,6 +86,8 @@ import static jdcapp.settings.AppPropertyType.ZOOM_OUT_ICON;
 import static jdcapp.settings.AppPropertyType.ZOOM_OUT_TOOLTIP;
 import static jdcapp.settings.AppStartupConstants.FILE_PROTOCOL;
 import static jdcapp.settings.AppStartupConstants.PATH_IMAGES;
+import static jdcapp.settings.AppPropertyType.IMPLEMENTED_CLASS_NAME_LABEL;
+import static jdcapp.settings.AppPropertyType.EXTENDED_CLASS_NAME_LABEL;
 import org.controlsfx.control.CheckComboBox;
 import properties_manager.PropertiesManager;
 
@@ -180,9 +183,15 @@ public class WorkspaceManager {
     Label packageNameLabel;
     TextField packageNameText;
     
-    //The label and control for parent
-    Label parentNameLabel;
-    CheckComboBox parentComboBox; //TODO: Figure out if this is how you want to implement parent selection
+    //The label and control for adding new parents
+    Label addNewParentLabel;
+    TextField newParentText;
+    
+    //The labels and controls for parents
+    Label implementedClassNameLabel;
+    CheckComboBox implementedClassComboBox;
+    Label extendedClassNameLabel;
+    ComboBox extendedClassComboBox;
     
     //The controls, labels, and pane for variables
     FlowPane variablePane;
@@ -301,7 +310,9 @@ public class WorkspaceManager {
         //Initialize the class, package, and parent labels
         classNameLabel = new Label(props.getProperty(CLASS_NAME_LABEL.toString()));
         packageNameLabel = new Label(props.getProperty(PACKAGE_NAME_LABEL.toString()));
-        parentNameLabel = new Label(props.getProperty(PARENT_NAME_LABEL.toString()));
+        addNewParentLabel = new Label(props.getProperty(ADD_NEW_PARENT_LABEL.toString()));
+        implementedClassNameLabel = new Label(props.getProperty(IMPLEMENTED_CLASS_NAME_LABEL.toString()));
+        extendedClassNameLabel = new Label(props.getProperty(EXTENDED_CLASS_NAME_LABEL.toString()));
         
         //Initialize the class and package text fields
         //NOTE: the text fields will be disabled until a new class/interface is made or an old one is selected
@@ -309,8 +320,11 @@ public class WorkspaceManager {
         classNameText.setDisable(true);
         packageNameText = new TextField();
         packageNameText.setDisable(true);
+        newParentText = new TextField();
+        newParentText.setDisable(true);
         
-        parentComboBox = new CheckComboBox();
+        implementedClassComboBox = new CheckComboBox();
+        extendedClassComboBox = new ComboBox();
         //TODO: Set parentComboBox to display a list of potential parent classes
         
         //Populate infoGrid with our class, package, and parent labels and controls
@@ -318,8 +332,12 @@ public class WorkspaceManager {
         infoGrid.add(classNameText, 1, 0);
         infoGrid.add(packageNameLabel, 0, 1);
         infoGrid.add(packageNameText, 1, 1);
-        infoGrid.add(parentNameLabel, 0, 2);
-        infoGrid.add(parentComboBox, 1, 2);
+        infoGrid.add(addNewParentLabel, 0, 2);
+        infoGrid.add(newParentText, 1, 2);
+        infoGrid.add(implementedClassNameLabel, 0, 3);
+        infoGrid.add(implementedClassComboBox, 1, 3);
+        infoGrid.add(extendedClassNameLabel, 0, 4);
+        infoGrid.add(extendedClassComboBox, 1, 4);
         
         componentToolbarPane.getChildren().add(infoGrid);
         
@@ -687,10 +705,13 @@ public class WorkspaceManager {
     /**
      * Activates the workspace controls so that they can be used to edit the newly-loaded or created
      * file. This method is called by handleNewRequest() and handleLoadRequest().
+     * 
+     * Note: do not enable codeExportButton here. Any enabling or disabling of codeExportButton will be handled by
+     * another method.
      */
     public void activateWorkspaceControls(){
         photoExportButton.setDisable(false);
-        codeExportButton.setDisable(false);
+        //codeExportButton.setDisable(false);
         selectButton.setDisable(false);
         addClassButton.setDisable(false);
         addInterfaceButton.setDisable(false);
@@ -731,6 +752,15 @@ public class WorkspaceManager {
         //TODO: Possibly finish adding cases (if there are any more cases to be handled)
     }
     
+    /**
+     * Enables/disables codeExportButton based on whether or not code is valid (no red text).
+     * Should be called any time isExportable is updated.
+     * @param isExportable 
+     */
+    public void updateCodeExportButton(boolean isExportable){
+        codeExportButton.setDisable(!isExportable);
+    }
+    
     public Pane getCanvas(){
         return canvas;
     }
@@ -746,13 +776,13 @@ public class WorkspaceManager {
             c.toDisplay();
             if(c == dataManager.getSelectedClass()){
                 //Sets the outline rectangle to highlighted
-                c.getOutlineRectangle().setEffect(highlightedEffect);
+                c.highlight(highlightedEffect);
             }
             else{
                 //Makes sure that only one CustomClass is highlighted at a time
-                c.getOutlineRectangle().setEffect(null);
+                c.highlight(null);
             }
-            canvas.getChildren().add(c);
+            canvas.getChildren().add(c.getDisplay());
         }
     }
     
@@ -770,15 +800,15 @@ public class WorkspaceManager {
             isRed = true;
 
         //Remove the selected class from the canvas and the arraylist of classes
-        canvas.getChildren().remove(dataManager.getSelectedClass());
+        canvas.getChildren().remove(dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().remove(dataManager.getSelectedClass());
         
         //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
         dataManager.getSelectedClass().toDisplay();
-        dataManager.getSelectedClass().getOutlineRectangle().setEffect(highlightedEffect);
+        dataManager.getSelectedClass().highlight(highlightedEffect);
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
-        canvas.getChildren().add(dataManager.getSelectedClass());
+        canvas.getChildren().add(dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().add(dataManager.getSelectedClass());
     }
     
@@ -787,7 +817,7 @@ public class WorkspaceManager {
      */
     public void unhighlightSelectedClass(){
         DataManager dataManager = app.getDataManager();
-        dataManager.getSelectedClass().getOutlineRectangle().setEffect(null);
+        dataManager.getSelectedClass().highlight(null);
     }
     
     /**
@@ -795,7 +825,7 @@ public class WorkspaceManager {
      */
     public void highlightSelectedClass(){
         DataManager dataManager = app.getDataManager();
-        dataManager.getSelectedClass().getOutlineRectangle().setEffect(highlightedEffect);
+        dataManager.getSelectedClass().highlight(highlightedEffect);
     }
     
     /**
