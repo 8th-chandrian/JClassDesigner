@@ -175,7 +175,7 @@ public class FileController {
     }
 
     public void handleCodeExportRequest() {
-        
+        /*
         // WE'LL NEED THIS TO GET CUSTOM STUFF
 	PropertiesManager props = PropertiesManager.getPropertiesManager();
         DataManager dataManager = app.getDataManager();
@@ -199,6 +199,7 @@ public class FileController {
             else
                 dialog.show(props.getProperty(EXPORT_ERROR_TITLE), props.getProperty(EXPORT_ERROR_MESSAGE_UNKNOWN));
         }
+        */
     }
     
     public void handleExitRequest() {
@@ -317,6 +318,7 @@ public class FileController {
                 app.getWorkspaceManager().activateWorkspaceControls();
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
                 app.getWorkspaceManager().wipeSelectedClassData();
+                app.getDataManager().checkCombinations();
             } catch (Exception e) {
                 AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
                 dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));

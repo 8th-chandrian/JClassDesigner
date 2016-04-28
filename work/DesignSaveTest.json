@@ -1,21 +1,21 @@
 
 {
-    "font_name":"System Regular",
+    "font_name":"SansSerif Regular",
     "pixel_height":12.0,
+    "max_pixel_width":8.0,
     "class_array":[
         {
             "start_x":200.0,
             "start_y":200.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
+            "width":96.0,
+            "height":42.0,
             "custom_class":{
                 "class_name":"ThreadExample",
                 "package_name":"example",
                 "interface_value":false,
                 "abstract_value":false,
-                "parents":[
-                    "Application"
+                "extended_class":"Application",
+                "implemented_classes":[
                 ],
                 "variables":[
                     {
@@ -205,55 +205,20 @@
                         ]
                     }
                 ]
-            },
-            "connections":[
-                {
-                    "key":"CounterTask",
-                    "point_array":[
-                        {
-                            "point_x":300.0,
-                            "point_y":400.0
-                        },
-                        {
-                            "point_x":300.0,
-                            "point_y":500.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                },
-                {
-                    "key":"Application",
-                    "point_array":[
-                        {
-                            "point_x":200.0,
-                            "point_y":250.0
-                        },
-                        {
-                            "point_x":200.0,
-                            "point_y":400.0
-                        },
-                        {
-                            "point_x":200.0,
-                            "point_y":500.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                }
-            ]
+            }
         },
         {
             "start_x":150.0,
             "start_y":300.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
+            "width":96.0,
+            "height":42.0,
             "custom_class":{
                 "class_name":"CounterTask",
                 "package_name":"example.task",
                 "interface_value":false,
                 "abstract_value":false,
-                "parents":[
-                    "Task<Void>"
+                "extended_class":"Task<Void>",
+                "implemented_classes":[
                 ],
                 "variables":[
                     {
@@ -291,37 +256,20 @@
                         ]
                     }
                 ]
-            },
-            "connections":[
-                {
-                    "key":"Task",
-                    "point_array":[
-                        {
-                            "point_x":200.0,
-                            "point_y":500.0
-                        },
-                        {
-                            "point_x":300.0,
-                            "point_y":500.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                }
-            ]
+            }
         },
         {
             "start_x":290.0,
             "start_y":650.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
+            "width":96.0,
+            "height":42.0,
             "custom_class":{
                 "class_name":"DateTask",
                 "package_name":"example.task",
                 "interface_value":false,
                 "abstract_value":false,
-                "parents":[
-                    "Task<Void>"
+                "extended_class":"Task<Void>",
+                "implemented_classes":[
                 ],
                 "variables":[
                     {
@@ -359,50 +307,20 @@
                         ]
                     }
                 ]
-            },
-            "connections":[
-                {
-                    "key":"Task",
-                    "point_array":[
-                        {
-                            "point_x":500.0,
-                            "point_y":550.0
-                        },
-                        {
-                            "point_x":500.0,
-                            "point_y":700.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                },
-                {
-                    "key":"Date",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":650.0
-                        },
-                        {
-                            "point_x":600.0,
-                            "point_y":800.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                }
-            ]
+            }
         },
         {
             "start_x":580.0,
             "start_y":220.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
+            "width":96.0,
+            "height":42.0,
             "custom_class":{
                 "class_name":"PauseHandler",
                 "package_name":"example.handler",
                 "interface_value":false,
                 "abstract_value":false,
-                "parents":[
+                "extended_class":"",
+                "implemented_classes":[
                     "EventHandler"
                 ],
                 "variables":[
@@ -435,50 +353,20 @@
                         ]
                     }
                 ]
-            },
-            "connections":[
-                {
-                    "key":"EventHandler",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":540.0
-                        },
-                        {
-                            "point_x":800.0,
-                            "point_y":760.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                },
-                {
-                    "key":"ThreadExample",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":650.0
-                        },
-                        {
-                            "point_x":600.0,
-                            "point_y":800.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                }
-            ]
+            }
         },
         {
             "start_x":580.0,
             "start_y":220.0,
-            "width":200.0,
-            "height":72.0,
-            "wrapping_width":200.0,
+            "width":96.0,
+            "height":42.0,
             "custom_class":{
                 "class_name":"StartHandler",
                 "package_name":"example.handler",
                 "interface_value":false,
                 "abstract_value":false,
-                "parents":[
+                "extended_class":"",
+                "implemented_classes":[
                     "EventHandler"
                 ],
                 "variables":[
@@ -511,37 +399,7 @@
                         ]
                     }
                 ]
-            },
-            "connections":[
-                {
-                    "key":"EventHandler",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":540.0
-                        },
-                        {
-                            "point_x":800.0,
-                            "point_y":760.0
-                        }
-                    ],
-                    "connector_type":"arrow"
-                },
-                {
-                    "key":"ThreadExample",
-                    "point_array":[
-                        {
-                            "point_x":600.0,
-                            "point_y":650.0
-                        },
-                        {
-                            "point_x":600.0,
-                            "point_y":800.0
-                        }
-                    ],
-                    "connector_type":"diamond"
-                }
-            ]
+            }
         }
     ]
 }

@@ -62,6 +62,7 @@ public class EditController {
         //Update the edit toolbar controls to reflect the selection, and reload the workspace so that the class is visible
         workspaceManager.updateEditToolbarControls();
         workspaceManager.reloadSelectedClass();
+        dataManager.checkCombinations();
     }
 
     public void handleAddInterfaceRequest() {
@@ -89,6 +90,7 @@ public class EditController {
         //Update the edit toolbar controls to reflect the selection, and reload the workspace so that the class is visible
         workspaceManager.updateEditToolbarControls();
         workspaceManager.reloadSelectedClass();
+        dataManager.checkCombinations();
     }
 
     public void handleRemoveRequest() {

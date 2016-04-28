@@ -66,7 +66,7 @@ public class CustomClass{
         return implementedClasses;
     }
     
-    public void setParents(ArrayList<String> implementedClasses){
+    public void setImplementedClasses(ArrayList<String> implementedClasses){
         this.implementedClasses = implementedClasses;
     }
     

@@ -30,7 +30,7 @@ public class TestLoad {
         ThreadExampleDesign toLoad = new ThreadExampleDesign();
         
         try{
-            fileManager.loadData(dataManager, toLoad.getFilePath() + ".json");
+            fileManager.loadData(dataManager, toLoad.getFilePath() + "json");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -49,12 +49,12 @@ public class TestLoad {
             System.out.println("\tStarting y value: " + testClassWrapper.getStartY());
             System.out.println("\tWidth: " + testClassWrapper.getWidth());
             System.out.println("\tHeight: " + testClassWrapper.getHeight());
-            System.out.println("\tWrapping width: " + testClassWrapper.getWrappingWidth() + "\n");
             
-            System.out.println("\tParents: ");
-            ArrayList<String> testParents = testClassWrapper.getData().getParents();
-            for(int j = 0; j < testParents.size(); j++){
-                System.out.println("\t\t" + testParents.get(j));
+            System.out.println("\tExtended Class: " + testClassWrapper.getData().getExtendedClass());
+            System.out.println("\tImplemented Classes: ");
+            ArrayList<String> testImplementedClasses = testClassWrapper.getData().getImplementedClasses();
+            for(int j = 0; j < testImplementedClasses.size(); j++){
+                System.out.println("\t\t" + testImplementedClasses.get(j));
             }
             
             System.out.println("\n\tVariables: ");
@@ -81,22 +81,6 @@ public class TestLoad {
                 System.out.println("\t\tArguments: ");
                 for(int k = 0; k < testArguments.size(); k++){
                     System.out.println("\t\t\t" + testArguments.get(k));
-                }
-                System.out.println("");
-            }
-            
-            System.out.println("\tPoints: ");
-            HashMap<String, ConnectorArrayList> testHashMap = testClassWrapper.getConnections();
-            ArrayList<String> testKeys = new ArrayList<>(Arrays.asList(testHashMap.keySet().toArray(new String[testHashMap.size()])));
-            for(int j = 0; j < testKeys.size(); j++){
-                String testKey = testKeys.get(j);
-                ConnectorArrayList testConnections = testHashMap.get(testKey);
-                
-                System.out.println("\t\tKey: " + testKey);
-                System.out.println("\t\tConnector type: " + testConnections.getConnectorType());
-                System.out.println("\t\tPoints: ");
-                for(int k = 0; k < testConnections.size(); k++){
-                    System.out.println("\t\t\t" + testConnections.get(k).getX() + ", " + testConnections.get(k).getY());
                 }
                 System.out.println("");
             }

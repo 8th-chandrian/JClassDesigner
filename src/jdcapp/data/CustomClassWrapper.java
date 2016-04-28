@@ -3,8 +3,6 @@
  */
 package jdcapp.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import javafx.scene.Group;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
@@ -27,12 +25,12 @@ public class CustomClassWrapper extends CustomBox{
     public static final String INTERFACE_TEXT_HEADER = "<<interface>>";
     public static final String ABSTRACT_TEXT_HEADER = "<<abstract>>";
     
-    //The height of the pixels, to be used when setting the text size and calculating the size of the 
-    //encompassing rectangles
+    //Variables used for setting font size and calculating rectangle width and height.
+    //These variables are only changed when zooming, and are reset every time a design
+    //is created or loaded, along with zoom.
     static double pixelHeight = 12;
-    
-    //The maximum width of any letter of text
-    static double maxPixelWidth = 8;
+    static double spacingOffset = 1;
+    static double maxPixelWidth = 3;
     
     //The text font, to be used with toDisplay (lets us alter the font size when zooming)
     static Font textFont = Font.font("sans-serif", FontWeight.NORMAL, pixelHeight);
@@ -49,15 +47,10 @@ public class CustomClassWrapper extends CustomBox{
     
     //The maximum number of characters in any line in the display
     private double maxCharacters;
-    
-    //The HashMap containing lists of points on the lines connecting this class and its associated classes
-    //Note: The String used for hashing contains the connected class's name
-    private HashMap<String, ConnectorArrayList> connections;
-    
+
     public CustomClassWrapper(double initX, double initY){
         super(initX, initY);
         data = new CustomClass();
-        connections = new HashMap<>();
         display = new Group();
         toDisplay();
     }
@@ -69,182 +62,113 @@ public class CustomClassWrapper extends CustomBox{
      * TODO: Clean up this method and make it more adaptable (it will need serious editing to 
      * support resizing and abstract classes/interfaces)
      */
-    /*
     @Override
     public void toDisplay(){
         //Call clear first, to remove any old display objects from the Group
         display.getChildren().clear();
+        double displayX = startX + 3;
         
         Rectangle outline = new Rectangle();
-        Text nameText = new Text();
-        Text varsText = new Text();
-        Text methodsText = new Text();
-        
-        //Set the id of the Text objects so that the text is formatted by the CSS
-        nameText.setFont(textFont);
-        varsText.setFont(textFont);
-        methodsText.setFont(textFont);
-        
-        //Create the name text display
-        //TODO: Edit this slightly to take into account interface displaying
-        nameText.setText(data.getClassName());
-        nameText.setX(startX);
-        nameText.setY(startY + pixelHeight);
-        nameText.setWrappingWidth(wrappingWidth);
-        int numLinesName = 2;
-        
-        //Create the rectangle surrounding the name text
-        Rectangle nameOutline = new Rectangle(startX, startY, wrappingWidth, 
-                (numLinesName) * pixelHeight);
-        nameOutline.setStroke(Color.BLACK);
-        nameOutline.setStrokeWidth(1);
-        nameOutline.setFill(Color.WHITE);
-        
-        //Create the variable text display
-        String vars = "";
-        int numLinesVars = 2;
-        if(!data.getVariables().isEmpty()){
-            numLinesVars = 1;
-            //vars = "";
-            for(CustomVar v : data.getVariables()){
-                vars += v.getVarName() + "\n";
-                numLinesVars++;
-            }
-        }
-        varsText.setText(vars);
-        varsText.setX(startX);
-        varsText.setY(startY + ((numLinesName + 1) * pixelHeight));
-        varsText.setWrappingWidth(wrappingWidth);
-        
-        //Create the rectangle surrounding the variable text
-        Rectangle varsOutline = new Rectangle(startX, startY + (numLinesName * pixelHeight), 
-                wrappingWidth, (numLinesVars) * pixelHeight);
-        varsOutline.setStroke(Color.BLACK);
-        varsOutline.setStrokeWidth(1);
-        varsOutline.setFill(Color.WHITE);
-        
-        //Create the method text display
-        String methods = "";
-        int numLinesMethods = 2;
-        if(!data.getMethods().isEmpty()){
-            numLinesMethods = 1;
-            //methods = "";
-            for(CustomMethod m : data.getMethods()){
-                methods += m.getMethodName() + "\n";
-                numLinesMethods++;
-            }
-        }
-        methodsText.setText(methods);
-        methodsText.setX(startX);
-        methodsText.setY(startY + ((numLinesName + numLinesVars + 1) * pixelHeight));
-        methodsText.setWrappingWidth(wrappingWidth);
-        
-        //Create the rectangle surrounding the method text
-        Rectangle methodsOutline = new Rectangle(startX, startY + ((numLinesName + numLinesVars) * pixelHeight), 
-                wrappingWidth, (numLinesMethods) * pixelHeight);
-        methodsOutline.setStroke(Color.BLACK);
-        methodsOutline.setStrokeWidth(1);
-        methodsOutline.setFill(Color.WHITE);
-        
-        //Create the overlaying rectangle
-        outline.setX(startX);
-        outline.setY(startY);
-        outline.setWidth(wrappingWidth);
-        outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
-        outline.setStroke(Color.BLACK);
-        outline.setStrokeWidth(1);
-        outline.setFill(Color.WHITE);
-        
-        //Set the width and height of the CustomClass to the width and height of the overlaying rectangle
-        setWidth(wrappingWidth);
-        setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
-        
+        double lineOffset = 1.5;
         display.getChildren().add(outline);
-        display.getChildren().add(nameOutline);
-        display.getChildren().add(varsOutline);
-        display.getChildren().add(methodsOutline);
-        display.getChildren().add(nameText);
-        display.getChildren().add(varsText);
-        display.getChildren().add(methodsText);
-    } */
-    
-    @Override
-    public void toDisplay(){
-        //Call clear first, to remove any old display objects from the Group
-        display.getChildren().clear();
-        
-        Rectangle outline = new Rectangle();
-        Text nameText = new Text();
-        Text varsText = new Text();
-        Text methodsText = new Text();
-        
-        //Set the id of the Text objects so that the text is formatted by the CSS
-        nameText.setFont(textFont);
-        varsText.setFont(textFont);
-        methodsText.setFont(textFont);
         
         //Create the name text display
-        double numLinesName = 1.5;
         if(data.isInterface()){
-            nameText.setText(" " + INTERFACE_TEXT_HEADER + "\n " + data.getClassName());
+            Text interfaceText = new Text();
+            interfaceText.setFont(textFont);
+            interfaceText.setText(INTERFACE_TEXT_HEADER);
+            interfaceText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            interfaceText.setX(displayX);
+            lineOffset++;
+            
+            Text nameText = new Text();
+            nameText.setFont(textFont);
+            nameText.setText(data.getClassName());
+            nameText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            nameText.setX(displayX);
+            lineOffset++;
+            
+            display.getChildren().add(interfaceText);
+            display.getChildren().add(nameText);
             maxCharacters = Math.max(INTERFACE_TEXT_HEADER.length(), data.getClassName().length());
-            numLinesName = 2.5;
         }
         else if(data.isAbstract()){
-            nameText.setText(" " + ABSTRACT_TEXT_HEADER + "\n " + data.getClassName());
-            maxCharacters = Math.max(ABSTRACT_TEXT_HEADER.length(), data.getClassName().length());
-            numLinesName = 2.5;
+            Text abstractText = new Text();
+            abstractText.setFont(textFont);
+            abstractText.setText(ABSTRACT_TEXT_HEADER);
+            abstractText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            abstractText.setX(displayX);
+            lineOffset++;
+            
+            Text nameText = new Text();
+            nameText.setFont(textFont);
+            nameText.setText(data.getClassName());
+            nameText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            nameText.setX(displayX);
+            lineOffset++;
+            
+            display.getChildren().add(abstractText);
+            display.getChildren().add(nameText);
+            maxCharacters = Math.max(INTERFACE_TEXT_HEADER.length(), data.getClassName().length());
         }
         else{
+            Text voidText = new Text();
+            Text nameText = new Text();
+            nameText.setFont(textFont);
             nameText.setText(data.getClassName());
+            nameText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            nameText.setX(displayX);
+            lineOffset++;
+            
+            display.getChildren().add(voidText);
+            display.getChildren().add(nameText);
             maxCharacters = data.getClassName().length();
         }
-        nameText.setX(startX);
-        nameText.setY(startY + pixelHeight);
+        lineOffset += 1.5;
         
         //Create the vars text display
-        String totalVarsString = "";
-        double numLinesVars = 1;
         for(CustomVar v : data.getVariables()){
             String varsString = "";
             //Add bullets for different access types
             if(v.getAccess().equals(PRIVATE_VAR_ACCESS)){
-                varsString += " -";
+                varsString += "-";
             }
             else if(v.getAccess().equals(PUBLIC_VAR_ACCESS)){
-                varsString += " +";
+                varsString += "+";
             }
             else{
-                varsString += " #";
+                varsString += "#";
             }
             
             //Add static indicator if variable is static
             if(v.isStatic())
                 varsString += "$ ";
             
-            varsString += v.getVarName() + " : " + v.getVarType() + "\n";
-            totalVarsString += varsString;
+            varsString += v.getVarName() + " : " + v.getVarType();
+            Text varsText = new Text();
+            varsText.setFont(textFont);
+            varsText.setText(varsString);
+            varsText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            varsText.setX(displayX);
+            lineOffset++;
+            
+            display.getChildren().add(varsText);
             maxCharacters = Math.max(maxCharacters, varsString.length());
-            numLinesVars++;
         }
-        varsText.setText(totalVarsString);
-        varsText.setX(startX);
-        varsText.setY(startY + ((numLinesName + 1) * pixelHeight));
+        lineOffset += 1.5;
         
         //Create the methods text display
-        String totalMethodsString = "";
-        double numLinesMethods = 1;
         for(CustomMethod m : data.getMethods()){
             String methodString = "";
             //Add bullets for different access types
             if(m.getAccess().equals(PRIVATE_VAR_ACCESS)){
-                methodString += " -";
+                methodString += "-";
             }
             else if(m.getAccess().equals(PUBLIC_VAR_ACCESS)){
-                methodString += " +";
+                methodString += "+";
             }
             else{
-                methodString += " #";
+                methodString += "#";
             }
             
             //Add static indicator if variable is static
@@ -259,33 +183,31 @@ public class CustomClassWrapper extends CustomBox{
             methodString += ")";
             if(!m.isConstructor())
                 methodString += " : " + m.getReturnType();
-            methodString += "\n";
             
-            totalMethodsString += methodString;
+            Text methodsText = new Text();
+            methodsText.setFont(textFont);
+            methodsText.setText(methodString);
+            methodsText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
+            methodsText.setX(displayX);
+            lineOffset++;
+            
+            display.getChildren().add(methodsText);
             maxCharacters = Math.max(maxCharacters, methodString.length());
-            numLinesMethods++;
         }
-        methodsText.setText(totalMethodsString);
-        methodsText.setX(startX);
-        methodsText.setY(startY + ((numLinesName + numLinesVars + 1) * pixelHeight));
+        lineOffset += .5;
         
         //Create the overlaying rectangle
         outline.setX(startX);
         outline.setY(startY);
         outline.setWidth(maxCharacters * maxPixelWidth);
-        outline.setHeight((numLinesName + numLinesVars + numLinesMethods) * pixelHeight);
+        outline.setHeight(lineOffset * (pixelHeight + spacingOffset));
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
         outline.setFill(Color.WHITE);
         
         //Set the width and height of the CustomClass to the width and height of the overlaying rectangle
         width = maxCharacters * maxPixelWidth;
-        height = (numLinesName + numLinesVars + numLinesMethods) * pixelHeight;
-        
-        display.getChildren().add(outline);
-        display.getChildren().add(nameText);
-        display.getChildren().add(varsText);
-        display.getChildren().add(methodsText);
+        height = (lineOffset) * (pixelHeight + spacingOffset);
     }
     
     @Override
@@ -299,15 +221,7 @@ public class CustomClassWrapper extends CustomBox{
     }
     
     public Text getNameText(){
-        return (Text)display.getChildren().get(1);
-    }
-    
-    public Text getVarsText(){
         return (Text)display.getChildren().get(2);
-    }
-    
-    public Text getMethodsText(){
-        return (Text)display.getChildren().get(3);
     }
     
     public CustomClass getData(){
@@ -333,14 +247,8 @@ public class CustomClassWrapper extends CustomBox{
     public double getHeight() { return height; }
 
     public void setHeight(double height) { this.height = height; }
-
-    public HashMap<String, ConnectorArrayList> getConnections() { return connections; }
-
-    public void setConnections(HashMap<String, ConnectorArrayList> connections) { this.connections = connections; }
-
-    //public double getWrappingWidth() { return wrappingWidth; }
-    
-    //public void setWrappingWidth(double w) { wrappingWidth = w; }
+  
+    public Group getDisplay(){ return display; }
     
     //Static getters and setters
     public static double getPixelHeight(){
@@ -359,9 +267,14 @@ public class CustomClassWrapper extends CustomBox{
         textFont = f;
     }
     
-    public Group getDisplay(){
-        return display;
+    public static double getMaxPixelWidth(){
+        return maxPixelWidth;
     }
+    
+    public static void setMaxPixelWidth(double p){
+        maxPixelWidth = p;
+    }
+
     
     //TODO: Finish coding this class
 }
