@@ -30,7 +30,7 @@ public class CustomClassWrapper extends CustomBox{
     //is created or loaded, along with zoom.
     static double pixelHeight = 12;
     static double spacingOffset = 1;
-    static double maxPixelWidth = 3;
+    static double maxPixelWidth = 8;
     
     //The text font, to be used with toDisplay (lets us alter the font size when zooming)
     static Font textFont = Font.font("sans-serif", FontWeight.NORMAL, pixelHeight);

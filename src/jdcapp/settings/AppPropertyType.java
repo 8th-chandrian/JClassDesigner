@@ -50,6 +50,8 @@ public enum AppPropertyType {
         RESIZE_TOOLTIP,
         ADD_CLASS_TOOLTIP,
         ADD_INTERFACE_TOOLTIP,
+        REMOVE_IMPLEMENTED_TOOLTIP,
+        REMOVE_EXTENDED_TOOLTIP,
         REMOVE_TOOLTIP,
         UNDO_TOOLTIP,
         REDO_TOOLTIP,
@@ -81,6 +83,7 @@ public enum AppPropertyType {
         PACKAGE_NAME_LABEL,
         ADD_NEW_PARENT_LABEL,
         IMPLEMENTED_CLASS_NAME_LABEL,
+        IMPLEMENTED_CLASS_BUTTON_TEXT,
         EXTENDED_CLASS_NAME_LABEL,
         //TODO: Finish putting in default text values here
         

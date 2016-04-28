@@ -41,13 +41,15 @@
         <property name="REDO_ICON"	    value="redo.png"></property>
         
         <!-- TOOLTIPS FOR EDIT TOOLBAR BUTTONS -->
-        <property name="SELECT_TOOLTIP"		value="Select"></property>
-        <property name="RESIZE_TOOLTIP"		value="Resize"></property>
-        <property name="ADD_CLASS_TOOLTIP"	value="Add Class"></property>
-        <property name="ADD_INTERFACE_TOOLTIP"	value="Add Interface"></property>
-        <property name="REMOVE_TOOLTIP"         value="Remove Selected Element"></property>
-        <property name="UNDO_TOOLTIP"           value="Undo"></property>
-        <property name="REDO_TOOLTIP"		value="Redo"></property>
+        <property name="SELECT_TOOLTIP"             value="Select"></property>
+        <property name="RESIZE_TOOLTIP"             value="Resize"></property>
+        <property name="ADD_CLASS_TOOLTIP"          value="Add Class"></property>
+        <property name="ADD_INTERFACE_TOOLTIP"      value="Add Interface"></property>
+        <property name="REMOVE_IMPLEMENTED_TOOLTIP" value="Clear Interfaces"></property>
+        <property name="REMOVE_EXTENDED_TOOLTIP"    value="Clear Extended Class"></property>
+        <property name="REMOVE_TOOLTIP"             value="Remove Selected Element"></property>
+        <property name="UNDO_TOOLTIP"               value="Undo"></property>
+        <property name="REDO_TOOLTIP"               value="Redo"></property>
         
         <!-- VIEW TOOLBAR ICON FILES -->
         <property name="ZOOM_IN_ICON"	    value="zoom_in.png"></property>
@@ -75,8 +77,9 @@
         <property name="CLASS_NAME_LABEL"                   value="Class Name:"></property>
         <property name="PACKAGE_NAME_LABEL"                 value="Package:"></property>
         <property name="ADD_NEW_PARENT_LABEL"               value="Add New Parent:"></property>
-        <property name="IMPLEMENTED_CLASS_NAME_LABEL"       value="Implemented Classes:"></property>
-        <property name="EXTENDED_CLASS_NAME_LABEL"          value="Extended Class:"></property>
+        <property name="IMPLEMENTED_CLASS_NAME_LABEL"       value="Interfaces:"></property>
+        <property name="IMPLEMENTED_CLASS_BUTTON_TEXT"      value="Select Interfaces"></property>
+        <property name="EXTENDED_CLASS_NAME_LABEL"          value="Extended:"></property>
         <!-- TODO: finish putting in default text values here -->
         
         <!-- ERROR MESSAGES -->

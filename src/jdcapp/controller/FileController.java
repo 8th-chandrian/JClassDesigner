@@ -89,6 +89,7 @@ public class FileController {
                 // REFRESH THE GUI, WHICH WILL ENABLE AND DISABLE
                 // THE APPROPRIATE CONTROLS
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
+                app.getWorkspaceManager().wipeSelectedClassData();
 
                 // TELL THE USER NEW WORK IS UNDERWAY
 		dialog.show(props.getProperty(NEW_COMPLETED_TITLE), props.getProperty(NEW_COMPLETED_MESSAGE));
@@ -322,6 +323,7 @@ public class FileController {
             } catch (Exception e) {
                 AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
                 dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
+                e.printStackTrace();
             }
         }
     }

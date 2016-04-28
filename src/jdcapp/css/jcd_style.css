@@ -75,6 +75,10 @@
     -fx-padding: 0;
 }
 
+.parent_display_hbox{
+    -fx-hgap: 5;
+}
+
 .workspace {
     -fx-background-color: lightgrey;
 }

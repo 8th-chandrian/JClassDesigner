@@ -4,6 +4,8 @@
 package jdcapp.data;
 
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import jdcapp.JDCApp;
 import static jdcapp.data.JDCAppState.SELECTING;
@@ -20,8 +22,6 @@ public class DataManager {
 
     //The ArrayList containing all class objects created
     ArrayList<CustomClassWrapper> classes;
-    
-    //TODO: PUT ARRAYLIST OF CUSTOM IMPORTED CLASSES HERE
     
     //The class currently selected
     CustomClassWrapper selectedClass;
@@ -75,6 +75,7 @@ public class DataManager {
         //If class clicked on is not selected and another class is, unhighlight currently-selected class
         if(selectedClass != null){
             workspaceManager.unhighlightSelectedClass();
+            workspaceManager.wipeSelectedClassData();
         }
         selectedClass = c;
         

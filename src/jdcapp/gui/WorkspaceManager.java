@@ -6,6 +6,7 @@ package jdcapp.gui;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +15,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
@@ -92,6 +96,9 @@ import static jdcapp.settings.AppStartupConstants.FILE_PROTOCOL;
 import static jdcapp.settings.AppStartupConstants.PATH_IMAGES;
 import static jdcapp.settings.AppPropertyType.IMPLEMENTED_CLASS_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.EXTENDED_CLASS_NAME_LABEL;
+import static jdcapp.settings.AppPropertyType.IMPLEMENTED_CLASS_BUTTON_TEXT;
+import static jdcapp.settings.AppPropertyType.REMOVE_EXTENDED_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.REMOVE_IMPLEMENTED_TOOLTIP;
 import org.controlsfx.control.CheckComboBox;
 import properties_manager.PropertiesManager;
 
@@ -112,6 +119,7 @@ public class WorkspaceManager {
     static final String RIGHT_VBOX_CLASS = "right_vbox";
     static final String COMPONENT_BUTTON_FLOWPANE_CLASS = "component_button_flowpane";
     static final String COMPONENT_BUTTON_CLASS = "component_button";
+    static final String PARENT_DISPLAY_HBOX_CLASS = "parent_display_hbox";
     static final String LARGE_LABEL_CLASS = "large_label";
     static final String WORKSPACE_CLASS = "workspace";
     static final String WORKSPACE_SCROLL_PANE_CLASS = "workspace_scroll_pane";
@@ -191,11 +199,18 @@ public class WorkspaceManager {
     Label addNewParentLabel;
     TextField newParentText;
     
-    //The labels and controls for parents
+    //The labels and controls for implemented classes
     Label implementedClassNameLabel;
-    CheckComboBox implementedClassComboBox;
+    MenuButton implementedClassMenuButton;
+    ContextMenu implementedClassMenu;
+    Button removeAllImplementedClassesButton;
+    FlowPane implementedPane;
+    
+    //The labels and controls for extended classes
     Label extendedClassNameLabel;
-    ComboBox extendedClassComboBox;
+    ComboBox<String> extendedClassComboBox;
+    Button removeExtendedClassButton;
+    FlowPane extendedPane;
     
     //The controls, labels, and pane for variables
     FlowPane variablePane;
@@ -327,9 +342,20 @@ public class WorkspaceManager {
         newParentText = new TextField();
         newParentText.setDisable(true);
         
-        implementedClassComboBox = new CheckComboBox();
-        extendedClassComboBox = new ComboBox();
-        //TODO: Set parentComboBox to display a list of potential parent classes
+        implementedClassMenuButton = new MenuButton(props.getProperty(IMPLEMENTED_CLASS_BUTTON_TEXT.toString()));
+        implementedClassMenuButton.setDisable(true);
+        implementedClassMenu = new ContextMenu();
+        implementedPane = new FlowPane();
+        implementedPane.getChildren().add(implementedClassNameLabel);
+        removeAllImplementedClassesButton = initChildButton(implementedPane, 
+                REMOVE_ELEMENT_ICON.toString(), REMOVE_IMPLEMENTED_TOOLTIP.toString(), true);
+        
+        extendedClassComboBox = new ComboBox<>();
+        extendedClassComboBox.setDisable(true);
+        extendedPane = new FlowPane();
+        extendedPane.getChildren().add(extendedClassNameLabel);
+        removeExtendedClassButton = initChildButton(extendedPane, 
+                REMOVE_ELEMENT_ICON.toString(), REMOVE_EXTENDED_TOOLTIP.toString(), true);
         
         //Populate infoGrid with our class, package, and parent labels and controls
         infoGrid.add(classNameLabel, 0, 0);
@@ -338,9 +364,9 @@ public class WorkspaceManager {
         infoGrid.add(packageNameText, 1, 1);
         infoGrid.add(addNewParentLabel, 0, 2);
         infoGrid.add(newParentText, 1, 2);
-        infoGrid.add(implementedClassNameLabel, 0, 3);
-        infoGrid.add(implementedClassComboBox, 1, 3);
-        infoGrid.add(extendedClassNameLabel, 0, 4);
+        infoGrid.add(implementedPane, 0, 3);
+        infoGrid.add(implementedClassMenuButton, 1, 3);
+        infoGrid.add(extendedPane, 0, 4);
         infoGrid.add(extendedClassComboBox, 1, 4);
         
         componentToolbarPane.getChildren().add(infoGrid);
@@ -574,6 +600,31 @@ public class WorkspaceManager {
             }
         });
         
+        //Handler for implementedClassMenuButton
+        implementedClassMenuButton.setOnMouseClicked(e -> {
+            if(!implementedClassMenu.isShowing())
+                implementedClassMenu.show(implementedClassMenuButton, Side.BOTTOM, 0, 0);
+            else
+                implementedClassMenu.hide();
+        });
+        
+        removeAllImplementedClassesButton.setOnAction(e -> {
+            componentController.handleRemoveAllInterfaces();
+        });
+        
+        //Handler for extendedClassComboBox
+        extendedClassComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue v, String oldValue, String newValue){
+                if(newValue != null)
+                    componentController.handleExtendedClassSelected(newValue);
+            }
+        });
+              
+        removeExtendedClassButton.setOnAction(e -> {
+            componentController.handleRemoveExtendedClass();
+        });
+        
         //TODO: Finish adding handlers for other events
     }
     
@@ -688,6 +739,12 @@ public class WorkspaceManager {
         removeVariable.getStyleClass().add(COMPONENT_BUTTON_CLASS);
         addMethod.getStyleClass().add(COMPONENT_BUTTON_CLASS);
         removeMethod.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        removeAllImplementedClassesButton.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        removeExtendedClassButton.getStyleClass().add(COMPONENT_BUTTON_CLASS);
+        extendedPane.getStyleClass().add(PARENT_DISPLAY_HBOX_CLASS);
+        implementedPane.getStyleClass().add(PARENT_DISPLAY_HBOX_CLASS);
+        extendedPane.setPrefWidth(40);
+        implementedPane.setPrefWidth(40);
         
         //Add first row to variable table and method table, and add horizontal scrolling to scroll panes
         variableScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -865,9 +922,28 @@ public class WorkspaceManager {
         
         classNameText.setText(dataManager.getSelectedClass().getData().getClassName());
         packageNameText.setText(dataManager.getSelectedClass().getData().getPackageName());
+        for(CustomClassWrapper c : dataManager.getClasses()){
+            extendedClassComboBox.getItems().add(c.getData().getClassName());
+            if(dataManager.getSelectedClass().getData().getExtendedClass().equals(c.getData().getClassName()))
+                extendedClassComboBox.getSelectionModel().select(c.getData().getClassName());
+            
+            CheckMenuItem newCheck = new CheckMenuItem(c.getData().getClassName());
+            newCheck.setOnAction(e -> {
+                componentController.handleInterfaceChecked(newCheck.isSelected(), newCheck.getText());
+            });
+            implementedClassMenu.getItems().add(newCheck);
+            for(String s : dataManager.getSelectedClass().getData().getImplementedClasses()){
+                if(s.equals(c.getData().getClassName()))
+                    newCheck.setSelected(true);
+            }
+        }
         
         classNameText.setDisable(false);
         packageNameText.setDisable(false);
+        implementedClassMenuButton.setDisable(false);
+        extendedClassComboBox.setDisable(false);
+        removeAllImplementedClassesButton.setDisable(false);
+        removeExtendedClassButton.setDisable(false);
     }
     
     /**
@@ -878,9 +954,16 @@ public class WorkspaceManager {
         
         classNameText.setText("");
         packageNameText.setText("");
+        extendedClassComboBox.getItems().removeAll(extendedClassComboBox.getItems());
+        extendedClassComboBox.valueProperty().set(null);
+        implementedClassMenu.getItems().removeAll(implementedClassMenu.getItems());
         
         classNameText.setDisable(true);
         packageNameText.setDisable(true);
+        implementedClassMenuButton.setDisable(true);
+        extendedClassComboBox.setDisable(true);
+        removeAllImplementedClassesButton.setDisable(true);
+        removeExtendedClassButton.setDisable(true);
     }
     
     //TODO: Finish adding methods

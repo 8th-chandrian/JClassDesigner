@@ -15,7 +15,7 @@ public class TestSave {
     
     public static void main(String[] args){
         
-        TestDisplayExample toSave = new TestDisplayExample();
+        ThreadExampleDesignInterface toSave = new ThreadExampleDesignInterface();
         
         try{
             File saveFile = new File(toSave.getFilePath());

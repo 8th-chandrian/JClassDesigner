@@ -21,7 +21,7 @@ import jdcapp.data.DataManager;
 public class ThreadExampleDesignInterface {
     
     private DataManager testData;
-    private static final String filePath = "./work/DesignSaveTestInterface";
+    private static final String filePath = "./work/DesignSaveTestInterface.";
     
     public ThreadExampleDesignInterface(){
         
@@ -82,25 +82,12 @@ public class ThreadExampleDesignInterface {
         ArrayList<CustomMethod> threadExampleMethods = new ArrayList<CustomMethod>(Arrays.asList(start,
                 startWork, doWork, appendText, sleep, initLayout, initHandlers, initWindow, 
                 initThreads, main));
-        
         threadExample.getData().setMethods(threadExampleMethods);
         
-        ArrayList<String> threadExampleParents = new ArrayList<String>(Arrays.asList("Application"));
-        threadExample.getData().setParents(threadExampleParents);
-        
-        //Point2D values are arbitrary and only created for testing purposes
-        HashMap<String, ConnectorArrayList> threadExampleConnections = new HashMap<>();
-        
-        //NOTE: There would be many more connections than just the two listed here, but
-        //more are not necessary for testing purposes so they have been excluded
-        ArrayList<Point2D> applicationConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 250), new Point2D(200, 400), 
-                new Point2D(200, 500)));
-        ConnectorArrayList applicationConnector = new ConnectorArrayList(applicationConnectorArray, ConnectorArrayList.ARROW_CONNECTOR);
-        threadExampleConnections.put("Application", applicationConnector);
-        ArrayList<Point2D> counterTaskConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(300, 400), new Point2D(300, 500)));
-        ConnectorArrayList counterTaskConnector = new ConnectorArrayList(counterTaskConnectorArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        threadExampleConnections.put("CounterTask", counterTaskConnector);
-        threadExample.setConnections(threadExampleConnections);
+        String threadExampleExtendedClass = "Application";
+        ArrayList<String> threadExampleImplementedClasses = new ArrayList<>();
+        threadExample.getData().setExtendedClass(threadExampleExtendedClass);
+        threadExample.getData().setImplementedClasses(threadExampleImplementedClasses);
         
         testData.getClasses().add(threadExample);
         
@@ -124,19 +111,11 @@ public class ThreadExampleDesignInterface {
             CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> counterTaskExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(counterTaskConstructor,
                 counterTaskCall));
-        
         counterTaskExample.getData().setMethods(counterTaskExampleMethods);
         
-        ArrayList<String> counterTaskExampleParents = new ArrayList<String>( Arrays.asList("Task<Void>", "CounterTaskInterface"));
-        counterTaskExample.getData().setParents(counterTaskExampleParents);
-        
-        HashMap<String, ConnectorArrayList> counterTaskExampleConnections = new HashMap<>();
-        ArrayList<Point2D> taskConnectorCounterTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 500), 
-                new Point2D(300, 500)));
-        ConnectorArrayList taskConnectorCounterTask = new ConnectorArrayList(taskConnectorCounterTaskArray, ConnectorArrayList.ARROW_CONNECTOR);
-        counterTaskExampleConnections.put("Task", taskConnectorCounterTask);
-        
-        counterTaskExample.setConnections(counterTaskExampleConnections);
+        ArrayList<String> counterTaskExampleImplementedClasses = new ArrayList<>(Arrays.asList("CounterTaskInterface"));
+        counterTaskExample.getData().setImplementedClasses(counterTaskExampleImplementedClasses);
+        counterTaskExample.getData().setExtendedClass("Task<Void>");
         
         testData.getClasses().add(counterTaskExample);
         
@@ -160,23 +139,11 @@ public class ThreadExampleDesignInterface {
             CustomMethod.PROTECTED_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("")));
         ArrayList<CustomMethod> dateTaskExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(dateTaskConstructor,
                 dateTaskCall));
-        
         dateTaskExample.getData().setMethods(dateTaskExampleMethods);
         
-        ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task<Void>"));
-        dateTaskExample.getData().setParents(dateTaskExampleParents);
-        
-        HashMap<String, ConnectorArrayList> dateTaskExampleConnections = new HashMap<>();
-        ArrayList<Point2D> taskConnectorDateTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(500, 550), 
-                new Point2D(500, 700)));
-        ConnectorArrayList taskConnectorDateTask = new ConnectorArrayList(taskConnectorDateTaskArray, ConnectorArrayList.ARROW_CONNECTOR);
-        dateTaskExampleConnections.put("Task", taskConnectorDateTask);
-        ArrayList<Point2D> dateConnectorDateTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
-                new Point2D(600, 800)));
-        ConnectorArrayList dateConnectorDateTask = new ConnectorArrayList(dateConnectorDateTaskArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        dateTaskExampleConnections.put("Date", dateConnectorDateTask);
-        
-        dateTaskExample.setConnections(dateTaskExampleConnections);
+        ArrayList<String> dateTaskExampleImplementedClasses = new ArrayList<>();
+        dateTaskExample.getData().setImplementedClasses(dateTaskExampleImplementedClasses);
+        dateTaskExample.getData().setExtendedClass("Task<Void>");
         
         testData.getClasses().add(dateTaskExample);
         
@@ -202,20 +169,9 @@ public class ThreadExampleDesignInterface {
         
         pauseHandlerExample.getData().setMethods(pauseHandlerExampleMethods);
         
-        ArrayList<String> pauseHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler"));
-        pauseHandlerExample.getData().setParents(pauseHandlerExampleParents);
-        
-        HashMap<String, ConnectorArrayList> pauseHandlerExampleConnections = new HashMap<>();
-        ArrayList<Point2D> eventHandlerConnectorPauseHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 540), 
-                new Point2D(800, 760)));
-        ConnectorArrayList eventHandlerConnectorPauseHandler = new ConnectorArrayList(eventHandlerConnectorPauseHandlerArray, ConnectorArrayList.ARROW_CONNECTOR);
-        pauseHandlerExampleConnections.put("EventHandler", eventHandlerConnectorPauseHandler);
-        ArrayList<Point2D> threadExampleConnectorPauseHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
-                new Point2D(600, 800)));
-        ConnectorArrayList threadExampleConnectorPauseHandler = new ConnectorArrayList(threadExampleConnectorPauseHandlerArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        pauseHandlerExampleConnections.put("ThreadExample", threadExampleConnectorPauseHandler);
-        
-        pauseHandlerExample.setConnections(pauseHandlerExampleConnections);
+        ArrayList<String> pauseHandlerExampleImplementedClasses = new ArrayList<String>(Arrays.asList("EventHandler"));
+        pauseHandlerExample.getData().setImplementedClasses(pauseHandlerExampleImplementedClasses);
+        pauseHandlerExample.getData().setExtendedClass("");
         
         testData.getClasses().add(pauseHandlerExample);
         
@@ -238,23 +194,11 @@ public class ThreadExampleDesignInterface {
             CustomMethod.PUBLIC_METHOD_ACCESS, new ArrayList<String>(Arrays.asList("event : Event")));
         ArrayList<CustomMethod> startHandlerExampleMethods = new ArrayList<CustomMethod>( Arrays.asList(startHandlerConstructor,
                 startHandlerHandle));
-        
         startHandlerExample.getData().setMethods(startHandlerExampleMethods);
         
-        ArrayList<String> startHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler"));
-        startHandlerExample.getData().setParents(startHandlerExampleParents);
-        
-        HashMap<String, ConnectorArrayList> startHandlerExampleConnections = new HashMap<>();
-        ArrayList<Point2D> eventHandlerConnectorStartHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 540), 
-                new Point2D(800, 760)));
-        ConnectorArrayList eventHandlerConnectorStartHandler = new ConnectorArrayList(eventHandlerConnectorStartHandlerArray, ConnectorArrayList.ARROW_CONNECTOR);
-        startHandlerExampleConnections.put("EventHandler", eventHandlerConnectorStartHandler);
-        ArrayList<Point2D> threadExampleConnectorStartHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
-                new Point2D(600, 800)));
-        ConnectorArrayList threadExampleConnectorStartHandler = new ConnectorArrayList(threadExampleConnectorStartHandlerArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        startHandlerExampleConnections.put("ThreadExample", threadExampleConnectorStartHandler);
-        
-        startHandlerExample.setConnections(startHandlerExampleConnections);
+        ArrayList<String> startHandlerExampleImplementedClasses = new ArrayList<String>( Arrays.asList("EventHandler"));
+        startHandlerExample.getData().setImplementedClasses(startHandlerExampleImplementedClasses);
+        startHandlerExample.getData().setExtendedClass("");
         
         testData.getClasses().add(startHandlerExample);
         
@@ -279,16 +223,9 @@ public class ThreadExampleDesignInterface {
 
         counterTaskExampleInterface.getData().setMethods(counterTaskExampleMethodsInterface);
 
-        ArrayList<String> counterTaskExampleParentsInterface = new ArrayList<String>(Arrays.asList(""));
-        counterTaskExampleInterface.getData().setParents(counterTaskExampleParentsInterface);
-
-        HashMap<String, ConnectorArrayList> counterTaskExampleConnectionsInterface = new HashMap<>();
-        ArrayList<Point2D> taskConnectorCounterTaskArrayInterface = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 500), 
-                new Point2D(300, 500)));
-        ConnectorArrayList taskConnectorCounterTaskInterface = new ConnectorArrayList(taskConnectorCounterTaskArrayInterface, ConnectorArrayList.ARROW_CONNECTOR);
-        counterTaskExampleConnectionsInterface.put("Task", taskConnectorCounterTaskInterface);
-
-        counterTaskExampleInterface.setConnections(counterTaskExampleConnectionsInterface);
+        ArrayList<String> counterTaskExampleImplementedClassesInterface = new ArrayList<String>(Arrays.asList(""));
+        counterTaskExampleInterface.getData().setImplementedClasses(counterTaskExampleImplementedClassesInterface);
+        counterTaskExampleInterface.getData().setExtendedClass("");
 
         testData.getClasses().add(counterTaskExampleInterface);
     } 

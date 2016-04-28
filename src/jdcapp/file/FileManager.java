@@ -107,6 +107,11 @@ public class FileManager {
     public void saveData(DataManager dataManager, String filePath) throws IOException{
         
         JsonArrayBuilder classArrayBuilder = Json.createArrayBuilder();
+        
+        String fontName = CustomClassWrapper.getFont().getName();
+        double pixelHeight = CustomClassWrapper.getPixelHeight();
+        double maxPixelWidth = CustomClassWrapper.getMaxPixelWidth();
+        
         for(CustomClassWrapper c : dataManager.getClasses()){
             
             //Get all instance variables from the CustomClassWrapper object
@@ -130,6 +135,9 @@ public class FileManager {
         
         //Create the final JsonObject containing the entire DataManager
         JsonObject dataManagerJSO = Json.createObjectBuilder()
+                .add(JSON_FONT_NAME, fontName)
+                .add(JSON_PIXEL_HEIGHT, pixelHeight)
+                .add(JSON_MAX_PIXEL_WIDTH, maxPixelWidth)
                 .add(JSON_CLASS_ARRAY, classArray)
                 .build();
         
@@ -349,8 +357,8 @@ public class FileManager {
         CustomClassWrapper c = new CustomClassWrapper(startX, startY);
         
         //Load in width, height, and wrapping width
-        c.setWidth(getDataAsDouble(j, JSON_WIDTH));
-        c.setHeight(getDataAsDouble(j, JSON_HEIGHT));
+//        c.setWidth(getDataAsDouble(j, JSON_WIDTH));
+//        c.setHeight(getDataAsDouble(j, JSON_HEIGHT));
         
         //Load in CustomClass data
         c.setData(loadCustomClass(j.getJsonObject(JSON_CUSTOM_CLASS)));
