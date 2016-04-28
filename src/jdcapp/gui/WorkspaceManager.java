@@ -19,6 +19,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
@@ -32,6 +33,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
@@ -99,7 +101,6 @@ import static jdcapp.settings.AppPropertyType.EXTENDED_CLASS_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.IMPLEMENTED_CLASS_BUTTON_TEXT;
 import static jdcapp.settings.AppPropertyType.REMOVE_EXTENDED_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.REMOVE_IMPLEMENTED_TOOLTIP;
-import org.controlsfx.control.CheckComboBox;
 import properties_manager.PropertiesManager;
 
 /**
@@ -383,6 +384,8 @@ public class WorkspaceManager {
         variableScrollPane = new ScrollPane();
         variableTableView = new TableView();
         variableScrollPane.setContent(variableTableView);
+        variableScrollPane.setPrefViewportWidth(100);
+        variableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         
         componentToolbarPane.getChildren().add(variableScrollPane);
         
@@ -397,7 +400,10 @@ public class WorkspaceManager {
         
         methodScrollPane = new ScrollPane();
         methodTableView = new TableView();
+        methodTableView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
         methodScrollPane.setContent(methodTableView);
+        methodScrollPane.setPrefViewportWidth(100);
+        methodScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         
         componentToolbarPane.getChildren().add(methodScrollPane);
         
@@ -757,13 +763,15 @@ public class WorkspaceManager {
         variableTableView.getColumns().add(new TableColumn("Type"));
         variableTableView.getColumns().add(new TableColumn("Static"));
         variableTableView.getColumns().add(new TableColumn("Access"));
-        variableTableView.getStyleClass().add(TABLE_VIEW_CLASS);
+        //variableTableView.getStyleClass().add(TABLE_VIEW_CLASS);
         
         methodTableView.getColumns().add(new TableColumn("Name"));
-        methodTableView.getColumns().add(new TableColumn("Type"));
+        methodTableView.getColumns().add(new TableColumn("Return"));
         methodTableView.getColumns().add(new TableColumn("Static"));
+        methodTableView.getColumns().add(new TableColumn("Abstract"));
         methodTableView.getColumns().add(new TableColumn("Access"));
-        methodTableView.getStyleClass().add(TABLE_VIEW_CLASS);
+        methodTableView.getColumns().add(new TableColumn("Arg1"));
+        //methodTableView.getStyleClass().add(TABLE_VIEW_CLASS);
         
         //Initialize style for the canvas
         canvas.getStyleClass().add(WORKSPACE_CLASS);
@@ -922,6 +930,8 @@ public class WorkspaceManager {
         
         classNameText.setText(dataManager.getSelectedClass().getData().getClassName());
         packageNameText.setText(dataManager.getSelectedClass().getData().getPackageName());
+        
+        //Populate ComboBox and Menu for parent classes and select necessary ones
         for(CustomClassWrapper c : dataManager.getClasses()){
             extendedClassComboBox.getItems().add(c.getData().getClassName());
             if(dataManager.getSelectedClass().getData().getExtendedClass().equals(c.getData().getClassName()))
