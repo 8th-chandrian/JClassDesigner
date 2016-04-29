@@ -3,8 +3,14 @@
  */
 package jdcapp.gui;
 
+import java.util.ArrayList;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -21,7 +27,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -38,6 +50,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import jdcapp.JDCApp;
 import jdcapp.controller.ComponentController;
 import jdcapp.controller.EditController;
@@ -45,6 +58,8 @@ import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomMethod;
+import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.file.FileManager;
@@ -128,6 +143,10 @@ public class WorkspaceManager {
     
     static final double DEFAULT_WIDTH = 2000;
     static final double DEFAULT_HEIGHT = 1000;
+    
+    static final ObservableList<String> access = FXCollections.observableArrayList(CustomVar.PRIVATE_VAR_ACCESS, 
+            CustomVar.PROTECTED_VAR_ACCESS, CustomVar.PUBLIC_VAR_ACCESS);
+    static final ObservableList<String> trueFalse = FXCollections.observableArrayList("true", "false");
     
     //The parent app and app name
     JDCApp app;
@@ -759,18 +778,18 @@ public class WorkspaceManager {
         methodScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         
         //TODO: FIX STYLE FOR THIS ASAP
-        variableTableView.getColumns().add(new TableColumn("Name"));
-        variableTableView.getColumns().add(new TableColumn("Type"));
-        variableTableView.getColumns().add(new TableColumn("Static"));
-        variableTableView.getColumns().add(new TableColumn("Access"));
+//        variableTableView.getColumns().add(new TableColumn("Name"));
+//        variableTableView.getColumns().add(new TableColumn("Type"));
+//        variableTableView.getColumns().add(new TableColumn("Static"));
+//        variableTableView.getColumns().add(new TableColumn("Access"));
         //variableTableView.getStyleClass().add(TABLE_VIEW_CLASS);
         
-        methodTableView.getColumns().add(new TableColumn("Name"));
-        methodTableView.getColumns().add(new TableColumn("Return"));
-        methodTableView.getColumns().add(new TableColumn("Static"));
-        methodTableView.getColumns().add(new TableColumn("Abstract"));
-        methodTableView.getColumns().add(new TableColumn("Access"));
-        methodTableView.getColumns().add(new TableColumn("Arg1"));
+//        methodTableView.getColumns().add(new TableColumn("Name"));
+//        methodTableView.getColumns().add(new TableColumn("Return"));
+//        methodTableView.getColumns().add(new TableColumn("Static"));
+//        methodTableView.getColumns().add(new TableColumn("Abstract"));
+//        methodTableView.getColumns().add(new TableColumn("Access"));
+//        methodTableView.getColumns().add(new TableColumn("Arg1"));
         //methodTableView.getStyleClass().add(TABLE_VIEW_CLASS);
         
         //Initialize style for the canvas
@@ -926,6 +945,22 @@ public class WorkspaceManager {
      * To be called just after selecting a new class.
      */
     public void loadSelectedClassData(){
+        reloadSelectedClassData();
+        loadVariableData();
+        loadMethodData();
+        
+        classNameText.setDisable(false);
+        packageNameText.setDisable(false);
+        implementedClassMenuButton.setDisable(false);
+        extendedClassComboBox.setDisable(false);
+        removeAllImplementedClassesButton.setDisable(false);
+        removeExtendedClassButton.setDisable(false);
+    }
+    
+    /**
+     * Reloads the class, package, interface, and extended class data
+     */
+    public void reloadSelectedClassData(){
         DataManager dataManager = app.getDataManager();
         
         classNameText.setText(dataManager.getSelectedClass().getData().getClassName());
@@ -947,13 +982,162 @@ public class WorkspaceManager {
                     newCheck.setSelected(true);
             }
         }
+    }
+    
+    public void loadVariableData(){
+        DataManager dataManager = app.getDataManager();
+        ObservableList<CustomVar> observableVars = FXCollections.observableArrayList(
+            dataManager.getSelectedClass().getData().getVariables());
+        variableTableView.setItems(observableVars);
         
-        classNameText.setDisable(false);
-        packageNameText.setDisable(false);
-        implementedClassMenuButton.setDisable(false);
-        extendedClassComboBox.setDisable(false);
-        removeAllImplementedClassesButton.setDisable(false);
-        removeExtendedClassButton.setDisable(false);
+        TableColumn<CustomVar, String> varNameCol = new TableColumn<>("Name");
+        varNameCol.setCellValueFactory((CellDataFeatures<CustomVar, String> c) 
+                -> new ReadOnlyObjectWrapper(c.getValue().getVarName()));
+        varNameCol.setCellFactory(TextFieldTableCell.<CustomVar>forTableColumn());
+        varNameCol.setOnEditCommit((CellEditEvent<CustomVar, String> c) -> {
+            ((CustomVar) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setVarName((String)c.getNewValue());
+            reloadSelectedClass();
+        });
+        
+        TableColumn<CustomVar, String> varTypeCol = new TableColumn<>("Type");
+        varTypeCol.setCellValueFactory((CellDataFeatures<CustomVar, String> c) 
+                -> new ReadOnlyObjectWrapper(c.getValue().getVarType()));
+        varTypeCol.setCellFactory(TextFieldTableCell.<CustomVar>forTableColumn());
+        varTypeCol.setOnEditCommit((CellEditEvent<CustomVar, String> c) -> {
+            ((CustomVar) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setVarType((String)c.getNewValue());
+            //TODO: Put code for generating new class box/removing old class box/
+            //generating and removing connection lines here
+            reloadSelectedClass();
+        });
+        
+        TableColumn<CustomVar, String> varStaticCol = new TableColumn<>("Static");
+        varStaticCol.setCellValueFactory(new Callback<CellDataFeatures<CustomVar, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<CustomVar, String> c) {
+                if(c.getValue().isStatic()){
+                    return new ReadOnlyObjectWrapper("true");
+                }
+                return new ReadOnlyObjectWrapper("false");
+            }
+        });
+        varStaticCol.setCellFactory(ComboBoxTableCell.forTableColumn(trueFalse));
+        varStaticCol.setOnEditCommit((CellEditEvent<CustomVar, String> c) -> {
+            ((CustomVar) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setStaticValue(c.getNewValue().equals("true"));
+            reloadSelectedClass();
+        });
+        
+        TableColumn<CustomVar, String> varAccessCol = new TableColumn<>("Access");
+        varAccessCol.setCellValueFactory((CellDataFeatures<CustomVar, String> c) 
+                -> new ReadOnlyObjectWrapper(c.getValue().getAccess()));
+        varAccessCol.setCellFactory(ComboBoxTableCell.forTableColumn(access));
+        varAccessCol.setOnEditCommit((CellEditEvent<CustomVar, String> c) -> {
+            ((CustomVar) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setAccess(c.getNewValue());
+            reloadSelectedClass();
+        });
+        
+        variableTableView.getColumns().setAll(varNameCol, varTypeCol, varStaticCol, varAccessCol);
+        //TODO: Get width of TableView hashed out
+        variableTableView.setPrefWidth(Math.max((varNameCol.getPrefWidth() + varTypeCol.getPrefWidth() + 
+                varStaticCol.getPrefWidth() + varAccessCol.getPrefWidth()), variableScrollPane.getWidth()));
+        variableTableView.setEditable(true);
+    }
+    
+    public void loadMethodData(){
+        DataManager dataManager = app.getDataManager();
+        ObservableList<CustomMethod> observableMethods = FXCollections.observableArrayList(
+            dataManager.getSelectedClass().getData().getMethods());
+        
+        TableColumn<CustomMethod, String> methodNameCol = new TableColumn<>("Name");
+        methodNameCol.setCellValueFactory((CellDataFeatures<CustomMethod, String> c) 
+                -> new ReadOnlyObjectWrapper(c.getValue().getMethodName()));
+        methodNameCol.setCellFactory(TextFieldTableCell.<CustomMethod>forTableColumn());
+        methodNameCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
+            ((CustomMethod) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setMethodName((String)c.getNewValue());
+            reloadSelectedClass();
+        });
+        methodTableView.getColumns().add(methodNameCol);
+        
+        TableColumn<CustomMethod, String> methodTypeCol = new TableColumn<>("Return");
+        methodTypeCol.setCellValueFactory((CellDataFeatures<CustomMethod, String> c) 
+                -> new ReadOnlyObjectWrapper(c.getValue().getReturnType()));
+        methodTypeCol.setCellFactory(TextFieldTableCell.<CustomMethod>forTableColumn());
+        methodTypeCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
+            ((CustomMethod) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setReturnType((String)c.getNewValue());
+            //TODO: Put code for generating new class box/removing old class box/
+            //generating and removing connection lines here
+            reloadSelectedClass();
+        });
+        methodTableView.getColumns().add(methodTypeCol);
+        
+        TableColumn<CustomMethod, String> methodStaticCol = new TableColumn<>("Static");
+        methodStaticCol.setCellValueFactory(new Callback<CellDataFeatures<CustomMethod, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<CustomMethod, String> c) {
+                if(c.getValue().isStatic()){
+                    return new ReadOnlyObjectWrapper("true");
+                }
+                return new ReadOnlyObjectWrapper("false");
+            }
+        });
+        methodStaticCol.setCellFactory(ComboBoxTableCell.forTableColumn(trueFalse));
+        methodStaticCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
+            ((CustomMethod) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setStaticValue(c.getNewValue().equals("true"));
+            reloadSelectedClass();
+        });
+        methodTableView.getColumns().add(methodStaticCol);
+        
+        TableColumn<CustomMethod, String> methodAbstractCol = new TableColumn<>("Abstract");
+        methodAbstractCol.setCellValueFactory(new Callback<CellDataFeatures<CustomMethod, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<CustomMethod, String> c) {
+                if(c.getValue().isAbstract()){
+                    return new ReadOnlyObjectWrapper("true");
+                }
+                return new ReadOnlyObjectWrapper("false");
+            }
+        });
+        methodAbstractCol.setCellFactory(ComboBoxTableCell.forTableColumn(trueFalse));
+        methodAbstractCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
+            ((CustomMethod) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setStaticValue(c.getNewValue().equals("true"));
+            reloadSelectedClass();
+        });
+        
+        TableColumn<CustomMethod, String> methodAccessCol = new TableColumn<>("Access");
+        methodAccessCol.setCellValueFactory((CellDataFeatures<CustomMethod, String> c) 
+                -> new ReadOnlyObjectWrapper(c.getValue().getAccess()));
+        methodAccessCol.setCellFactory(ComboBoxTableCell.forTableColumn(access));
+        methodAccessCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
+            ((CustomMethod) c.getTableView().getItems().get(
+                    c.getTablePosition().getRow())
+                    ).setAccess(c.getNewValue());
+            reloadSelectedClass();
+        });
+        methodTableView.getColumns().add(methodAbstractCol);
+        
+//        TableColumn<CustomMethod, String> methodArgsCol = new TableColumn<>("Arguments");
+//        methodArgsCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
+//        methodArgsCol.setCellFactory(value);
+        
+        //TODO: Get width of TableView hashed out
+//        methodTableView.setPrefWidth(Math.max((methodNameCol.getPrefWidth() + methodTypeCol.getPrefWidth() + 
+//                methodStaticCol.getPrefWidth() + methodAccessCol.getPrefWidth()), methodScrollPane.getWidth()));
+        methodTableView.setEditable(true);
     }
     
     /**
@@ -974,6 +1158,8 @@ public class WorkspaceManager {
         extendedClassComboBox.setDisable(true);
         removeAllImplementedClassesButton.setDisable(true);
         removeExtendedClassButton.setDisable(true);
+        variableTableView.setEditable(false);
+        methodTableView.setEditable(false);
     }
     
     //TODO: Finish adding methods

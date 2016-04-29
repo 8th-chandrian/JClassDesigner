@@ -90,7 +90,7 @@ public class ComponentController {
         //and possibly remove generated boxes as well
         
         workspaceManager.wipeSelectedClassData();
-        workspaceManager.loadSelectedClassData();
+        workspaceManager.reloadSelectedClassData();
     }
 
     public void handleRemoveExtendedClass() {
@@ -104,7 +104,7 @@ public class ComponentController {
         }
         
         workspaceManager.wipeSelectedClassData();
-        workspaceManager.loadSelectedClassData();
+        workspaceManager.reloadSelectedClassData();
     }
     
 }

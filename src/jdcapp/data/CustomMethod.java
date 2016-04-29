@@ -13,6 +13,7 @@ public class CustomMethod {
     
     static final String DEFAULT_METHOD_NAME = "defaultMethod";
     static final String DEFAULT_RETURN_TYPE = "DefaultType";
+    static final String DEFAULT_ARGUMENT = "";
     static final boolean DEFAULT_METHOD_STATIC_VALUE = false;
     static final boolean DEFAULT_METHOD_ABSTRACT_VALUE = false;
     
