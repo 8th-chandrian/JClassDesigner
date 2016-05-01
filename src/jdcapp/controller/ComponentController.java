@@ -3,6 +3,7 @@
  */
 package jdcapp.controller;
 
+import java.util.ArrayList;
 import jdcapp.JDCApp;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
@@ -104,9 +105,8 @@ public class ComponentController {
                 workspaceManager.reloadWorkspace();
                 dataManager.checkCombinations();
             }
-            //TODO: Insert code here to add a line connecting selected class and extendedClass
-            //and possibly generate a box for extendedClass as well (search ArrayList of temporary class
-            //names to see if a box needs to be generated and added to classes ArrayList)
+            //TODO: Insert code here to possibly generate a line connecting selected class and newImport
+            //or not, if one already exists
         }
     }
 
@@ -179,5 +179,64 @@ public class ComponentController {
         //TODO: Insert code here to check removed method and remove any lines associated with
         //it, and possibly remove generated boxes as well
     }
+
+    public void handleVarTypeChange(CustomVar customVar, String newValue, String oldValue) {
+        DataManager dataManager = app.getDataManager();
+        if(!oldValue.equals(newValue)){
+            //TODO: Insert code here to remove the line connecting selected class and old extended class
+            //and possibly remove generated box for oldValue as well, if old type has no
+            //other connections to it (search ArrayList of connections to check)
+            customVar.setVarType(newValue);
+            if(!dataManager.hasName(newValue)){
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                        dataManager.getSelectedClass().getStartY() + 5, newValue);
+                dataManager.getClasses().add(newImport);
+            }
+            //TODO: Insert code here to possibly generate a line connecting selected class and newImport
+            //or not, if one already exists
+            app.getWorkspaceManager().reloadWorkspace();
+            dataManager.checkCombinations();
+        }
+    }
+
+    public void handleMethodTypeChange(CustomMethod customMethod, String newValue, String oldValue) {
+        DataManager dataManager = app.getDataManager();
+        if(!oldValue.equals(newValue)){
+            //TODO: Insert code here to remove the line connecting selected class and old extended class
+            //and possibly remove generated box for oldValue as well, if old type has no
+            //other connections to it (search ArrayList of connections to check)
+            customMethod.setReturnType(newValue);
+            if(!dataManager.hasName(newValue)){
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                        dataManager.getSelectedClass().getStartY() + 5, newValue);
+                dataManager.getClasses().add(newImport);
+            }
+            //TODO: Insert code here to possibly generate a line connecting selected class and newImport
+            //or not, if one already exists
+            app.getWorkspaceManager().reloadWorkspace();
+            dataManager.checkCombinations();
+        }
+    }
     
+    public void handleArgsChange(CustomMethod customMethod, ArrayList<String> oldArgs, ArrayList<String> newArgs) {
+        DataManager dataManager = app.getDataManager();
+        if(!oldArgs.equals(newArgs)){
+            //TODO: Insert code here to remove the line connecting selected class and old extended class
+            //and possibly remove generated box for oldValue as well, if old type has no
+            //other connections to it (search ArrayList of connections to check)
+            customMethod.setArguments(newArgs);
+            for(String arg : newArgs){
+                String[] argArray = arg.split(" : ");
+                if(!dataManager.hasName(argArray[1])){
+                    CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                            dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
+                    dataManager.getClasses().add(newImport);
+                }
+                //TODO: Insert code here to possibly generate a line connecting selected class and arg
+                //or not, if one already exists
+            }
+            app.getWorkspaceManager().reloadWorkspace();
+            dataManager.checkCombinations();
+        }
+    }
 }

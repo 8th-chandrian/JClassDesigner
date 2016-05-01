@@ -1123,12 +1123,14 @@ public class WorkspaceManager {
                 -> new ReadOnlyObjectWrapper(c.getValue().getVarType()));
         varTypeCol.setCellFactory(TextFieldTableCell.<CustomVar>forTableColumn());
         varTypeCol.setOnEditCommit((CellEditEvent<CustomVar, String> c) -> {
-            ((CustomVar) c.getTableView().getItems().get(
-                    c.getTablePosition().getRow())
-                    ).setVarType((String)c.getNewValue());
+//            ((CustomVar) c.getTableView().getItems().get(
+//                    c.getTablePosition().getRow())
+//                    ).setVarType((String)c.getNewValue());
             //TODO: Put code for generating new class box/removing old class box/
             //generating and removing connection lines here
-            reloadSelectedClass();
+            componentController.handleVarTypeChange((CustomVar) c.getTableView().getItems().get(c.getTablePosition().getRow()), 
+                    c.getNewValue(), c.getOldValue());
+//            reloadSelectedClass();
         });
         
         TableColumn<CustomVar, String> varStaticCol = new TableColumn<>("Static");
@@ -1202,12 +1204,14 @@ public class WorkspaceManager {
                 -> new ReadOnlyObjectWrapper(c.getValue().getReturnType()));
         methodReturnCol.setCellFactory(TextFieldTableCell.<CustomMethod>forTableColumn());
         methodReturnCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
-            ((CustomMethod) c.getTableView().getItems().get(
-                    c.getTablePosition().getRow())
-                    ).setReturnType((String)c.getNewValue());
-            //TODO: Put code for generating new class box/removing old class box/
-            //generating and removing connection lines here
-            reloadSelectedClass();
+//            ((CustomMethod) c.getTableView().getItems().get(
+//                    c.getTablePosition().getRow())
+//                    ).setReturnType((String)c.getNewValue());
+//            //TODO: Put code for generating new class box/removing old class box/
+//            //generating and removing connection lines here
+//            reloadSelectedClass();
+            componentController.handleMethodTypeChange((CustomMethod) c.getTableView().getItems().get(c.getTablePosition().getRow()), 
+                    c.getNewValue(), c.getOldValue());
         });
         
         TableColumn<CustomMethod, String> methodStaticCol = new TableColumn<>("Static");
