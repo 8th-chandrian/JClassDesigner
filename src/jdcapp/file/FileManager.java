@@ -34,8 +34,10 @@ import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 import jdcapp.data.ConnectorArrayList;
+import jdcapp.data.CustomBox;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomImport;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
@@ -112,12 +114,16 @@ public class FileManager {
         double pixelHeight = CustomClassWrapper.getPixelHeight();
         double maxPixelWidth = CustomClassWrapper.getMaxPixelWidth();
         
-        for(CustomClassWrapper c : dataManager.getClasses()){
+        for(CustomBox c : dataManager.getClasses()){
             
             //Get all instance variables from the CustomClassWrapper object
             double startX = c.getStartX();
             double startY = c.getStartY();
-            JsonObject customClassJson = makeCustomClassJsonObject(c.getData());
+            JsonObject customClassJson;
+            if(c instanceof CustomClassWrapper)
+                customClassJson = makeCustomClassJsonObject(((CustomClassWrapper)c).getData());
+            else
+                customClassJson = makeCustomImportJsonObject((CustomImport)c);
             
             //Then build the JsonObject to save
             JsonObject wrapperJson = Json.createObjectBuilder()
@@ -158,6 +164,24 @@ public class FileManager {
 	PrintWriter pw = new PrintWriter(filePath + "json");
 	pw.write(prettyPrinted);
 	pw.close();
+    }
+    
+    /**
+     * Helper method which converts a CustomImport to a JsonObject
+     * @param c
+     *      The CustomImport to be converted
+     * @return 
+     *      The CustomImport in JsonObject format
+     */
+    private JsonObject makeCustomImportJsonObject(CustomImport c){
+        String className = c.getImportName();
+        String packageName = c.getPackageName();
+        
+        JsonObject customImportJson = Json.createObjectBuilder()
+                .add(JSON_CLASS_NAME, className)
+                .add(JSON_PACKAGE_NAME, packageName)
+                .build();
+        return customImportJson;
     }
     
     /**
@@ -344,25 +368,27 @@ public class FileManager {
 	// Load the array of CustomClassWrappers
 	JsonArray jsonClassArray = json.getJsonArray(JSON_CLASS_ARRAY);
 	for (int i = 0; i < jsonClassArray.size(); i++) {
-	    JsonObject jsonCustomClassWrapper = jsonClassArray.getJsonObject(i);
-	    CustomClassWrapper c = loadCustomClassWrapper(jsonCustomClassWrapper);
+	    JsonObject jsonCustomBox = jsonClassArray.getJsonObject(i);
+	    CustomBox c = loadCustomBox(jsonCustomBox);
 	    dataManager.getClasses().add(c);
 	}
     }
     
-    private CustomClassWrapper loadCustomClassWrapper(JsonObject j){
+    private CustomBox loadCustomBox(JsonObject j){
         //Load in X and Y values and instantiate the CustomClassWrapper
         double startX = getDataAsDouble(j, JSON_START_X);
         double startY = getDataAsDouble(j, JSON_START_Y);
-        CustomClassWrapper c = new CustomClassWrapper(startX, startY);
-        
-        //Load in width, height, and wrapping width
-//        c.setWidth(getDataAsDouble(j, JSON_WIDTH));
-//        c.setHeight(getDataAsDouble(j, JSON_HEIGHT));
-        
-        //Load in CustomClass data
-        c.setData(loadCustomClass(j.getJsonObject(JSON_CUSTOM_CLASS)));
-        return c;
+        if(j.getJsonObject(JSON_CUSTOM_CLASS) != null){
+            CustomClassWrapper c = new CustomClassWrapper(startX, startY);
+            //Load in CustomClass data
+            c.setData(loadCustomClass(j.getJsonObject(JSON_CUSTOM_CLASS)));
+            return c;
+        }
+        else{
+            CustomImport c = new CustomImport(startX, startY, j.getString(JSON_CLASS_NAME));
+            c.setPackageName(j.getString(JSON_PACKAGE_NAME));
+            return c;
+        }
     }
     
     private CustomClass loadCustomClass(JsonObject j){

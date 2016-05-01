@@ -58,9 +58,6 @@ public class CustomClassWrapper extends CustomBox{
     /**
      * Constructs requisite text objects and rectangles for the display of the CustomClass
      * object in the workspace.
-     * 
-     * TODO: Clean up this method and make it more adaptable (it will need serious editing to 
-     * support resizing and abstract classes/interfaces)
      */
     @Override
     public void toDisplay(){
@@ -220,7 +217,11 @@ public class CustomClassWrapper extends CustomBox{
     public Rectangle getOutlineRectangle(){
         return (Rectangle)display.getChildren().get(0);
     }
+ 
+    @Override
+    public Group getDisplay(){ return display; }
     
+    @Override
     public Text getNameText(){
         return (Text)display.getChildren().get(2);
     }
@@ -248,8 +249,6 @@ public class CustomClassWrapper extends CustomBox{
     public double getHeight() { return height; }
 
     public void setHeight(double height) { this.height = height; }
-  
-    public Group getDisplay(){ return display; }
     
     //Static getters and setters
     public static double getPixelHeight(){

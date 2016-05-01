@@ -21,10 +21,17 @@ public class DataManager {
     JDCApp app;
 
     //The ArrayList containing all class objects created
-    ArrayList<CustomClassWrapper> classes;
+    ArrayList<CustomBox> classes;
+    
+    //The ArrayList containing temporary parents that have been added by the user.
+    //These can be selected as implemented or extended classes. If they are, new
+    //CustomImport objects are created and added to the classes array, and they are
+    //removed from tempParents. Note that tempParents is deleted every time the 
+    //program is closed.
+    ArrayList<String> tempParents;
     
     //The class currently selected
-    CustomClassWrapper selectedClass;
+    CustomBox selectedClass;
     
     //The state of the application
     JDCAppState state;
@@ -36,6 +43,7 @@ public class DataManager {
         app = init;
         selectedClass = null;
         classes = new ArrayList<>();
+        tempParents = new ArrayList<>();
         isExportable = false;
         //TODO: Finish coding constructor (is this all we need here?)
     }
@@ -46,6 +54,7 @@ public class DataManager {
     public void reset() {
         //Initialize all variables except app and selectedClass
         classes = new ArrayList<>();
+        tempParents = new ArrayList<>();
         selectedClass = null;
         state = SELECTING;
     }
@@ -60,9 +69,9 @@ public class DataManager {
      *      The class clicked on, or null if no class contains the coordinates
      *      of the mouse click.
      */
-    public CustomClassWrapper selectTopClass(double x, double y){
+    public CustomBox selectTopClass(double x, double y){
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
-        CustomClassWrapper c = getTopClass(x, y);
+        CustomBox c = getTopClass(x, y);
         
         //Don't need to do anything if no class was clicked on
         if(c == null)
@@ -96,9 +105,9 @@ public class DataManager {
      *      The class clicked on, or null if no class contains the coordinates
      *      of the mouse click.
      */
-    public CustomClassWrapper getTopClass(double x, double y){
+    public CustomBox getTopClass(double x, double y){
         for(int i = classes.size() - 1; i >= 0; i--){
-            CustomClassWrapper c = classes.get(i);
+            CustomBox c = classes.get(i);
             if(c.getOutlineRectangle().contains(x, y))
                 return c;
         }
@@ -113,15 +122,19 @@ public class DataManager {
         return state;
     }
     
-    public ArrayList<CustomClassWrapper> getClasses(){
+    public ArrayList<CustomBox> getClasses(){
         return classes;
+    }
+    
+    public ArrayList<String> getTempParents(){
+        return tempParents;
     }
     
     public void setSelectedClass(CustomClassWrapper c){
         selectedClass = c;
     }
     
-    public CustomClassWrapper getSelectedClass(){
+    public CustomBox getSelectedClass(){
         return selectedClass;
     }
     
@@ -134,13 +147,24 @@ public class DataManager {
     public void checkCombinations(){
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         int tally = 0;
-        for(CustomClassWrapper c : classes){
-            if(isCombinationUnique(c.getData().getClassName(), c.getData().getPackageName())){
-                c.getNameText().setFill(Color.BLACK);
-                tally++;
+        for(CustomBox cb : classes){
+            if(cb instanceof CustomClassWrapper){
+                CustomClassWrapper c = (CustomClassWrapper) cb;
+                if(isCombinationUnique(c.getData().getClassName(), c.getData().getPackageName())){
+                    c.getNameText().setFill(Color.BLACK);
+                    tally++;
+                }
+                else
+                    c.getNameText().setFill(Color.RED);
             }
-            else
-                c.getNameText().setFill(Color.RED);
+            else if(cb instanceof CustomImport){
+                if(((CustomImport)cb).getPackageName().equals(CustomImport.DEFAULT_PACKAGE_NAME))
+                    ((CustomImport)cb).getNameText().setFill(Color.RED);
+                else{
+                    ((CustomImport)cb).getNameText().setFill(Color.BLACK);
+                    tally++;
+                }
+            }
         }
         if(tally == classes.size())
             isExportable = true;
@@ -160,9 +184,12 @@ public class DataManager {
         int numOccurances = 0;
         if(className.equals(CustomClass.DEFAULT_CLASS_NAME) || packageName.equals(CustomClass.DEFAULT_PACKAGE_NAME))
                 return false;
-        for(CustomClassWrapper c : classes){
-            if(c.getData().getClassName().equals(className) && c.getData().getPackageName().equals(packageName))
-                numOccurances++;
+        for(CustomBox cb : classes){
+            if(cb instanceof CustomClassWrapper){
+                CustomClassWrapper c = (CustomClassWrapper) cb;
+                if(c.getData().getClassName().equals(className) && c.getData().getPackageName().equals(packageName))
+                    numOccurances++;
+            }
         }
         if(numOccurances > 1)
             return false;

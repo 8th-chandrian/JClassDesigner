@@ -3,8 +3,10 @@
  */
 package jdcapp.data;
 
+import javafx.scene.Group;
 import javafx.scene.effect.Effect;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -41,7 +43,11 @@ public abstract class CustomBox {
         dragY = -1;
     }
     
+    public abstract double getStartX();
+    public abstract double getStartY();
     public abstract void toDisplay();
+    public abstract Group getDisplay();
+    public abstract Text getNameText();
     public abstract void highlight(Effect e);
     public abstract Rectangle getOutlineRectangle();
 }

@@ -57,7 +57,9 @@ import jdcapp.controller.EditController;
 import jdcapp.controller.FileController;
 import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
+import jdcapp.data.CustomBox;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomImport;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
@@ -629,6 +631,23 @@ public class WorkspaceManager {
             }
         });
         
+        //Handlers for newParentText. A change is logged if enter is pressed or focus
+        //is lost.
+        newParentText.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER)){
+                componentController.handleNewParentAdded(newParentText.getText());
+                newParentText.setText(null);
+                canvas.requestFocus();
+            }
+        });
+        newParentText.focusedProperty().addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> change, Boolean oldFocus, Boolean newFocus){
+                if(!newFocus)
+                    newParentText.setText(null);
+            }
+        });
+        
         //Handler for implementedClassMenuButton
         implementedClassMenuButton.setOnMouseClicked(e -> {
             if(!implementedClassMenu.isShowing())
@@ -661,7 +680,7 @@ public class WorkspaceManager {
         
         //Handler for removeVariable button
         removeVariable.setOnAction(e -> {
-           componentController.handleRemoveVariable((CustomVar)variableTableView.getSelectionModel().getSelectedItem());
+            componentController.handleRemoveVariable((CustomVar)variableTableView.getSelectionModel().getSelectedItem());
         });
         
         //Handler for addMethod button
@@ -671,7 +690,7 @@ public class WorkspaceManager {
         
         //Handler for removeMethod button
         removeMethod.setOnAction(e -> {
-           componentController.handleRemoveMethod((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
+            componentController.handleRemoveMethod((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
         });
         
         //Handler for editMethodArgs button
@@ -753,6 +772,9 @@ public class WorkspaceManager {
         return button;
     }
     
+    /**
+     * Links display objects to their css style classes.
+     */
     public void initStyle(){
         
         //Initialize style for top toolbar
@@ -914,7 +936,7 @@ public class WorkspaceManager {
         DataManager dataManager = app.getDataManager();
         canvas.getChildren().clear();
         
-        for(CustomClassWrapper c : dataManager.getClasses()){
+        for(CustomBox c : dataManager.getClasses()){
             c.toDisplay();
             if(c == dataManager.getSelectedClass()){
                 //Sets the outline rectangle to highlighted
@@ -974,21 +996,19 @@ public class WorkspaceManager {
      * To be called just after selecting a new class.
      */
     public void loadSelectedClassData(){
-        reloadSelectedClassData();
-        loadVariableData();
-        loadMethodData();
-        
-        classNameText.setDisable(false);
-        packageNameText.setDisable(false);
-        implementedClassMenuButton.setDisable(false);
-        extendedClassComboBox.setDisable(false);
-        removeAllImplementedClassesButton.setDisable(false);
-        removeExtendedClassButton.setDisable(false);
-        addVariable.setDisable(false);
-        removeVariable.setDisable(true);
-        addMethod.setDisable(false);
-        removeMethod.setDisable(true);
-        editMethodArgs.setDisable(true);
+        DataManager dataManager = app.getDataManager();
+        if(dataManager.getSelectedClass() instanceof CustomClassWrapper){
+            reloadSelectedClassData();
+            loadVariableData();
+            loadMethodData();
+        }
+        else{
+            reloadSelectedClassData();
+            variableTableView.getItems().clear();
+            variableTableView.getColumns().clear();
+            methodTableView.getItems().clear();
+            methodTableView.getColumns().clear();
+        }
     }
     
     /**
@@ -997,29 +1017,92 @@ public class WorkspaceManager {
     public void reloadSelectedClassData(){
         DataManager dataManager = app.getDataManager();
         
-        classNameText.setText(dataManager.getSelectedClass().getData().getClassName());
-        packageNameText.setText(dataManager.getSelectedClass().getData().getPackageName());
-        
-        //Populate ComboBox and Menu for parent classes and select necessary ones
-        for(CustomClassWrapper c : dataManager.getClasses()){
-            extendedClassComboBox.getItems().add(c.getData().getClassName());
-            if(dataManager.getSelectedClass().getData().getExtendedClass().equals(c.getData().getClassName()))
-                extendedClassComboBox.getSelectionModel().select(c.getData().getClassName());
-            
-            CheckMenuItem newCheck = new CheckMenuItem(c.getData().getClassName());
-            newCheck.setOnAction(e -> {
-                componentController.handleInterfaceChecked(newCheck.isSelected(), newCheck.getText());
-            });
-            implementedClassMenu.getItems().add(newCheck);
-            for(String s : dataManager.getSelectedClass().getData().getImplementedClasses()){
-                if(s.equals(c.getData().getClassName()))
-                    newCheck.setSelected(true);
+        if(dataManager.getSelectedClass() instanceof CustomClassWrapper){
+            classNameText.setText(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName());
+            packageNameText.setText(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getPackageName());
+            extendedClassComboBox.getItems().clear();
+            implementedClassMenu.getItems().clear();
+
+            //Populate ComboBox and Menu for parent classes and select necessary ones
+            for(CustomBox c : dataManager.getClasses()){
+                if(c instanceof CustomClassWrapper){
+                    extendedClassComboBox.getItems().add(((CustomClassWrapper)c).getData().getClassName());
+                    if(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(((CustomClassWrapper)c).getData().getClassName()))
+                        extendedClassComboBox.getSelectionModel().select(((CustomClassWrapper)c).getData().getClassName());
+
+                    CheckMenuItem newCheck = new CheckMenuItem(((CustomClassWrapper)c).getData().getClassName());
+                    newCheck.setOnAction(e -> {
+                        componentController.handleInterfaceChecked(newCheck.isSelected(), newCheck.getText());
+                    });
+                    implementedClassMenu.getItems().add(newCheck);
+                    for(String s : ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses()){
+                        if(s.equals(((CustomClassWrapper)c).getData().getClassName()))
+                            newCheck.setSelected(true);
+                    }
+                }
+                else{
+                    extendedClassComboBox.getItems().add(((CustomImport)c).getImportName());
+                    if(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(((CustomImport)c).getImportName()));
+                        extendedClassComboBox.getSelectionModel().select(((CustomImport)c).getImportName());
+
+                    CheckMenuItem newCheck = new CheckMenuItem(((CustomImport)c).getImportName());
+                    newCheck.setOnAction(e -> {
+                        componentController.handleInterfaceChecked(newCheck.isSelected(), newCheck.getText());
+                    });
+                    implementedClassMenu.getItems().add(newCheck);
+                    for(String s : ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses()){
+                        if(s.equals(((CustomImport)c).getImportName()))
+                            newCheck.setSelected(true);
+                    }
+                }
             }
+            for(String s : dataManager.getTempParents()){
+                extendedClassComboBox.getItems().add(s);
+                CheckMenuItem newCheck = new CheckMenuItem(s);
+                newCheck.setOnAction(e -> {
+                    componentController.handleInterfaceChecked(newCheck.isSelected(), newCheck.getText());
+                });
+                implementedClassMenu.getItems().add(newCheck);
+            }
+
+            //Enable necessary controls
+            classNameText.setDisable(false);
+            packageNameText.setDisable(false);
+            newParentText.setDisable(false);
+            implementedClassMenuButton.setDisable(false);
+            extendedClassComboBox.setDisable(false);
+            removeAllImplementedClassesButton.setDisable(false);
+            removeExtendedClassButton.setDisable(false);
+            addVariable.setDisable(false);
+            removeVariable.setDisable(true);
+            addMethod.setDisable(false);
+            removeMethod.setDisable(true);
+            editMethodArgs.setDisable(true);
+        }
+        else{
+            classNameText.setText(((CustomImport)dataManager.getSelectedClass()).getImportName());
+            packageNameText.setText(((CustomImport)dataManager.getSelectedClass()).getPackageName());
+            extendedClassComboBox.getItems().clear();
+            implementedClassMenu.getItems().clear();
+
+            //Enable necessary controls
+            classNameText.setDisable(true);
+            packageNameText.setDisable(false);
+            newParentText.setDisable(true);
+            implementedClassMenuButton.setDisable(true);
+            extendedClassComboBox.setDisable(true);
+            removeAllImplementedClassesButton.setDisable(true);
+            removeExtendedClassButton.setDisable(true);
+            addVariable.setDisable(true);
+            removeVariable.setDisable(true);
+            addMethod.setDisable(true);
+            removeMethod.setDisable(true);
+            editMethodArgs.setDisable(true);
         }
     }
     
     /**
-     * Loads the variables into the tableview
+     * Loads the variables into the tableview (assumption is that selected class is a CustomClassWrapper)
      */
     public void loadVariableData(){
 //        //Remove all items from methodTableView
@@ -1027,7 +1110,7 @@ public class WorkspaceManager {
         
         DataManager dataManager = app.getDataManager();
         ObservableList<CustomVar> observableVars = FXCollections.observableArrayList(
-            dataManager.getSelectedClass().getData().getVariables());
+            ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getVariables());
         variableTableView.setItems(observableVars);
         
         TableColumn<CustomVar, String> varNameCol = new TableColumn<>("Name");
@@ -1098,7 +1181,7 @@ public class WorkspaceManager {
     }
     
     /**
-     * Loads the methods into the tableview
+     * Loads the methods into the tableview (assumption is that selected class is a CustomClassWrapper)
      */
     public void loadMethodData(){
 //        //Remove all items from methodTableView
@@ -1106,7 +1189,7 @@ public class WorkspaceManager {
         
         DataManager dataManager = app.getDataManager();
         ObservableList<CustomMethod> observableMethods = FXCollections.observableArrayList(
-            dataManager.getSelectedClass().getData().getMethods());
+            ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getMethods());
         methodTableView.setItems(observableMethods);
         
         TableColumn<CustomMethod, String> methodNameCol = new TableColumn<>("Name");
@@ -1166,7 +1249,7 @@ public class WorkspaceManager {
             ((CustomMethod) c.getTableView().getItems().get(
                     c.getTablePosition().getRow())
                     ).setAbstractValue(c.getNewValue().equals("true"));
-            dataManager.getSelectedClass().getData().updateAbstractValue();
+            ((CustomClassWrapper)dataManager.getSelectedClass()).getData().updateAbstractValue();
             reloadSelectedClass();
         });
         
@@ -1199,37 +1282,9 @@ public class WorkspaceManager {
     }
     
     /**
-     * Helper method to be called after method is removed
-     */
-    public void refreshMethodButtons(){
-        if(methodTableView.getSelectionModel().getSelectedItem() != null){
-            removeMethod.setDisable(false);
-            editMethodArgs.setDisable(false);
-        }
-        else{
-            removeMethod.setDisable(true);
-            editMethodArgs.setDisable(true);
-        }
-    }
-    
-    /**
-     * Helper method to be called after variable is removed
-     */
-    public void refreshVariableButton(){
-        if(variableTableView.getSelectionModel().getSelectedItem() != null){
-            removeVariable.setDisable(false);
-        }
-        else{
-            removeVariable.setDisable(true);
-        }
-    }
-    
-    /**
      * To be called just after selecting a new class.
      */
     public void wipeSelectedClassData(){
-        DataManager dataManager = app.getDataManager();
-        
         classNameText.setText("");
         packageNameText.setText("");
         extendedClassComboBox.getItems().removeAll(extendedClassComboBox.getItems());
@@ -1238,6 +1293,7 @@ public class WorkspaceManager {
         
         classNameText.setDisable(true);
         packageNameText.setDisable(true);
+        newParentText.setDisable(true);
         implementedClassMenuButton.setDisable(true);
         extendedClassComboBox.setDisable(true);
         removeAllImplementedClassesButton.setDisable(true);

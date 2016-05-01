@@ -4,7 +4,7 @@
 package jdcapp.controller;
 
 import jdcapp.JDCApp;
-import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomBox;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.gui.WorkspaceManager;
@@ -37,7 +37,7 @@ public class WorkspaceController {
         DataManager dataManager = app.getDataManager();
         
         if(dataManager.getState() == JDCAppState.SELECTING){
-            CustomClassWrapper c = dataManager.selectTopClass(x, y);
+            CustomBox c = dataManager.selectTopClass(x, y);
             if(c != null){
                 dataManager.getSelectedClass().initDrag(x, y);
                 dataManager.setState(JDCAppState.DRAGGING_CLASS);
