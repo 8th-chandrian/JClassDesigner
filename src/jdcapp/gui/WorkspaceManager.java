@@ -3,17 +3,13 @@
  */
 package jdcapp.gui;
 
-import java.util.ArrayList;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -25,14 +21,11 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -1021,6 +1014,7 @@ public class WorkspaceManager {
             classNameText.setText(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName());
             packageNameText.setText(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getPackageName());
             extendedClassComboBox.getItems().clear();
+            extendedClassComboBox.getSelectionModel().clearSelection();
             implementedClassMenu.getItems().clear();
 
             //Populate ComboBox and Menu for parent classes and select necessary ones
@@ -1042,7 +1036,7 @@ public class WorkspaceManager {
                 }
                 else{
                     extendedClassComboBox.getItems().add(((CustomImport)c).getImportName());
-                    if(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(((CustomImport)c).getImportName()));
+                    if(((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(((CustomImport)c).getImportName()))
                         extendedClassComboBox.getSelectionModel().select(((CustomImport)c).getImportName());
 
                     CheckMenuItem newCheck = new CheckMenuItem(((CustomImport)c).getImportName());
@@ -1288,7 +1282,7 @@ public class WorkspaceManager {
         classNameText.setText("");
         packageNameText.setText("");
         extendedClassComboBox.getItems().removeAll(extendedClassComboBox.getItems());
-        extendedClassComboBox.valueProperty().set(null);
+        extendedClassComboBox.getSelectionModel().clearSelection();
         implementedClassMenu.getItems().removeAll(implementedClassMenu.getItems());
         
         classNameText.setDisable(true);

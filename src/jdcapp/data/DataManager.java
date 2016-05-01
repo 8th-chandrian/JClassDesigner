@@ -114,28 +114,23 @@ public class DataManager {
         return null;
     }
     
-    public void setState(JDCAppState newState){
-        state = newState;
-    }
-    
-    public JDCAppState getState(){
-        return state;
-    }
-    
-    public ArrayList<CustomBox> getClasses(){
-        return classes;
-    }
-    
-    public ArrayList<String> getTempParents(){
-        return tempParents;
-    }
-    
-    public void setSelectedClass(CustomClassWrapper c){
-        selectedClass = c;
-    }
-    
-    public CustomBox getSelectedClass(){
-        return selectedClass;
+    /**
+     * Checks classes to see if any CustomBox has the same name as nameToCheck
+     * @param nameToCheck
+     * @return 
+     */
+    public boolean hasName(String nameToCheck){
+        for(CustomBox c : classes){
+            if(c instanceof CustomClassWrapper){
+                if(((CustomClassWrapper)c).getData().getClassName().equals(nameToCheck))
+                    return true;
+            }
+            else{
+                if(((CustomImport)c).getImportName().equals(nameToCheck))
+                    return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -199,4 +194,29 @@ public class DataManager {
     
     //TODO: Make more classes here to check whether or not variables/methods are not default
     //Use isExportable and updateCodeExportButton() to set text to red/black and enable/disable button.
+    
+        
+    public void setState(JDCAppState newState){
+        state = newState;
+    }
+    
+    public JDCAppState getState(){
+        return state;
+    }
+    
+    public ArrayList<CustomBox> getClasses(){
+        return classes;
+    }
+    
+    public ArrayList<String> getTempParents(){
+        return tempParents;
+    }
+    
+    public void setSelectedClass(CustomClassWrapper c){
+        selectedClass = c;
+    }
+    
+    public CustomBox getSelectedClass(){
+        return selectedClass;
+    }
 }

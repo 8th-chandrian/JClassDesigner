@@ -12,7 +12,7 @@
                 "package_name":"example.handler",
                 "interface_value":false,
                 "abstract_value":false,
-                "extended_class":"",
+                "extended_class":"ShittyImport",
                 "implemented_classes":[
                     "EventHandler"
                 ],
@@ -56,8 +56,9 @@
                 "package_name":"example",
                 "interface_value":false,
                 "abstract_value":false,
-                "extended_class":"Application",
+                "extended_class":"ShittyImport",
                 "implemented_classes":[
+                    "ShittyImport"
                 ],
                 "variables":[
                     {
@@ -389,50 +390,6 @@
             }
         },
         {
-            "start_x":718.0,
-            "start_y":199.0,
-            "custom_class":{
-                "class_name":"PauseHandler",
-                "package_name":"example.handler",
-                "interface_value":false,
-                "abstract_value":false,
-                "extended_class":"",
-                "implemented_classes":[
-                    "EventHandler"
-                ],
-                "variables":[
-                    {
-                        "var_name":"app",
-                        "var_type":"ThreadExample",
-                        "var_static_value":false,
-                        "var_access":"private"
-                    }
-                ],
-                "methods":[
-                    {
-                        "method_name":"PauseHandler",
-                        "method_return":"",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "initApp : ThreadExample"
-                        ]
-                    },
-                    {
-                        "method_name":"handle",
-                        "method_return":"void",
-                        "method_static_value":false,
-                        "method_abstract_value":false,
-                        "method_access":"public",
-                        "method_arguments":[
-                            "event : Event"
-                        ]
-                    }
-                ]
-            }
-        },
-        {
             "start_x":469.0,
             "start_y":481.0,
             "custom_class":{
@@ -478,6 +435,58 @@
                         ]
                     }
                 ]
+            }
+        },
+        {
+            "start_x":718.0,
+            "start_y":198.0,
+            "custom_class":{
+                "class_name":"PauseHandler",
+                "package_name":"example.handler",
+                "interface_value":false,
+                "abstract_value":false,
+                "extended_class":"ShittyImport",
+                "implemented_classes":[
+                    "EventHandler"
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"PauseHandler",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"handle",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "event : Event"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "start_x":761.0,
+            "start_y":385.0,
+            "custom_class":{
+                "class_name":"ShittyImport",
+                "package_name":"example.shitty"
             }
         }
     ]

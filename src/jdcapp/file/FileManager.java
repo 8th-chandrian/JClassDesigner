@@ -378,15 +378,15 @@ public class FileManager {
         //Load in X and Y values and instantiate the CustomClassWrapper
         double startX = getDataAsDouble(j, JSON_START_X);
         double startY = getDataAsDouble(j, JSON_START_Y);
-        if(j.getJsonObject(JSON_CUSTOM_CLASS) != null){
+        if(j.getJsonObject(JSON_CUSTOM_CLASS).containsKey(JSON_INTERFACE_VALUE)){
             CustomClassWrapper c = new CustomClassWrapper(startX, startY);
             //Load in CustomClass data
             c.setData(loadCustomClass(j.getJsonObject(JSON_CUSTOM_CLASS)));
             return c;
         }
         else{
-            CustomImport c = new CustomImport(startX, startY, j.getString(JSON_CLASS_NAME));
-            c.setPackageName(j.getString(JSON_PACKAGE_NAME));
+            CustomImport c = new CustomImport(startX, startY, j.getJsonObject(JSON_CUSTOM_CLASS).getString(JSON_CLASS_NAME));
+            c.setPackageName(j.getJsonObject(JSON_CUSTOM_CLASS).getString(JSON_PACKAGE_NAME));
             return c;
         }
     }

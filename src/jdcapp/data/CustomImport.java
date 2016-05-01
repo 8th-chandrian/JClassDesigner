@@ -60,6 +60,7 @@ public class CustomImport extends CustomBox{
         nameText.setText(importName);
         nameText.setY(startY + lineOffset * (pixelHeight + spacingOffset));
         nameText.setX(displayX);
+        lineOffset += 1.5;
         
         display.getChildren().add(nameText);
         

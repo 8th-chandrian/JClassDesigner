@@ -62,12 +62,20 @@ public class ComponentController {
 
     public void handleInterfaceChecked(boolean selected, String classToImplement) {
         DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         if(selected){
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().add(classToImplement);
-            //TODO: Insert code here to generate a line connecting selected class and classToImplement
-            //and possibly generate a box for classToImplement as well (search ArrayList of temporary class
-            //names to see if a box needs to be generated and added to classes ArrayList)
+            if(!dataManager.hasName(classToImplement)){
+                dataManager.getTempParents().remove(classToImplement);
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                        dataManager.getSelectedClass().getStartY() + 5, classToImplement);
+                dataManager.getClasses().add(newImport);
+                workspaceManager.reloadWorkspace();
+                dataManager.checkCombinations();
+            }
+            //TODO: Insert code here to possibly generate a line connecting selected class and classToImplement
+            //or not, if one already exists
         }
         else{
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().remove(classToImplement);
@@ -79,6 +87,7 @@ public class ComponentController {
 
     public void handleExtendedClassSelected(String extendedClass) {
         DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         if(!((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(extendedClass)){
             if(!((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
@@ -87,6 +96,14 @@ public class ComponentController {
                 //other connections to it (search ArrayList of connections to check)
             }
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(extendedClass);
+            if(!dataManager.hasName(extendedClass)){
+                dataManager.getTempParents().remove(extendedClass);
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                        dataManager.getSelectedClass().getStartY() + 5, extendedClass);
+                dataManager.getClasses().add(newImport);
+                workspaceManager.reloadWorkspace();
+                dataManager.checkCombinations();
+            }
             //TODO: Insert code here to add a line connecting selected class and extendedClass
             //and possibly generate a box for extendedClass as well (search ArrayList of temporary class
             //names to see if a box needs to be generated and added to classes ArrayList)
