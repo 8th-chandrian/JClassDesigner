@@ -72,11 +72,23 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, classToImplement);
                 dataManager.getClasses().add(newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
                 workspaceManager.reloadWorkspace();
                 dataManager.checkCombinations();
             }
-            //TODO: Insert code here to possibly generate a line connecting selected class and classToImplement
-            //or not, if one already exists
+            else{
+                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                String selectedClassName;
+                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                else
+                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                if(!dataManager.checkConnectionPair(selectedClassName, classToImplement)){
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(classToImplement));
+                    workspaceManager.reloadWorkspace();
+                }
+            }
         }
         else{
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().remove(classToImplement);
@@ -102,11 +114,23 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, extendedClass);
                 dataManager.getClasses().add(newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
                 workspaceManager.reloadWorkspace();
                 dataManager.checkCombinations();
             }
-            //TODO: Insert code here to possibly generate a line connecting selected class and newImport
-            //or not, if one already exists
+            else{
+                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                String selectedClassName;
+                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                else
+                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                if(!dataManager.checkConnectionPair(selectedClassName, extendedClass)){
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(extendedClass));
+                    workspaceManager.reloadWorkspace();
+                }
+            }
         }
     }
 
@@ -191,9 +215,23 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
                 dataManager.getClasses().add(newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                app.getWorkspaceManager().reloadWorkspace();
+                dataManager.checkCombinations();
             }
-            //TODO: Insert code here to possibly generate a line connecting selected class and newImport
-            //or not, if one already exists
+            else{
+                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                String selectedClassName;
+                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                else
+                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue));
+                    app.getWorkspaceManager().reloadWorkspace();
+                }
+            }
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
@@ -210,9 +248,23 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
                 dataManager.getClasses().add(newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                app.getWorkspaceManager().reloadWorkspace();
+                dataManager.checkCombinations();
             }
-            //TODO: Insert code here to possibly generate a line connecting selected class and newImport
-            //or not, if one already exists
+            else{
+                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                String selectedClassName;
+                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                else
+                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue));
+                    app.getWorkspaceManager().reloadWorkspace();
+                }
+            }
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
@@ -232,8 +284,19 @@ public class ComponentController {
                             dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
                     dataManager.getClasses().add(newImport);
                 }
-                //TODO: Insert code here to possibly generate a line connecting selected class and arg
-                //or not, if one already exists
+                else{
+                    //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                    String selectedClassName;
+                    if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                        selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                    else
+                        selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                    if(!dataManager.checkConnectionPair(selectedClassName, arg)){
+                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(arg));
+                        app.getWorkspaceManager().reloadWorkspace();
+                    }
+                }
             }
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();

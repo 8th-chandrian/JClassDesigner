@@ -40,6 +40,7 @@ public class WorkspaceController {
             CustomBox c = dataManager.selectTopClass(x, y);
             if(c != null){
                 dataManager.getSelectedClass().initDrag(x, y);
+                dataManager.initDragOnConnections(dataManager.getSelectedClass(), x, y);
                 dataManager.setState(JDCAppState.DRAGGING_CLASS);
             }
             else{
@@ -55,6 +56,7 @@ public class WorkspaceController {
         //Set the starting x and y values of the selected class, then reload it into canvas
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
             dataManager.getSelectedClass().drag(x, y);
+            dataManager.dragConnections(dataManager.getSelectedClass(), x, y);
             workspaceManager.reloadSelectedClass();
         }
         else if(dataManager.getState() == JDCAppState.RESIZING_CLASS){
@@ -66,6 +68,7 @@ public class WorkspaceController {
         DataManager dataManager = app.getDataManager();
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
             dataManager.getSelectedClass().endDrag();
+            dataManager.endDragOnConnections(dataManager.getSelectedClass());
             dataManager.setState(JDCAppState.SELECTING);
         }
         else if(dataManager.getState() == JDCAppState.DRAGGING_NOTHING){

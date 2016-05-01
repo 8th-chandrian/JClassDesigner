@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import javafx.geometry.Point2D;
 import jdcapp.JDCApp;
-import jdcapp.data.ConnectorArrayList;
 import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
@@ -89,20 +88,6 @@ public class ThreadExampleDesignAbstract {
         ArrayList<String> threadExampleParents = new ArrayList<String>(Arrays.asList("Application"));
         threadExample.getData().setParents(threadExampleParents);
         
-        //Point2D values are arbitrary and only created for testing purposes
-        HashMap<String, ConnectorArrayList> threadExampleConnections = new HashMap<>();
-        
-        //NOTE: There would be many more connections than just the two listed here, but
-        //more are not necessary for testing purposes so they have been excluded
-        ArrayList<Point2D> applicationConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 250), new Point2D(200, 400),
-                new Point2D(200, 500)));
-        ConnectorArrayList applicationConnector = new ConnectorArrayList(applicationConnectorArray, ConnectorArrayList.ARROW_CONNECTOR);
-        threadExampleConnections.put("Application", applicationConnector);
-        ArrayList<Point2D> counterTaskConnectorArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(300, 400), new Point2D(300, 500)));
-        ConnectorArrayList counterTaskConnector = new ConnectorArrayList(counterTaskConnectorArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        threadExampleConnections.put("CounterTask", counterTaskConnector);
-        threadExample.setConnections(threadExampleConnections);
-        
         testData.getClasses().add(threadExample);
         
         /////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,17 +112,6 @@ public class ThreadExampleDesignAbstract {
                 counterTaskCall));
         
         counterTaskExample.getData().setMethods(counterTaskExampleMethods);
-        
-        ArrayList<String> counterTaskExampleParents = new ArrayList<String>( Arrays.asList("Task<Void>"));
-        counterTaskExample.getData().setParents(counterTaskExampleParents);
-        
-        HashMap<String, ConnectorArrayList> counterTaskExampleConnections = new HashMap<>();
-        ArrayList<Point2D> taskConnectorCounterTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(200, 500), 
-                new Point2D(300, 500)));
-        ConnectorArrayList taskConnectorCounterTask = new ConnectorArrayList(taskConnectorCounterTaskArray, ConnectorArrayList.ARROW_CONNECTOR);
-        counterTaskExampleConnections.put("Task", taskConnectorCounterTask);
-        
-        counterTaskExample.setConnections(counterTaskExampleConnections);
         
         testData.getClasses().add(counterTaskExample);
         
@@ -167,18 +141,6 @@ public class ThreadExampleDesignAbstract {
         ArrayList<String> dateTaskExampleParents = new ArrayList<String>( Arrays.asList("Task<Void>"));
         dateTaskExample.getData().setParents(dateTaskExampleParents);
         
-        HashMap<String, ConnectorArrayList> dateTaskExampleConnections = new HashMap<>();
-        ArrayList<Point2D> taskConnectorDateTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(500, 550), 
-                new Point2D(500, 700)));
-        ConnectorArrayList taskConnectorDateTask = new ConnectorArrayList(taskConnectorDateTaskArray, ConnectorArrayList.ARROW_CONNECTOR);
-        dateTaskExampleConnections.put("Task", taskConnectorDateTask);
-        ArrayList<Point2D> dateConnectorDateTaskArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
-                new Point2D(600, 800)));
-        ConnectorArrayList dateConnectorDateTask = new ConnectorArrayList(dateConnectorDateTaskArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        dateTaskExampleConnections.put("Date", dateConnectorDateTask);
-        
-        dateTaskExample.setConnections(dateTaskExampleConnections);
-        
         testData.getClasses().add(dateTaskExample);
         
         //////////////////////////////////////////////////////////////////////
@@ -206,18 +168,6 @@ public class ThreadExampleDesignAbstract {
         ArrayList<String> pauseHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler"));
         pauseHandlerExample.getData().setParents(pauseHandlerExampleParents);
         
-        HashMap<String, ConnectorArrayList> pauseHandlerExampleConnections = new HashMap<>();
-        ArrayList<Point2D> eventHandlerConnectorPauseHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 540), 
-                new Point2D(800, 760)));
-        ConnectorArrayList eventHandlerConnectorPauseHandler = new ConnectorArrayList(eventHandlerConnectorPauseHandlerArray, ConnectorArrayList.ARROW_CONNECTOR);
-        pauseHandlerExampleConnections.put("EventHandler", eventHandlerConnectorPauseHandler);
-        ArrayList<Point2D> threadExampleConnectorPauseHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
-                new Point2D(600, 800)));
-        ConnectorArrayList threadExampleConnectorPauseHandler = new ConnectorArrayList(threadExampleConnectorPauseHandlerArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        pauseHandlerExampleConnections.put("ThreadExample", threadExampleConnectorPauseHandler);
-        
-        pauseHandlerExample.setConnections(pauseHandlerExampleConnections);
-        
         testData.getClasses().add(pauseHandlerExample);
         
         //////////////////////////////////////////////////////////////////////
@@ -244,18 +194,6 @@ public class ThreadExampleDesignAbstract {
         
         ArrayList<String> startHandlerExampleParents = new ArrayList<String>( Arrays.asList("EventHandler"));
         startHandlerExample.getData().setParents(startHandlerExampleParents);
-        
-        HashMap<String, ConnectorArrayList> startHandlerExampleConnections = new HashMap<>();
-        ArrayList<Point2D> eventHandlerConnectorStartHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 540), 
-                new Point2D(800, 760)));
-        ConnectorArrayList eventHandlerConnectorStartHandler = new ConnectorArrayList(eventHandlerConnectorStartHandlerArray, ConnectorArrayList.ARROW_CONNECTOR);
-        startHandlerExampleConnections.put("EventHandler", eventHandlerConnectorStartHandler);
-        ArrayList<Point2D> threadExampleConnectorStartHandlerArray = new ArrayList<Point2D>(Arrays.asList(new Point2D(600, 650), 
-                new Point2D(600, 800)));
-        ConnectorArrayList threadExampleConnectorStartHandler = new ConnectorArrayList(threadExampleConnectorStartHandlerArray, ConnectorArrayList.DIAMOND_CONNECTOR);
-        startHandlerExampleConnections.put("ThreadExample", threadExampleConnectorStartHandler);
-        
-        startHandlerExample.setConnections(startHandlerExampleConnections);
         
         testData.getClasses().add(startHandlerExample);
     } 

@@ -3,24 +3,16 @@
  */
 package jdcapp.file;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javax.json.Json;
@@ -33,7 +25,6 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
-import jdcapp.data.ConnectorArrayList;
 import jdcapp.data.CustomBox;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
@@ -41,9 +32,6 @@ import jdcapp.data.CustomImport;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
-import static jdcapp.settings.AppPropertyType.WORK_FILE_EXT;
-import org.apache.commons.lang3.StringUtils;
-import properties_manager.PropertiesManager;
 
 /**
  *

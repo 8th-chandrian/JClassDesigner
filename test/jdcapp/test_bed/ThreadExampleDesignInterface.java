@@ -5,10 +5,7 @@ package jdcapp.test_bed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import javafx.geometry.Point2D;
 import jdcapp.JDCApp;
-import jdcapp.data.ConnectorArrayList;
 import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;

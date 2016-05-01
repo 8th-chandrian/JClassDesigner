@@ -5,7 +5,7 @@ package jdcapp.data;
 
 import javafx.scene.Group;
 import javafx.scene.effect.Effect;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 /**
@@ -49,5 +49,5 @@ public abstract class CustomBox {
     public abstract Group getDisplay();
     public abstract Text getNameText();
     public abstract void highlight(Effect e);
-    public abstract Rectangle getOutlineRectangle();
+    public abstract Shape getOutlineShape();
 }

@@ -4,8 +4,6 @@
 package jdcapp.data;
 
 import java.util.ArrayList;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import jdcapp.JDCApp;
 import static jdcapp.data.JDCAppState.SELECTING;
@@ -22,6 +20,9 @@ public class DataManager {
 
     //The ArrayList containing all class objects created
     ArrayList<CustomBox> classes;
+    
+    //The ArrayList containing data on all connections
+    ArrayList<CustomConnection> connections;
     
     //The ArrayList containing temporary parents that have been added by the user.
     //These can be selected as implemented or extended classes. If they are, new
@@ -43,6 +44,7 @@ public class DataManager {
         app = init;
         selectedClass = null;
         classes = new ArrayList<>();
+        connections = new ArrayList<>();
         tempParents = new ArrayList<>();
         isExportable = false;
         //TODO: Finish coding constructor (is this all we need here?)
@@ -54,6 +56,7 @@ public class DataManager {
     public void reset() {
         //Initialize all variables except app and selectedClass
         classes = new ArrayList<>();
+        connections = new ArrayList<>();
         tempParents = new ArrayList<>();
         selectedClass = null;
         state = SELECTING;
@@ -108,7 +111,7 @@ public class DataManager {
     public CustomBox getTopClass(double x, double y){
         for(int i = classes.size() - 1; i >= 0; i--){
             CustomBox c = classes.get(i);
-            if(c.getOutlineRectangle().contains(x, y))
+            if(c.getOutlineShape().contains(x, y))
                 return c;
         }
         return null;
@@ -131,6 +134,25 @@ public class DataManager {
             }
         }
         return false;
+    }
+    
+    /**
+     * Checks classes for nameToCheck and returns the CustomBox with the matching name.
+     * @param nameToCheck
+     * @return 
+     */
+    public CustomBox getClassByName(String nameToCheck){
+        for(CustomBox c : classes){
+            if(c instanceof CustomClassWrapper){
+                if(((CustomClassWrapper)c).getData().getClassName().equals(nameToCheck))
+                    return c;
+            }
+            else{
+                if(((CustomImport)c).getImportName().equals(nameToCheck))
+                    return c;
+            }
+        }
+        return null;
     }
     
     /**
@@ -195,6 +217,127 @@ public class DataManager {
     //TODO: Make more classes here to check whether or not variables/methods are not default
     //Use isExportable and updateCodeExportButton() to set text to red/black and enable/disable button.
     
+    /**
+     * Checks all CustomConnection objects in connections to find one with the matching fromClass and toClass.
+     * If one is found, method returns true, otherwise method returns false.
+     * @param fromClass
+     * @param toClass 
+     * @return boolean
+     */
+    public boolean checkConnectionPair(String fromClass, String toClass){
+        for(CustomConnection c : connections){
+            if(c.getFromClass().equals(fromClass) && c.getToClass().equals(toClass))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Generates a new connection between the two given CustomBoxes
+     * @param fromClass
+     * @param toClass 
+     */
+    public void generateConnection(CustomBox fromClass, CustomBox toClass){
+        CustomConnection newConnection = new CustomConnection(fromClass, toClass, CustomConnection.DEFAULT_POINT_TYPE);
+        connections.add(newConnection);
+    }
+    
+    /**
+     * Gets all CustomConnections whose fromClass strings match the name of the CustomBox parameter.
+     * @param b
+     * @return 
+     */
+    public ArrayList<CustomConnection> getFromConnections(CustomBox b){
+        String toSearch;
+        ArrayList<CustomConnection> fromConnections = new ArrayList<>();
+        if(b instanceof CustomClassWrapper)
+            toSearch = ((CustomClassWrapper) b).getData().getClassName();
+        else
+            toSearch = ((CustomImport) b).getImportName();
+        
+        for(CustomConnection c : connections){
+            if(c.getFromClass().equals(toSearch))
+                fromConnections.add(c);
+        }
+        return fromConnections;
+    }
+    
+    /**
+     * Gets all CustomConnections whose toClass strings match the name of the CustomBox parameter.
+     * @param b
+     * @return 
+     */
+    public ArrayList<CustomConnection> getToConnections(CustomBox b){
+        String toSearch;
+        ArrayList<CustomConnection> toConnections = new ArrayList<>();
+        if(b instanceof CustomClassWrapper)
+            toSearch = ((CustomClassWrapper) b).getData().getClassName();
+        else
+            toSearch = ((CustomImport) b).getImportName();
+        
+        for(CustomConnection c : connections){
+            if(c.getToClass().equals(toSearch))
+                toConnections.add(c);
+        }
+        return toConnections;
+    }
+    
+    /**
+     * Calls initDrag on every point associated with the given CustomBox, using the
+     * given x and y parameters.
+     * @param b
+     * @param initX
+     * @param initY 
+     */
+    public void initDragOnConnections(CustomBox b, double initX, double initY){
+        ArrayList<CustomConnection> fromConnections = getFromConnections(b);
+        ArrayList<CustomConnection> toConnections = getToConnections(b);
+        
+        for(CustomConnection f : fromConnections){
+            f.getFirstPoint().initDrag(initX, initY);
+        }
+        for(CustomConnection t : toConnections){
+            t.getLastPoint().initDrag(initX, initY);
+        }
+    }
+    
+    /**
+     * Calls drag on every point associated with the given CustomBox, using the
+     * given x and y parameters.
+     * @param b
+     * @param x
+     * @param y 
+     */
+    public void dragConnections(CustomBox b, double x, double y){
+        ArrayList<CustomConnection> fromConnections = getFromConnections(b);
+        ArrayList<CustomConnection> toConnections = getToConnections(b);
+        
+        for(CustomConnection f : fromConnections){
+            f.getFirstPoint().drag(x, y);
+            f.toDisplay();
+        }
+        for(CustomConnection t : toConnections){
+            t.getLastPoint().drag(x, y);
+            t.toDisplay();
+        }
+    }
+    
+    /**
+     * Calls drag on every point associated with the given CustomBox, using the
+     * given x and y parameters.
+     * @param b
+     */
+    public void endDragOnConnections(CustomBox b){
+        ArrayList<CustomConnection> fromConnections = getFromConnections(b);
+        ArrayList<CustomConnection> toConnections = getToConnections(b);
+        
+        for(CustomConnection f : fromConnections){
+            f.getFirstPoint().endDrag();
+        }
+        for(CustomConnection t : toConnections){
+            t.getLastPoint().endDrag();
+        }
+    }
         
     public void setState(JDCAppState newState){
         state = newState;
@@ -218,5 +361,9 @@ public class DataManager {
     
     public CustomBox getSelectedClass(){
         return selectedClass;
+    }
+    
+    public ArrayList<CustomConnection> getConnections(){
+        return connections;
     }
 }

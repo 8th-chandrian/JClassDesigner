@@ -52,6 +52,7 @@ import jdcapp.controller.ViewController;
 import jdcapp.controller.WorkspaceController;
 import jdcapp.data.CustomBox;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomConnection;
 import jdcapp.data.CustomImport;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
@@ -940,6 +941,11 @@ public class WorkspaceManager {
                 c.highlight(null);
             }
             canvas.getChildren().add(c.getDisplay());
+        }
+        for(CustomConnection c : dataManager.getConnections()){
+            c.toDisplay();
+            canvas.getChildren().add(c.getDisplay());
+            //TODO: ADD CODE HERE TO DETERMINE IF ONE OF THE POINTS IN CUSTOM CONNECTION IS SELECTED
         }
     }
     

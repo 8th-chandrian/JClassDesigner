@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -214,7 +215,7 @@ public class CustomClassWrapper extends CustomBox{
     }
     
     @Override
-    public Rectangle getOutlineRectangle(){
+    public Shape getOutlineShape(){
         return (Rectangle)display.getChildren().get(0);
     }
  
