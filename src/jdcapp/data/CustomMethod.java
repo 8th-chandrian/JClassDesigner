@@ -60,7 +60,7 @@ public class CustomMethod {
     }
     
     /**
-     * Overloaded constructor, TO BE USED FOR TESTING PURPOSES ONLY
+     * Overloaded constructor, TO BE USED FOR LOADING PURPOSES ONLY
      * @param name
      * @param type
      * @param isStatic

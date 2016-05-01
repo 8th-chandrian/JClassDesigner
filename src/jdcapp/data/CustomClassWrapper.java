@@ -179,7 +179,8 @@ public class CustomClassWrapper extends CustomBox{
             for(String arg : m.getArguments()){
                 methodString += arg + ", ";
             }
-            methodString = methodString.substring(0, methodString.length() - 2);
+            if(!m.getArguments().isEmpty())
+                methodString = methodString.substring(0, methodString.length() - 2);
             methodString += ")";
             if(!m.isConstructor())
                 methodString += " : " + m.getReturnType();

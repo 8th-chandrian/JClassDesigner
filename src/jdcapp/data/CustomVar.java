@@ -35,7 +35,7 @@ public class CustomVar {
     }
     
     /**
-     * Overloaded constructor, TO BE USED FOR TESTING ONLY
+     * Overloaded constructor, TO BE USED FOR LOADING ONLY
      * @param name
      * @param type
      * @param isStatic

@@ -5,6 +5,8 @@ package jdcapp.controller;
 
 import jdcapp.JDCApp;
 import jdcapp.data.CustomClass;
+import jdcapp.data.CustomMethod;
+import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
 import jdcapp.gui.WorkspaceManager;
 
@@ -105,6 +107,52 @@ public class ComponentController {
         
         workspaceManager.wipeSelectedClassData();
         workspaceManager.reloadSelectedClassData();
+    }
+
+    public void handleAddVariable() {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        dataManager.getSelectedClass().getData().getVariables().add(new CustomVar());
+        workspaceManager.reloadSelectedClass();
+        workspaceManager.loadVariableData();
+        //TODO: Insert code here to set all variables with default data fields to red text
+        //This method should be similar to checkCombinations method in DataManager
+    }
+
+    public void handleRemoveVariable(CustomVar customVar) {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        dataManager.getSelectedClass().getData().getVariables().remove(customVar);
+        workspaceManager.reloadSelectedClass();
+        workspaceManager.loadVariableData();
+        workspaceManager.refreshVariableButton();
+        //TODO: Insert code here to check removed variable and remove any lines associated with
+        //it, and possibly remove generated box as well
+    }
+
+    public void handleAddMethod() {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        dataManager.getSelectedClass().getData().getMethods().add(new CustomMethod());
+        workspaceManager.reloadSelectedClass();
+        workspaceManager.loadMethodData();
+        //TODO: Insert code here to set all methods with default data fields to red text
+        //This method should be similar to checkCombinations method in DataManager
+    }
+
+    public void handleRemoveMethod(CustomMethod customMethod) {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        dataManager.getSelectedClass().getData().getMethods().remove(customMethod);
+        workspaceManager.reloadSelectedClass();
+        workspaceManager.loadMethodData();
+        workspaceManager.refreshMethodButtons();
+        //TODO: Insert code here to check removed method and remove any lines associated with
+        //it, and possibly remove generated boxes as well
     }
     
 }

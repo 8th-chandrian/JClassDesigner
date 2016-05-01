@@ -245,6 +245,7 @@ public class WorkspaceManager {
     Label methodLabel;
     Button addMethod;
     Button removeMethod;
+    Button editMethodArgs;
     ScrollPane methodScrollPane;
     TableView methodTableView;
     
@@ -414,6 +415,9 @@ public class WorkspaceManager {
         methodPane.getChildren().add(methodLabel);
         addMethod = initChildButton(methodPane, ADD_ELEMENT_ICON.toString(), ADD_METHOD_TOOLTIP.toString(), true);
         removeMethod = initChildButton(methodPane, REMOVE_ELEMENT_ICON.toString(), REMOVE_METHOD_TOOLTIP.toString(), true);
+        editMethodArgs = new Button("Edit Arguments");
+        editMethodArgs.setDisable(true);
+        methodPane.getChildren().add(editMethodArgs);
         
         componentToolbarPane.getChildren().add(methodPane);
         
@@ -648,6 +652,31 @@ public class WorkspaceManager {
               
         removeExtendedClassButton.setOnAction(e -> {
             componentController.handleRemoveExtendedClass();
+        });
+        
+        //Handler for addVariable button
+        addVariable.setOnAction(e -> {
+            componentController.handleAddVariable();
+        });
+        
+        //Handler for removeVariable button
+        removeVariable.setOnAction(e -> {
+           componentController.handleRemoveVariable((CustomVar)variableTableView.getSelectionModel().getSelectedItem());
+        });
+        
+        //Handler for addMethod button
+        addMethod.setOnAction(e -> {
+            componentController.handleAddMethod();
+        });
+        
+        //Handler for removeMethod button
+        removeMethod.setOnAction(e -> {
+           componentController.handleRemoveMethod((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
+        });
+        
+        //Handler for editMethodArgs button
+        editMethodArgs.setOnAction(e -> {
+            //TODO: PUT EDIT METHOD ARGS POPUP BOX GENERATION HERE!!! DO THIS ASAP!!!!
         });
         
         //TODO: Finish adding handlers for other events
@@ -955,6 +984,11 @@ public class WorkspaceManager {
         extendedClassComboBox.setDisable(false);
         removeAllImplementedClassesButton.setDisable(false);
         removeExtendedClassButton.setDisable(false);
+        addVariable.setDisable(false);
+        removeVariable.setDisable(true);
+        addMethod.setDisable(false);
+        removeMethod.setDisable(true);
+        editMethodArgs.setDisable(true);
     }
     
     /**
@@ -984,7 +1018,13 @@ public class WorkspaceManager {
         }
     }
     
+    /**
+     * Loads the variables into the tableview
+     */
     public void loadVariableData(){
+//        //Remove all items from methodTableView
+//        variableTableView.getItems().removeAll(variableTableView.getItems());
+        
         DataManager dataManager = app.getDataManager();
         ObservableList<CustomVar> observableVars = FXCollections.observableArrayList(
             dataManager.getSelectedClass().getData().getVariables());
@@ -1044,16 +1084,30 @@ public class WorkspaceManager {
         });
         
         variableTableView.getColumns().setAll(varNameCol, varTypeCol, varStaticCol, varAccessCol);
-        //TODO: Get width of TableView hashed out
         variableTableView.setPrefWidth(Math.max((varNameCol.getPrefWidth() + varTypeCol.getPrefWidth() + 
                 varStaticCol.getPrefWidth() + varAccessCol.getPrefWidth()), variableScrollPane.getWidth()));
         variableTableView.setEditable(true);
+        variableTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if(newSelection != null){
+                removeVariable.setDisable(false);
+            }
+            else {
+                removeVariable.setDisable(true);
+            }
+        });
     }
     
+    /**
+     * Loads the methods into the tableview
+     */
     public void loadMethodData(){
+//        //Remove all items from methodTableView
+//        methodTableView.getItems().removeAll(methodTableView.getItems());
+        
         DataManager dataManager = app.getDataManager();
         ObservableList<CustomMethod> observableMethods = FXCollections.observableArrayList(
             dataManager.getSelectedClass().getData().getMethods());
+        methodTableView.setItems(observableMethods);
         
         TableColumn<CustomMethod, String> methodNameCol = new TableColumn<>("Name");
         methodNameCol.setCellValueFactory((CellDataFeatures<CustomMethod, String> c) 
@@ -1065,13 +1119,12 @@ public class WorkspaceManager {
                     ).setMethodName((String)c.getNewValue());
             reloadSelectedClass();
         });
-        methodTableView.getColumns().add(methodNameCol);
         
-        TableColumn<CustomMethod, String> methodTypeCol = new TableColumn<>("Return");
-        methodTypeCol.setCellValueFactory((CellDataFeatures<CustomMethod, String> c) 
+        TableColumn<CustomMethod, String> methodReturnCol = new TableColumn<>("Return");
+        methodReturnCol.setCellValueFactory((CellDataFeatures<CustomMethod, String> c) 
                 -> new ReadOnlyObjectWrapper(c.getValue().getReturnType()));
-        methodTypeCol.setCellFactory(TextFieldTableCell.<CustomMethod>forTableColumn());
-        methodTypeCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
+        methodReturnCol.setCellFactory(TextFieldTableCell.<CustomMethod>forTableColumn());
+        methodReturnCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
             ((CustomMethod) c.getTableView().getItems().get(
                     c.getTablePosition().getRow())
                     ).setReturnType((String)c.getNewValue());
@@ -1079,7 +1132,6 @@ public class WorkspaceManager {
             //generating and removing connection lines here
             reloadSelectedClass();
         });
-        methodTableView.getColumns().add(methodTypeCol);
         
         TableColumn<CustomMethod, String> methodStaticCol = new TableColumn<>("Static");
         methodStaticCol.setCellValueFactory(new Callback<CellDataFeatures<CustomMethod, String>, ObservableValue<String>>() {
@@ -1098,7 +1150,6 @@ public class WorkspaceManager {
                     ).setStaticValue(c.getNewValue().equals("true"));
             reloadSelectedClass();
         });
-        methodTableView.getColumns().add(methodStaticCol);
         
         TableColumn<CustomMethod, String> methodAbstractCol = new TableColumn<>("Abstract");
         methodAbstractCol.setCellValueFactory(new Callback<CellDataFeatures<CustomMethod, String>, ObservableValue<String>>() {
@@ -1114,7 +1165,8 @@ public class WorkspaceManager {
         methodAbstractCol.setOnEditCommit((CellEditEvent<CustomMethod, String> c) -> {
             ((CustomMethod) c.getTableView().getItems().get(
                     c.getTablePosition().getRow())
-                    ).setStaticValue(c.getNewValue().equals("true"));
+                    ).setAbstractValue(c.getNewValue().equals("true"));
+            dataManager.getSelectedClass().getData().updateAbstractValue();
             reloadSelectedClass();
         });
         
@@ -1128,16 +1180,48 @@ public class WorkspaceManager {
                     ).setAccess(c.getNewValue());
             reloadSelectedClass();
         });
-        methodTableView.getColumns().add(methodAbstractCol);
         
-//        TableColumn<CustomMethod, String> methodArgsCol = new TableColumn<>("Arguments");
-//        methodArgsCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
-//        methodArgsCol.setCellFactory(value);
-        
-        //TODO: Get width of TableView hashed out
-//        methodTableView.setPrefWidth(Math.max((methodNameCol.getPrefWidth() + methodTypeCol.getPrefWidth() + 
-//                methodStaticCol.getPrefWidth() + methodAccessCol.getPrefWidth()), methodScrollPane.getWidth()));
+        methodTableView.getColumns().setAll(methodNameCol, methodReturnCol, methodStaticCol, methodAbstractCol, methodAccessCol);
+        methodTableView.setPrefWidth(Math.max((methodNameCol.getPrefWidth() + methodReturnCol.getPrefWidth() + 
+                methodStaticCol.getPrefWidth() + methodAbstractCol.getPrefWidth() + methodAccessCol.getPrefWidth()), 
+                methodScrollPane.getWidth()));
         methodTableView.setEditable(true);
+        methodTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if(newSelection != null){
+                removeMethod.setDisable(false);
+                editMethodArgs.setDisable(false);
+            }
+            else {
+                removeMethod.setDisable(true);
+                editMethodArgs.setDisable(true);
+            }
+        });
+    }
+    
+    /**
+     * Helper method to be called after method is removed
+     */
+    public void refreshMethodButtons(){
+        if(methodTableView.getSelectionModel().getSelectedItem() != null){
+            removeMethod.setDisable(false);
+            editMethodArgs.setDisable(false);
+        }
+        else{
+            removeMethod.setDisable(true);
+            editMethodArgs.setDisable(true);
+        }
+    }
+    
+    /**
+     * Helper method to be called after variable is removed
+     */
+    public void refreshVariableButton(){
+        if(variableTableView.getSelectionModel().getSelectedItem() != null){
+            removeVariable.setDisable(false);
+        }
+        else{
+            removeVariable.setDisable(true);
+        }
     }
     
     /**
@@ -1160,6 +1244,11 @@ public class WorkspaceManager {
         removeExtendedClassButton.setDisable(true);
         variableTableView.setEditable(false);
         methodTableView.setEditable(false);
+        addVariable.setDisable(true);
+        removeVariable.setDisable(true);
+        addMethod.setDisable(true);
+        removeMethod.setDisable(true);
+        editMethodArgs.setDisable(true);
     }
     
     //TODO: Finish adding methods

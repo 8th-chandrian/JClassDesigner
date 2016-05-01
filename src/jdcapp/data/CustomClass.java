@@ -109,4 +109,14 @@ public class CustomClass{
     public void setInterfaceValue(boolean interfaceValue){
         this.interfaceValue = interfaceValue;
     }
+    
+    public void updateAbstractValue(){
+        for(CustomMethod m : methods){
+            if(m.isAbstract()){
+                abstractValue = true;
+                return;
+            }   
+        }
+        abstractValue = false;
+    }
 }
