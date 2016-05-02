@@ -96,4 +96,12 @@ public class CustomConnection {
     public CustomPoint getLastPoint(){
         return points.get(points.size() - 1);
     }
+    
+    public ArrayList<CustomPoint> getPoints(){
+        return points;
+    }
+    
+    public String getArrowType(){
+        return arrowType;
+    }
 }

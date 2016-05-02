@@ -28,8 +28,10 @@ import javax.json.stream.JsonGenerator;
 import jdcapp.data.CustomBox;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomConnection;
 import jdcapp.data.CustomImport;
 import jdcapp.data.CustomMethod;
+import jdcapp.data.CustomPoint;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
 
@@ -71,6 +73,17 @@ public class FileManager {
     static final String JSON_METHOD_ACCESS = "method_access";
     static final String JSON_METHOD_ARGUMENTS = "method_arguments";
     
+    static final String JSON_FROM_CLASS = "from_class";
+    static final String JSON_TO_CLASS = "to_class";
+    static final String JSON_ARROW_TYPE = "arrow_type";
+    static final String JSON_CUSTOM_POINT_ARRAY = "custom_point_array";
+    static final String JSON_CONNECTION_ARRAY = "connection_array";
+    
+    static final String JSON_POINT_TYPE = "point_type";
+    static final String JSON_IS_REMOVABLE = "is_removable";
+    static final String JSON_POINT_X = "point_x";
+    static final String JSON_POINT_Y = "point_y";
+    
     public static final int CODE_EXPORTED_SUCCESSFULLY = 0;
     public static final int ERROR_CREATING_DIRECTORIES = -1;
     public static final int ERROR_CREATING_JAVA_FILES = -2;
@@ -97,10 +110,11 @@ public class FileManager {
     public void saveData(DataManager dataManager, String filePath) throws IOException{
         
         JsonArrayBuilder classArrayBuilder = Json.createArrayBuilder();
+        JsonArrayBuilder connectionArrayBuilder = Json.createArrayBuilder();
         
-        String fontName = CustomClassWrapper.getFont().getName();
-        double pixelHeight = CustomClassWrapper.getPixelHeight();
-        double maxPixelWidth = CustomClassWrapper.getMaxPixelWidth();
+//        String fontName = CustomClassWrapper.getFont().getName();
+//        double pixelHeight = CustomClassWrapper.getPixelHeight();
+//        double maxPixelWidth = CustomClassWrapper.getMaxPixelWidth();
         
         for(CustomBox c : dataManager.getClasses()){
             
@@ -124,15 +138,36 @@ public class FileManager {
             classArrayBuilder.add(wrapperJson);
         }
         
+        for(CustomConnection c : dataManager.getConnections()){
+            
+            //Get fromClass and toClass strings from connection
+            String fromClass = c.getFromClass();
+            String toClass = c.getToClass();
+            String arrowType = c.getArrowType();
+            
+            JsonArray customPointArray = makeCustomPointArrayJsonArray(c.getPoints());
+            
+            JsonObject connectionJson = Json.createObjectBuilder()
+                    .add(JSON_FROM_CLASS, fromClass)
+                    .add(JSON_TO_CLASS, toClass)
+                    .add(JSON_ARROW_TYPE, arrowType)
+                    .add(JSON_CUSTOM_POINT_ARRAY, customPointArray)
+                    .build();
+            
+            connectionArrayBuilder.add(connectionJson);
+        }
+        
         //Build the array of classes
         JsonArray classArray = classArrayBuilder.build();
+        JsonArray connectionArray = connectionArrayBuilder.build();
         
         //Create the final JsonObject containing the entire DataManager
         JsonObject dataManagerJSO = Json.createObjectBuilder()
-                .add(JSON_FONT_NAME, fontName)
-                .add(JSON_PIXEL_HEIGHT, pixelHeight)
-                .add(JSON_MAX_PIXEL_WIDTH, maxPixelWidth)
+//                .add(JSON_FONT_NAME, fontName)
+//                .add(JSON_PIXEL_HEIGHT, pixelHeight)
+//                .add(JSON_MAX_PIXEL_WIDTH, maxPixelWidth)
                 .add(JSON_CLASS_ARRAY, classArray)
+                .add(JSON_CONNECTION_ARRAY, connectionArray)
                 .build();
         
         // AND NOW OUTPUT IT TO A JSON FILE WITH PRETTY PRINTING
@@ -152,6 +187,38 @@ public class FileManager {
 	PrintWriter pw = new PrintWriter(filePath + "json");
 	pw.write(prettyPrinted);
 	pw.close();
+    }
+    
+    /**
+     * Helper method which converts an array of CustomPoint objects to a JsonArray
+     * @param points
+     * @return 
+     */
+    private JsonArray makeCustomPointArrayJsonArray(ArrayList<CustomPoint> points){
+        JsonArrayBuilder customPointArrayBuilder = Json.createArrayBuilder();
+        for(CustomPoint point : points){
+            JsonObject pointJsonObject = makeCustomPointJsonObject(point);
+            customPointArrayBuilder.add(pointJsonObject);
+        }
+        
+        JsonArray customPointArray = customPointArrayBuilder.build();
+        return customPointArray;
+    }
+    
+    private JsonObject makeCustomPointJsonObject(CustomPoint point){
+        String pointType = point.getPointType();
+        boolean isRemovable = point.getIsRemovable();
+        double x = point.getStartX();
+        double y = point.getStartY();
+        
+        JsonObject pointObject = Json.createObjectBuilder()
+                .add(JSON_POINT_TYPE, pointType)
+                .add(JSON_IS_REMOVABLE, isRemovable)
+                .add(JSON_POINT_X, x)
+                .add(JSON_POINT_Y, y)
+                .build();
+        
+        return pointObject;
     }
     
     /**
@@ -344,14 +411,14 @@ public class FileManager {
 	JsonObject json = loadJSONFile(filePath);
 	
 	// Load the font data
-	String fontName = json.getString(JSON_FONT_NAME);
-        double pixelHeight = getDataAsDouble(json, JSON_PIXEL_HEIGHT);
-        Font textFont = Font.font(fontName, FontWeight.NORMAL, pixelHeight);
-        double maxPixelWidth = getDataAsDouble(json, JSON_MAX_PIXEL_WIDTH);
-        
-	CustomClassWrapper.setFont(textFont);
-        CustomClassWrapper.setPixelHeight(pixelHeight);
-        CustomClassWrapper.setMaxPixelWidth(maxPixelWidth);
+//	String fontName = json.getString(JSON_FONT_NAME);
+//        double pixelHeight = getDataAsDouble(json, JSON_PIXEL_HEIGHT);
+//        Font textFont = Font.font(fontName, FontWeight.NORMAL, pixelHeight);
+//        double maxPixelWidth = getDataAsDouble(json, JSON_MAX_PIXEL_WIDTH);
+//        
+//	CustomClassWrapper.setFont(textFont);
+//        CustomClassWrapper.setPixelHeight(pixelHeight);
+//        CustomClassWrapper.setMaxPixelWidth(maxPixelWidth);
 	
 	// Load the array of CustomClassWrappers
 	JsonArray jsonClassArray = json.getJsonArray(JSON_CLASS_ARRAY);
@@ -360,6 +427,53 @@ public class FileManager {
 	    CustomBox c = loadCustomBox(jsonCustomBox);
 	    dataManager.getClasses().add(c);
 	}
+        
+        JsonArray jsonConnectionArray = json.getJsonArray(JSON_CONNECTION_ARRAY);
+        for(int i = 0; i < jsonConnectionArray.size(); i++){
+            JsonObject jsonConnection = jsonConnectionArray.getJsonObject(i);
+            CustomConnection c = loadCustomConnection(jsonConnection, dataManager);
+            dataManager.getConnections().add(c);
+        }
+    }
+    
+    /**
+     * Helper method for loading CustomConnection from JsonObject. Note that DataManager
+     * must be passed in to get the two CustomBox objects needed to initialize the CustomConnection
+     * from the strings they were saved as.
+     * @param jsonConnection
+     * @param dataManager
+     * @return 
+     */
+    private CustomConnection loadCustomConnection(JsonObject jsonConnection, DataManager dataManager){
+        String fromClass = jsonConnection.getString(JSON_FROM_CLASS);
+        String toClass = jsonConnection.getString(JSON_TO_CLASS);
+        String arrowType = jsonConnection.getString(JSON_ARROW_TYPE);
+        CustomConnection c = new CustomConnection(dataManager.getClassByName(fromClass), 
+                dataManager.getClassByName(toClass), arrowType);
+        
+        JsonArray jsonPointArray = jsonConnection.getJsonArray(JSON_CUSTOM_POINT_ARRAY);
+        for(int i = 0; i < jsonPointArray.size(); i++){
+            JsonObject jsonPoint = jsonPointArray.getJsonObject(i);
+            CustomPoint point = loadCustomPoint(jsonPoint);
+            c.getPoints().add(point);
+        }
+        
+        return c;
+    }
+    
+    /**
+     * Helper method for loading CustomPoint from JsonObject.
+     * @param jsonCustomPoint
+     * @return 
+     */
+    private CustomPoint loadCustomPoint(JsonObject jsonCustomPoint){
+        String pointType = jsonCustomPoint.getString(JSON_POINT_TYPE);
+        boolean isRemovable = jsonCustomPoint.getBoolean(JSON_IS_REMOVABLE);
+        double x = getDataAsDouble(jsonCustomPoint, JSON_POINT_X);
+        double y = getDataAsDouble(jsonCustomPoint, JSON_POINT_Y);
+        
+        CustomPoint point = new CustomPoint(x, y, pointType, isRemovable);
+        return point;
     }
     
     private CustomBox loadCustomBox(JsonObject j){

@@ -84,4 +84,12 @@ public class CustomPoint extends CustomBox{
     public Shape getOutlineShape(){
         return (Shape)display.getChildren().get(0);
     }
+    
+    public String getPointType(){
+        return pointType;
+    }
+    
+    public boolean getIsRemovable(){
+        return isRemovable;
+    }
 }

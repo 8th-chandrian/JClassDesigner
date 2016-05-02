@@ -20,6 +20,10 @@ import javafx.stage.Stage;
  * @author Noah
  */
 public class ArgumentsDisplaySingleton extends Stage{
+    
+    //TODO: FINISH CODING THIS CLASS
+    //MOST OF THIS CLASS IS JUST A COPY OF AppYesNoCancelDialogueSingleton
+    
     // HERE'S THE SINGLETON
     static ArgumentsDisplaySingleton singleton;
     

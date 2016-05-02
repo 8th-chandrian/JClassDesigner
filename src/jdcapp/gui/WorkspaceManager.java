@@ -1311,6 +1311,16 @@ public class WorkspaceManager {
         editMethodArgs.setDisable(true);
     }
     
+    /**
+     * Wipes all data from the columns. To be called when creating or loading a design.
+     */
+    public void wipeTableData(){
+        variableTableView.getItems().clear();
+        variableTableView.getColumns().clear();
+        methodTableView.getItems().clear();
+        methodTableView.getColumns().clear();
+    }
+    
     //TODO: Finish adding methods
     
     

@@ -5,20 +5,12 @@ package jdcapp.controller;
 
 import java.io.File;
 import java.io.IOException;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
-import static jdcapp.settings.AppPropertyType.EXPORT_CODE_TITLE;
-import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_DIRECTORIES;
-import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_FILES;
-import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_UNKNOWN;
-import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_TITLE;
-import static jdcapp.settings.AppPropertyType.EXPORT_SUCCESS_MESSAGE;
-import static jdcapp.settings.AppPropertyType.EXPORT_SUCCESS_TITLE;
 import static jdcapp.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
 import static jdcapp.settings.AppPropertyType.LOAD_ERROR_TITLE;
 import static jdcapp.settings.AppPropertyType.LOAD_WORK_TITLE;
@@ -90,6 +82,7 @@ public class FileController {
                 // THE APPROPRIATE CONTROLS
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
                 app.getWorkspaceManager().wipeSelectedClassData();
+                app.getWorkspaceManager().wipeTableData();
 
                 // TELL THE USER NEW WORK IS UNDERWAY
 		dialog.show(props.getProperty(NEW_COMPLETED_TITLE), props.getProperty(NEW_COMPLETED_MESSAGE));
@@ -319,6 +312,7 @@ public class FileController {
                 app.getWorkspaceManager().activateWorkspaceControls();
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
                 app.getWorkspaceManager().wipeSelectedClassData();
+                app.getWorkspaceManager().wipeTableData();
                 app.getDataManager().checkCombinations();
             } catch (Exception e) {
                 AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
