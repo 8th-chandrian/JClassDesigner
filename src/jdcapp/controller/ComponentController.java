@@ -67,6 +67,8 @@ public class ComponentController {
         
         if(selected){
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().add(classToImplement);
+            //Check to see if classToImplement exists as a class in classes. If not, create
+            //it and create a new connection linking it and the selected class as well.
             if(!dataManager.hasName(classToImplement)){
                 dataManager.getTempParents().remove(classToImplement);
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
@@ -77,7 +79,7 @@ public class ComponentController {
                 dataManager.checkCombinations();
             }
             else{
-                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                //Check connections to see if one already exists for the string pair. If so, do nothing. If not, create one.
                 String selectedClassName;
                 if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
                     selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
@@ -92,9 +94,10 @@ public class ComponentController {
         }
         else{
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().remove(classToImplement);
-            //TODO: Insert code here to remove the line connecting selected class and classToImplement
-            //and possibly remove generated box for classToImplement as well, if classToImplement has no
-            //other connections to it (search ArrayList of connections to check)
+            
+            //Remove class to implement connection
+            removeConnectionAndClass(classToImplement);
+            workspaceManager.reloadWorkspace();
         }
     }
 
@@ -102,11 +105,11 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
-        if(!((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(extendedClass)){
-            if(!((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
-                //TODO: Insert code here to remove the line connecting selected class and old extended class
-                //and possibly remove generated box for classToImplement as well, if old extended class has no
-                //other connections to it (search ArrayList of connections to check)
+        String oldExtendedClass = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass();
+        if(!oldExtendedClass.equals(extendedClass)){
+            if(!oldExtendedClass.equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
+                //Remove old extended class connection, if there is one (there wouldn't be if there was no extended class)
+                removeConnectionAndClass(oldExtendedClass);
             }
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(extendedClass);
             if(!dataManager.hasName(extendedClass)){
@@ -138,26 +141,33 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
+        //Remove all old implemented class connections
+        for(String implementedClass : ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses()){
+            removeConnectionAndClass(implementedClass);
+        }
+        
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().clear();
-        //TODO: Insert code here to remove all interface connections to selected class
-        //and possibly remove generated boxes as well
         
         workspaceManager.wipeSelectedClassData();
         workspaceManager.reloadSelectedClassData();
+        workspaceManager.reloadWorkspace();
     }
 
     public void handleRemoveExtendedClass() {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
-        if(!((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass().equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
+        String oldExtendedClass = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass();
+        if(!oldExtendedClass.equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
+            //Remove old extended class connection
+            removeConnectionAndClass(oldExtendedClass);
+            
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(CustomClass.DEFAULT_EXTENDED_CLASS);
-            //TODO: Insert code here to remove the line connecting selected class and old extended class
-            //and possibly remove generated box as well (search ArrayList of connections to check)
         }
         
         workspaceManager.wipeSelectedClassData();
         workspaceManager.reloadSelectedClassData();
+        workspaceManager.reloadWorkspace();
     }
 
     public void handleAddVariable() {
@@ -175,11 +185,12 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
+        //Remove variable type connection
+        removeConnectionAndClass(customVar.getVarType());
+            
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getVariables().remove(customVar);
-        workspaceManager.reloadSelectedClass();
+        workspaceManager.reloadWorkspace();
         workspaceManager.loadVariableData();
-        //TODO: Insert code here to check removed variable and remove any lines associated with
-        //it, and possibly remove generated box as well
     }
 
     public void handleAddMethod() {
@@ -197,20 +208,26 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
+        //Remove return type connection
+        removeConnectionAndClass(customMethod.getReturnType());
+        
+        //Remove all arguments
+        for(String arg : customMethod.getArguments()){
+            removeConnectionAndClass(arg);
+        }
+        
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getMethods().remove(customMethod);
-        workspaceManager.reloadSelectedClass();
+        workspaceManager.reloadWorkspace();
         workspaceManager.loadMethodData();
-        //TODO: Insert code here to check removed method and remove any lines associated with
-        //it, and possibly remove generated boxes as well
     }
 
     public void handleVarTypeChange(CustomVar customVar, String newValue, String oldValue) {
         DataManager dataManager = app.getDataManager();
         if(!oldValue.equals(newValue)){
-            //TODO: Insert code here to remove the line connecting selected class and old extended class
-            //and possibly remove generated box for oldValue as well, if old type has no
-            //other connections to it (search ArrayList of connections to check)
+            //Remove connection associated with old value
+            removeConnectionAndClass(oldValue);
             customVar.setVarType(newValue);
+            //Generate connection and possibly class as well for new value
             if(!dataManager.hasName(newValue)){
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
@@ -240,10 +257,10 @@ public class ComponentController {
     public void handleMethodTypeChange(CustomMethod customMethod, String newValue, String oldValue) {
         DataManager dataManager = app.getDataManager();
         if(!oldValue.equals(newValue)){
-            //TODO: Insert code here to remove the line connecting selected class and old extended class
-            //and possibly remove generated box for oldValue as well, if old type has no
-            //other connections to it (search ArrayList of connections to check)
+            //Remove connection associated with old value
+            removeConnectionAndClass(oldValue);
             customMethod.setReturnType(newValue);
+            //Create new connection and possibly class for new value
             if(!dataManager.hasName(newValue)){
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
@@ -273,10 +290,14 @@ public class ComponentController {
     public void handleArgsChange(CustomMethod customMethod, ArrayList<String> oldArgs, ArrayList<String> newArgs) {
         DataManager dataManager = app.getDataManager();
         if(!oldArgs.equals(newArgs)){
-            //TODO: Insert code here to remove the line connecting selected class and old extended class
-            //and possibly remove generated box for oldValue as well, if old type has no
-            //other connections to it (search ArrayList of connections to check)
+            //Remove all connections associated with old arguments
+            for(String arg : oldArgs){
+                removeConnectionAndClass(arg);
+            }
+            
             customMethod.setArguments(newArgs);
+            
+            //Generate all connections and classes necessary for new arguments
             for(String arg : newArgs){
                 String[] argArray = arg.split(" : ");
                 if(!dataManager.hasName(argArray[1])){
@@ -301,5 +322,22 @@ public class ComponentController {
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
+    }
+    
+    /**
+     * Helper method for removing connections between selected class and class specified
+     * by toRemove string, and removing toRemove class as well if no other connections
+     * link to it.
+     * @param toRemove 
+     */
+    private void removeConnectionAndClass(String toRemove){
+        DataManager dataManager = app.getDataManager();
+        //Remove the connection between the selected class and the old extended class
+        dataManager.getConnections().remove(dataManager.getConnection(
+                ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName(), toRemove));
+        //If the old extended class now has no connections associated with it and 
+        //is not a custom class, remove it entirely
+        if(!dataManager.hasConnectionsAssociated(toRemove) && (dataManager.getClassByName(toRemove) instanceof CustomImport))
+            dataManager.getClasses().remove(dataManager.getClassByName(toRemove));
     }
 }

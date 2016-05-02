@@ -283,6 +283,19 @@ public class DataManager {
     }
     
     /**
+     * Checks whether the given class name has any connections leading to or from it.
+     * @param classToCheck
+     * @return 
+     */
+    public boolean hasConnectionsAssociated(String classToCheck){
+        for(CustomConnection c : connections){
+            if(c.getFromClass().equals(classToCheck) || c.getToClass().equals(classToCheck))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
      * Calls initDrag on every point associated with the given CustomBox, using the
      * given x and y parameters.
      * @param b
@@ -337,6 +350,14 @@ public class DataManager {
         for(CustomConnection t : toConnections){
             t.getLastPoint().endDrag();
         }
+    }
+    
+    public CustomConnection getConnection(String fromClass, String toClass){
+        for(CustomConnection c : connections){
+            if(c.getFromClass().equals(fromClass) && c.getToClass().equals(toClass))
+                return c;
+        }
+        return null;
     }
         
     public void setState(JDCAppState newState){
