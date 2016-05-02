@@ -690,7 +690,12 @@ public class WorkspaceManager {
         
         //Handler for editMethodArgs button
         editMethodArgs.setOnAction(e -> {
-            //TODO: PUT EDIT METHOD ARGS POPUP BOX GENERATION HERE!!! DO THIS ASAP!!!!
+            ArgumentsDisplaySingleton s = ArgumentsDisplaySingleton.getSingleton();
+            s.show((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
+            if(s.selection.equals(s.OKAY)){
+                componentController.handleArgsChange((CustomMethod)methodTableView.getSelectionModel().getSelectedItem(), 
+                        s.getOldArgs(), s.getNewArgs());
+            }
         });
         
         //TODO: Finish adding handlers for other events

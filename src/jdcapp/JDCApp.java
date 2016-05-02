@@ -4,12 +4,15 @@
 package jdcapp;
 
 import java.net.URL;
+import java.util.Arrays;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import jdcapp.data.CustomMethod;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
+import jdcapp.gui.ArgumentsDisplaySingleton;
 import jdcapp.gui.WorkspaceManager;
 import static jdcapp.settings.AppPropertyType.APP_CSS;
 import static jdcapp.settings.AppPropertyType.APP_PATH_CSS;
@@ -50,6 +53,8 @@ public class JDCApp extends Application {
 	messageDialog.init(primaryStage);
 	AppYesNoCancelDialogSingleton yesNoDialog = AppYesNoCancelDialogSingleton.getSingleton();
 	yesNoDialog.init(primaryStage);
+        ArgumentsDisplaySingleton argsDialog = ArgumentsDisplaySingleton.getSingleton();
+        argsDialog.init(primaryStage);
 	
 	PropertiesManager props = PropertiesManager.getPropertiesManager();
 

@@ -304,6 +304,7 @@ public class ComponentController {
                     CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                             dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
                     dataManager.getClasses().add(newImport);
+                    dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
                 }
                 else{
                     //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -313,20 +314,21 @@ public class ComponentController {
                     else
                         selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
-                    if(!dataManager.checkConnectionPair(selectedClassName, arg)){
-                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(arg));
-                        app.getWorkspaceManager().reloadWorkspace();
+                    if(!dataManager.checkConnectionPair(selectedClassName, argArray[1])){
+                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(argArray[1]));
+                        //app.getWorkspaceManager().reloadWorkspace();
                     }
                 }
             }
             //Remove all connections associated with old arguments
             for(String arg : oldArgs){
-                if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), arg))
-                    removeConnectionAndClass(arg);
+                String[] oldArgArray = arg.split(" : ");
+                if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldArgArray[1]))
+                    removeConnectionAndClass(oldArgArray[1]);
             }
-            app.getWorkspaceManager().reloadWorkspace();
-            dataManager.checkCombinations();
         }
+        app.getWorkspaceManager().reloadWorkspace();
+        dataManager.checkCombinations();
     }
     
     /**
