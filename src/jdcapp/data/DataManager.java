@@ -359,6 +359,40 @@ public class DataManager {
         }
         return null;
     }
+    
+    /**
+     * Checks whether or not the string is used in more than one place in a CustomClass.
+     * If it is, return true, else return false. This method is used in ComponentController
+     * to determine whether or not a connection should be removed.
+     * @param c
+     * @param toCheck
+     * @return 
+     */
+    public boolean isUsed(CustomClassWrapper c, String toCheck) {
+        int useCount = 0;
+        CustomClass custom = c.getData();
+        if(custom.getExtendedClass().equals(toCheck))
+            useCount++;
+        for(String implemented : custom.getImplementedClasses()){
+            if(implemented.equals(toCheck))
+                useCount++;
+        }
+        for(CustomVar v : custom.getVariables()){
+            if(v.getVarType().equals(toCheck))
+                useCount++;
+        }
+        for(CustomMethod m : custom.getMethods()){
+            if(m.getReturnType().equals(toCheck))
+                useCount++;
+            for(String arg : m.getArguments()){
+                if(arg.equals(toCheck))
+                    useCount++;
+            }
+        }
+        if(useCount > 0)
+            return true;
+        return false;
+    }
         
     public void setState(JDCAppState newState){
         state = newState;

@@ -431,7 +431,7 @@ public class FileManager {
         JsonArray jsonConnectionArray = json.getJsonArray(JSON_CONNECTION_ARRAY);
         for(int i = 0; i < jsonConnectionArray.size(); i++){
             JsonObject jsonConnection = jsonConnectionArray.getJsonObject(i);
-            CustomConnection c = loadCustomConnection(jsonConnection, dataManager);
+            CustomConnection c = loadCustomConnection(jsonConnection);
             dataManager.getConnections().add(c);
         }
     }
@@ -444,20 +444,20 @@ public class FileManager {
      * @param dataManager
      * @return 
      */
-    private CustomConnection loadCustomConnection(JsonObject jsonConnection, DataManager dataManager){
+    private CustomConnection loadCustomConnection(JsonObject jsonConnection){
         String fromClass = jsonConnection.getString(JSON_FROM_CLASS);
         String toClass = jsonConnection.getString(JSON_TO_CLASS);
         String arrowType = jsonConnection.getString(JSON_ARROW_TYPE);
-        CustomConnection c = new CustomConnection(dataManager.getClassByName(fromClass), 
-                dataManager.getClassByName(toClass), arrowType);
         
         JsonArray jsonPointArray = jsonConnection.getJsonArray(JSON_CUSTOM_POINT_ARRAY);
+        ArrayList<CustomPoint> points = new ArrayList<>();
         for(int i = 0; i < jsonPointArray.size(); i++){
             JsonObject jsonPoint = jsonPointArray.getJsonObject(i);
             CustomPoint point = loadCustomPoint(jsonPoint);
-            c.getPoints().add(point);
+            points.add(point);
         }
         
+        CustomConnection c = new CustomConnection(fromClass, toClass, arrowType, points);
         return c;
     }
     

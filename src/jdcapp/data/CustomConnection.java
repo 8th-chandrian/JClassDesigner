@@ -60,6 +60,15 @@ public class CustomConnection {
         toDisplay();
     }
     
+    public CustomConnection(String fromClass, String toClass, String arrowType, ArrayList<CustomPoint> points){
+        this.fromClass = fromClass;
+        this.toClass = toClass;
+        this.arrowType = arrowType;
+        this.points = points;
+        display = new Group();
+        toDisplay();
+    }
+    
     public void toDisplay(){
         display.getChildren().clear();
         

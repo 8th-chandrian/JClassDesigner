@@ -35,7 +35,7 @@ public class ComponentController {
         if(dataManager.getSelectedClass() != null){
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setClassName(text);
             workspaceManager.reloadSelectedClass();
-
+            workspaceManager.reloadSelectedClassData();
             //Checks to ensure that no other classes have that same name/package combination
             dataManager.checkCombinations();
         }
@@ -96,7 +96,8 @@ public class ComponentController {
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().remove(classToImplement);
             
             //Remove class to implement connection
-            removeConnectionAndClass(classToImplement);
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), classToImplement))
+                removeConnectionAndClass(classToImplement);
             workspaceManager.reloadWorkspace();
         }
     }
@@ -108,8 +109,9 @@ public class ComponentController {
         String oldExtendedClass = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass();
         if(!oldExtendedClass.equals(extendedClass)){
             if(!oldExtendedClass.equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
-                //Remove old extended class connection, if there is one (there wouldn't be if there was no extended class)
-                removeConnectionAndClass(oldExtendedClass);
+                ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(CustomClass.DEFAULT_EXTENDED_CLASS);
+                if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass))
+                    removeConnectionAndClass(oldExtendedClass);
             }
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(extendedClass);
             if(!dataManager.hasName(extendedClass)){
@@ -141,13 +143,15 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
-        //Remove all old implemented class connections
-        for(String implementedClass : ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses()){
-            removeConnectionAndClass(implementedClass);
-        }
-        
+        ArrayList<String> oldImplementedClasses = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses();
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().clear();
         
+        //Remove all old implemented class connections
+        for(String implementedClass : oldImplementedClasses){
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), implementedClass))
+                removeConnectionAndClass(implementedClass);
+        }
+
         workspaceManager.wipeSelectedClassData();
         workspaceManager.reloadSelectedClassData();
         workspaceManager.reloadWorkspace();
@@ -159,10 +163,11 @@ public class ComponentController {
         
         String oldExtendedClass = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getExtendedClass();
         if(!oldExtendedClass.equals(CustomClass.DEFAULT_EXTENDED_CLASS)){
-            //Remove old extended class connection
-            removeConnectionAndClass(oldExtendedClass);
-            
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(CustomClass.DEFAULT_EXTENDED_CLASS);
+            
+            //Remove old extended class connection
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass))
+                removeConnectionAndClass(oldExtendedClass);
         }
         
         workspaceManager.wipeSelectedClassData();
@@ -185,10 +190,12 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
-        //Remove variable type connection
-        removeConnectionAndClass(customVar.getVarType());
-            
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getVariables().remove(customVar);
+        
+        //Remove variable type connection
+        if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), customVar.getVarType()))
+            removeConnectionAndClass(customVar.getVarType());
+            
         workspaceManager.reloadWorkspace();
         workspaceManager.loadVariableData();
     }
@@ -208,15 +215,17 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
+        ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getMethods().remove(customMethod);
+        
         //Remove return type connection
-        removeConnectionAndClass(customMethod.getReturnType());
+        if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), customMethod.getReturnType()))
+            removeConnectionAndClass(customMethod.getReturnType());
         
         //Remove all arguments
         for(String arg : customMethod.getArguments()){
-            removeConnectionAndClass(arg);
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), arg))
+                removeConnectionAndClass(arg);
         }
-        
-        ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getMethods().remove(customMethod);
         workspaceManager.reloadWorkspace();
         workspaceManager.loadMethodData();
     }
@@ -224,8 +233,6 @@ public class ComponentController {
     public void handleVarTypeChange(CustomVar customVar, String newValue, String oldValue) {
         DataManager dataManager = app.getDataManager();
         if(!oldValue.equals(newValue)){
-            //Remove connection associated with old value
-            removeConnectionAndClass(oldValue);
             customVar.setVarType(newValue);
             //Generate connection and possibly class as well for new value
             if(!dataManager.hasName(newValue)){
@@ -233,8 +240,6 @@ public class ComponentController {
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
                 dataManager.getClasses().add(newImport);
                 dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
-                app.getWorkspaceManager().reloadWorkspace();
-                dataManager.checkCombinations();
             }
             else{
                 //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -246,9 +251,11 @@ public class ComponentController {
 
                 if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
                     dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue));
-                    app.getWorkspaceManager().reloadWorkspace();
                 }
             }
+            //Remove connection associated with old value
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
+                removeConnectionAndClass(oldValue);
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
@@ -257,8 +264,6 @@ public class ComponentController {
     public void handleMethodTypeChange(CustomMethod customMethod, String newValue, String oldValue) {
         DataManager dataManager = app.getDataManager();
         if(!oldValue.equals(newValue)){
-            //Remove connection associated with old value
-            removeConnectionAndClass(oldValue);
             customMethod.setReturnType(newValue);
             //Create new connection and possibly class for new value
             if(!dataManager.hasName(newValue)){
@@ -266,8 +271,6 @@ public class ComponentController {
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
                 dataManager.getClasses().add(newImport);
                 dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
-                app.getWorkspaceManager().reloadWorkspace();
-                dataManager.checkCombinations();
             }
             else{
                 //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -279,9 +282,11 @@ public class ComponentController {
 
                 if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
                     dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue));
-                    app.getWorkspaceManager().reloadWorkspace();
                 }
             }
+            //Remove connection associated with old value
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
+                removeConnectionAndClass(oldValue);
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
@@ -290,11 +295,6 @@ public class ComponentController {
     public void handleArgsChange(CustomMethod customMethod, ArrayList<String> oldArgs, ArrayList<String> newArgs) {
         DataManager dataManager = app.getDataManager();
         if(!oldArgs.equals(newArgs)){
-            //Remove all connections associated with old arguments
-            for(String arg : oldArgs){
-                removeConnectionAndClass(arg);
-            }
-            
             customMethod.setArguments(newArgs);
             
             //Generate all connections and classes necessary for new arguments
@@ -318,6 +318,11 @@ public class ComponentController {
                         app.getWorkspaceManager().reloadWorkspace();
                     }
                 }
+            }
+            //Remove all connections associated with old arguments
+            for(String arg : oldArgs){
+                if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), arg))
+                    removeConnectionAndClass(arg);
             }
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();

@@ -3,6 +3,7 @@
  */
 package jdcapp.gui;
 
+import java.util.ArrayList;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -928,9 +929,16 @@ public class WorkspaceManager {
      */
     public void reloadWorkspace() {
         DataManager dataManager = app.getDataManager();
+        ArrayList<Boolean> isRed = new ArrayList<>();
+        for(int i = 0; i < dataManager.getClasses().size(); i++){
+            isRed.add(false);
+            if(dataManager.getClasses().get(i).getNameText().getFill().equals(Color.RED))
+                isRed.set(i, true);
+        }
         canvas.getChildren().clear();
         
-        for(CustomBox c : dataManager.getClasses()){
+        for(int i = 0; i < dataManager.getClasses().size(); i++){
+            CustomBox c = dataManager.getClasses().get(i);
             c.toDisplay();
             if(c == dataManager.getSelectedClass()){
                 //Sets the outline rectangle to highlighted
@@ -940,6 +948,8 @@ public class WorkspaceManager {
                 //Makes sure that only one CustomClass is highlighted at a time
                 c.highlight(null);
             }
+            if(isRed.get(i))
+                c.getNameText().setFill(Color.RED);
             canvas.getChildren().add(c.getDisplay());
         }
         for(CustomConnection c : dataManager.getConnections()){
@@ -971,7 +981,8 @@ public class WorkspaceManager {
         dataManager.getSelectedClass().highlight(highlightedEffect);
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
-        canvas.getChildren().add(dataManager.getSelectedClass().getDisplay());
+        canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
+        //canvas.getChildren().add(dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().add(dataManager.getSelectedClass());
     }
     
