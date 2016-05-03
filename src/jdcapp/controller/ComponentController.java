@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import jdcapp.JDCApp;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomConnection;
 import jdcapp.data.CustomImport;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomVar;
@@ -74,7 +75,7 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, classToImplement);
                 dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.ARROW_POINT_TYPE);
                 workspaceManager.reloadWorkspace();
                 dataManager.checkCombinations();
             }
@@ -87,7 +88,8 @@ public class ComponentController {
                     selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
                 if(!dataManager.checkConnectionPair(selectedClassName, classToImplement)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(classToImplement));
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(classToImplement), 
+                            CustomConnection.ARROW_POINT_TYPE);
                     workspaceManager.reloadWorkspace();
                 }
             }
@@ -119,7 +121,7 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, extendedClass);
                 dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.ARROW_POINT_TYPE);
                 workspaceManager.reloadWorkspace();
                 dataManager.checkCombinations();
             }
@@ -132,7 +134,8 @@ public class ComponentController {
                     selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
                 if(!dataManager.checkConnectionPair(selectedClassName, extendedClass)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(extendedClass));
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(extendedClass), 
+                            CustomConnection.ARROW_POINT_TYPE);
                     workspaceManager.reloadWorkspace();
                 }
             }
@@ -143,18 +146,24 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
-        ArrayList<String> oldImplementedClasses = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses();
-        ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().clear();
+        ArrayList<String> oldImplementedClasses = new ArrayList<>();
+        for(String s : ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses()){
+            oldImplementedClasses.add(s);
+        }
+        ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses().removeAll(
+                ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getImplementedClasses());
         
         //Remove all old implemented class connections
         for(String implementedClass : oldImplementedClasses){
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), implementedClass))
                 removeConnectionAndClass(implementedClass);
+//            else
+//                reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), implementedClass);
         }
 
+        workspaceManager.reloadWorkspace();
         workspaceManager.wipeSelectedClassData();
         workspaceManager.reloadSelectedClassData();
-        workspaceManager.reloadWorkspace();
     }
 
     public void handleRemoveExtendedClass() {
@@ -239,7 +248,7 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
                 dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
             }
             else{
                 //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -250,7 +259,8 @@ public class ComponentController {
                     selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
                 if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue));
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
+                            CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                 }
             }
             //Remove connection associated with old value
@@ -270,7 +280,7 @@ public class ComponentController {
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
                 dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.DIAMOND_POINT_TYPE);
             }
             else{
                 //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -281,7 +291,8 @@ public class ComponentController {
                     selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
                 if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue));
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
+                            CustomConnection.DIAMOND_POINT_TYPE);
                 }
             }
             //Remove connection associated with old value
@@ -304,7 +315,7 @@ public class ComponentController {
                     CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                             dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
                     dataManager.getClasses().add(newImport);
-                    dataManager.generateConnection(dataManager.getSelectedClass(), newImport);
+                    dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.DIAMOND_POINT_TYPE);
                 }
                 else{
                     //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -315,7 +326,8 @@ public class ComponentController {
                         selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
                     if(!dataManager.checkConnectionPair(selectedClassName, argArray[1])){
-                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(argArray[1]));
+                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(argArray[1]), 
+                                CustomConnection.DIAMOND_POINT_TYPE);
                         //app.getWorkspaceManager().reloadWorkspace();
                     }
                 }

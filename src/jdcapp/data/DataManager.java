@@ -34,6 +34,11 @@ public class DataManager {
     //The class currently selected
     CustomBox selectedClass;
     
+    //The point currently selected and its parent connection (these variables should
+    //only be altered at the same time)
+    CustomPoint selectedPoint;
+    CustomConnection selectedConnection;
+    
     //The state of the application
     JDCAppState state;
     
@@ -43,6 +48,8 @@ public class DataManager {
     public DataManager(JDCApp init){
         app = init;
         selectedClass = null;
+        selectedPoint = null;
+        selectedConnection = null;
         classes = new ArrayList<>();
         connections = new ArrayList<>();
         tempParents = new ArrayList<>();
@@ -59,6 +66,8 @@ public class DataManager {
         connections = new ArrayList<>();
         tempParents = new ArrayList<>();
         selectedClass = null;
+        selectedPoint = null;
+        selectedConnection = null;
         state = SELECTING;
     }
     
@@ -83,6 +92,13 @@ public class DataManager {
         //Don't need to do anything if class clicked on is selected already
         if(c == selectedClass)
             return selectedClass;
+        
+        //If point is currently highlighted, unhighlight it
+        if(selectedPoint != null){
+            workspaceManager.unhighlightSelectedPoint();
+            selectedPoint = null;
+            selectedConnection = null;
+        }
         
         //If class clicked on is not selected and another class is, unhighlight currently-selected class
         if(selectedClass != null){
@@ -115,6 +131,49 @@ public class DataManager {
                 return c;
         }
         return null;
+    }
+    
+    public CustomPoint selectTopPoint(double x, double y){
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        CustomPoint toSelect = null;
+        CustomConnection containsPoint = null; 
+        connection_loop: for(CustomConnection c : connections){
+            for(CustomPoint p : c.getPoints()){
+                if(p.getOutlineShape().contains(x, y)){
+                    toSelect = p;
+                    containsPoint = c;
+                    break connection_loop;
+                }   
+            }
+        }
+        
+        //Don't need to do anything if no point was clicked on
+        if(toSelect == null){
+            return null;
+        }
+        
+        //Don't need to do anything if the point clicked on is already selected
+        if(toSelect == selectedPoint)
+            return selectedPoint;
+        
+        //If the point clicked on is not already selected, and another class is, deselect
+        //the selected class
+        if(selectedClass != null){
+            workspaceManager.unhighlightSelectedClass();
+            workspaceManager.wipeSelectedClassData();
+            workspaceManager.wipeTableData();
+            selectedClass = null;
+        }
+        
+        //If another point is currently selected, deselect it
+        if(selectedPoint != null){
+            workspaceManager.unhighlightSelectedPoint();
+        }
+        selectedPoint = toSelect;
+        selectedConnection = containsPoint;
+        workspaceManager.highlightSelectedPoint();
+        return toSelect;
     }
     
     /**
@@ -236,9 +295,10 @@ public class DataManager {
      * Generates a new connection between the two given CustomBoxes
      * @param fromClass
      * @param toClass 
+     * @param connectionType
      */
-    public void generateConnection(CustomBox fromClass, CustomBox toClass){
-        CustomConnection newConnection = new CustomConnection(fromClass, toClass, CustomConnection.DEFAULT_POINT_TYPE);
+    public void generateConnection(CustomBox fromClass, CustomBox toClass, String connectionType){
+        CustomConnection newConnection = new CustomConnection(fromClass, toClass, connectionType);
         connections.add(newConnection);
     }
     
@@ -416,6 +476,22 @@ public class DataManager {
     
     public CustomBox getSelectedClass(){
         return selectedClass;
+    }
+    
+    public void setSelectedPoint(CustomPoint p){
+        selectedPoint = p;
+    }
+        
+    public CustomPoint getSelectedPoint(){
+        return selectedPoint;
+    }
+    
+    public void setSelectedConnection(CustomConnection c){
+        selectedConnection = c;
+    }
+    
+    public CustomConnection getSelectedConnection(){
+        return selectedConnection;
     }
     
     public ArrayList<CustomConnection> getConnections(){

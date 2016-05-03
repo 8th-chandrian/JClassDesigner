@@ -3,8 +3,10 @@
  */
 package jdcapp.controller;
 
+import javafx.scene.shape.Rectangle;
 import jdcapp.JDCApp;
 import jdcapp.data.CustomBox;
+import jdcapp.data.CustomPoint;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.gui.WorkspaceManager;
@@ -37,14 +39,21 @@ public class WorkspaceController {
         DataManager dataManager = app.getDataManager();
         
         if(dataManager.getState() == JDCAppState.SELECTING){
-            CustomBox c = dataManager.selectTopClass(x, y);
-            if(c != null){
-                dataManager.getSelectedClass().initDrag(x, y);
-                dataManager.initDragOnConnections(dataManager.getSelectedClass(), x, y);
-                dataManager.setState(JDCAppState.DRAGGING_CLASS);
+            CustomPoint p = dataManager.selectTopPoint(x, y);
+            if(p != null){
+                dataManager.getSelectedPoint().initDrag(x, y);
+                dataManager.setState(JDCAppState.DRAGGING_POINT);
             }
             else{
-                dataManager.setState(JDCAppState.DRAGGING_NOTHING);
+                CustomBox c = dataManager.selectTopClass(x, y);
+                if(c != null){
+                    dataManager.getSelectedClass().initDrag(x, y);
+                    dataManager.initDragOnConnections(dataManager.getSelectedClass(), x, y);
+                    dataManager.setState(JDCAppState.DRAGGING_CLASS);
+                }
+                else{
+                    dataManager.setState(JDCAppState.DRAGGING_NOTHING);
+                }
             }
         }
     }
@@ -59,6 +68,17 @@ public class WorkspaceController {
             dataManager.dragConnections(dataManager.getSelectedClass(), x, y);
             workspaceManager.reloadSelectedClass();
         }
+        else if(dataManager.getState() == JDCAppState.DRAGGING_POINT){
+            if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getFirstPoint())
+                dataManager.getSelectedPoint().dragEnd(x, y, 
+                        (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getFromClass()).getOutlineShape());
+            else if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getLastPoint())
+                dataManager.getSelectedPoint().dragEnd(x, y, 
+                        (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getToClass()).getOutlineShape());
+            else
+                dataManager.getSelectedPoint().drag(x, y);
+            workspaceManager.reloadSelectedConnection();
+        }
         else if(dataManager.getState() == JDCAppState.RESIZING_CLASS){
             //TODO: Code this case
         }
@@ -71,8 +91,11 @@ public class WorkspaceController {
             dataManager.endDragOnConnections(dataManager.getSelectedClass());
             dataManager.setState(JDCAppState.SELECTING);
         }
+        else if(dataManager.getState() == JDCAppState.DRAGGING_POINT){
+            dataManager.getSelectedPoint().endDrag();
+            dataManager.setState(JDCAppState.SELECTING);
+        }
         else if(dataManager.getState() == JDCAppState.DRAGGING_NOTHING){
-            dataManager.getSelectedClass().endDrag();
             dataManager.setState(JDCAppState.SELECTING);
         }
     }

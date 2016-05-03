@@ -987,8 +987,24 @@ public class WorkspaceManager {
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
         canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
-        //canvas.getChildren().add(dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().add(dataManager.getSelectedClass());
+    }
+    
+    /**
+     * To be called after any change is made to the selected point.
+     */
+    public void reloadSelectedConnection(){
+        DataManager dataManager = app.getDataManager();
+        
+        //Remove the selected connection from the canvas and the arraylist of connections
+        canvas.getChildren().remove(dataManager.getSelectedConnection().getDisplay());
+        dataManager.getConnections().remove(dataManager.getSelectedConnection());
+        
+        //Reload the display data in CustomConnection and add back into canvas and arraylist
+        dataManager.getSelectedConnection().toDisplay();
+        dataManager.getSelectedPoint().highlight(highlightedEffect);
+        canvas.getChildren().add(dataManager.getSelectedConnection().getDisplay());
+        dataManager.getConnections().add(dataManager.getSelectedConnection());
     }
     
     /**
@@ -1005,6 +1021,22 @@ public class WorkspaceManager {
     public void highlightSelectedClass(){
         DataManager dataManager = app.getDataManager();
         dataManager.getSelectedClass().highlight(highlightedEffect);
+    }
+    
+    /**
+     * To be called just before selecting a new point.
+     */
+    public void unhighlightSelectedPoint(){
+        DataManager dataManager = app.getDataManager();
+        dataManager.getSelectedPoint().highlight(null);
+    }
+    
+    /**
+     * To be called just after selecting a new point.
+     */
+    public void highlightSelectedPoint(){
+        DataManager dataManager = app.getDataManager();
+        dataManager.getSelectedPoint().highlight(highlightedEffect);
     }
     
     /**

@@ -51,7 +51,7 @@ public class CustomConnection {
         points = new ArrayList<>();
         this.arrowType = arrowType;
         CustomPoint fromPoint = new CustomPoint(fromClass.getStartX(), fromClass.getStartY(), DEFAULT_POINT_TYPE, false);
-        CustomPoint toPoint = new CustomPoint(toClass.getStartX(), toClass.getStartY(), DEFAULT_POINT_TYPE, false);
+        CustomPoint toPoint = new CustomPoint(toClass.getStartX(), toClass.getStartY(), arrowType, false);
         points.add(fromPoint);
         points.add(toPoint);
         
