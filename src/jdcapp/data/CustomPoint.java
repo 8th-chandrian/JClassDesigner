@@ -147,6 +147,10 @@ public class CustomPoint extends CustomBox{
         return pointType;
     }
     
+    public void setPointType(String type){
+        pointType = type;
+    }
+    
     public boolean getIsRemovable(){
         return isRemovable;
     }

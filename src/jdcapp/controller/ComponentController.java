@@ -76,7 +76,6 @@ public class ComponentController {
                         dataManager.getSelectedClass().getStartY() + 5, classToImplement);
                 dataManager.getClasses().add(newImport);
                 dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.ARROW_POINT_TYPE);
-                workspaceManager.reloadWorkspace();
                 dataManager.checkCombinations();
             }
             else{
@@ -90,8 +89,9 @@ public class ComponentController {
                 if(!dataManager.checkConnectionPair(selectedClassName, classToImplement)){
                     dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(classToImplement), 
                             CustomConnection.ARROW_POINT_TYPE);
-                    workspaceManager.reloadWorkspace();
                 }
+                else
+                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), classToImplement);
             }
         }
         else{
@@ -100,8 +100,10 @@ public class ComponentController {
             //Remove class to implement connection
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), classToImplement))
                 removeConnectionAndClass(classToImplement);
-            workspaceManager.reloadWorkspace();
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), classToImplement);
         }
+        workspaceManager.reloadWorkspace();
     }
 
     public void handleExtendedClassSelected(String extendedClass) {
@@ -114,6 +116,8 @@ public class ComponentController {
                 ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(CustomClass.DEFAULT_EXTENDED_CLASS);
                 if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass))
                     removeConnectionAndClass(oldExtendedClass);
+                else
+                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass);
             }
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(extendedClass);
             if(!dataManager.hasName(extendedClass)){
@@ -136,8 +140,10 @@ public class ComponentController {
                 if(!dataManager.checkConnectionPair(selectedClassName, extendedClass)){
                     dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(extendedClass), 
                             CustomConnection.ARROW_POINT_TYPE);
-                    workspaceManager.reloadWorkspace();
                 }
+                else
+                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), extendedClass);
+                workspaceManager.reloadWorkspace();
             }
         }
     }
@@ -157,8 +163,8 @@ public class ComponentController {
         for(String implementedClass : oldImplementedClasses){
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), implementedClass))
                 removeConnectionAndClass(implementedClass);
-//            else
-//                reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), implementedClass);
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), implementedClass);
         }
 
         workspaceManager.reloadWorkspace();
@@ -177,6 +183,8 @@ public class ComponentController {
             //Remove old extended class connection
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass))
                 removeConnectionAndClass(oldExtendedClass);
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass);
         }
         
         workspaceManager.wipeSelectedClassData();
@@ -204,6 +212,8 @@ public class ComponentController {
         //Remove variable type connection
         if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), customVar.getVarType()))
             removeConnectionAndClass(customVar.getVarType());
+        else
+            dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), customVar.getVarType());
             
         workspaceManager.reloadWorkspace();
         workspaceManager.loadVariableData();
@@ -229,11 +239,15 @@ public class ComponentController {
         //Remove return type connection
         if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), customMethod.getReturnType()))
             removeConnectionAndClass(customMethod.getReturnType());
+        else
+            dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), customMethod.getReturnType());
         
         //Remove all arguments
         for(String arg : customMethod.getArguments()){
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), arg))
                 removeConnectionAndClass(arg);
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), arg);
         }
         workspaceManager.reloadWorkspace();
         workspaceManager.loadMethodData();
@@ -244,38 +258,6 @@ public class ComponentController {
         if(!oldValue.equals(newValue)){
             customVar.setVarType(newValue);
             //Generate connection and possibly class as well for new value
-            if(!dataManager.hasName(newValue)){
-                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                        dataManager.getSelectedClass().getStartY() + 5, newValue);
-                dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
-            }
-            else{
-                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
-                String selectedClassName;
-                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
-                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
-                else
-                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
-
-                if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
-                            CustomConnection.FEATHERED_ARROW_POINT_TYPE);
-                }
-            }
-            //Remove connection associated with old value
-            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
-                removeConnectionAndClass(oldValue);
-            app.getWorkspaceManager().reloadWorkspace();
-            dataManager.checkCombinations();
-        }
-    }
-
-    public void handleMethodTypeChange(CustomMethod customMethod, String newValue, String oldValue) {
-        DataManager dataManager = app.getDataManager();
-        if(!oldValue.equals(newValue)){
-            customMethod.setReturnType(newValue);
-            //Create new connection and possibly class for new value
             if(!dataManager.hasName(newValue)){
                 CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                         dataManager.getSelectedClass().getStartY() + 5, newValue);
@@ -294,10 +276,50 @@ public class ComponentController {
                     dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
                             CustomConnection.DIAMOND_POINT_TYPE);
                 }
+                else
+                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), newValue);
             }
             //Remove connection associated with old value
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
                 removeConnectionAndClass(oldValue);
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldValue);
+            app.getWorkspaceManager().reloadWorkspace();
+            dataManager.checkCombinations();
+        }
+    }
+
+    public void handleMethodTypeChange(CustomMethod customMethod, String newValue, String oldValue) {
+        DataManager dataManager = app.getDataManager();
+        if(!oldValue.equals(newValue)){
+            customMethod.setReturnType(newValue);
+            //Create new connection and possibly class for new value
+            if(!dataManager.hasName(newValue)){
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                        dataManager.getSelectedClass().getStartY() + 5, newValue);
+                dataManager.getClasses().add(newImport);
+                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
+            }
+            else{
+                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                String selectedClassName;
+                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                else
+                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
+                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
+                            CustomConnection.FEATHERED_ARROW_POINT_TYPE);
+                }
+                else
+                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), newValue);
+            }
+            //Remove connection associated with old value
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
+                removeConnectionAndClass(oldValue);
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldValue);
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
@@ -315,7 +337,7 @@ public class ComponentController {
                     CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
                             dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
                     dataManager.getClasses().add(newImport);
-                    dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.DIAMOND_POINT_TYPE);
+                    dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                 }
                 else{
                     //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
@@ -327,9 +349,10 @@ public class ComponentController {
 
                     if(!dataManager.checkConnectionPair(selectedClassName, argArray[1])){
                         dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(argArray[1]), 
-                                CustomConnection.DIAMOND_POINT_TYPE);
-                        //app.getWorkspaceManager().reloadWorkspace();
+                                CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                     }
+                    else
+                        dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), argArray[1]);
                 }
             }
             //Remove all connections associated with old arguments
@@ -337,6 +360,8 @@ public class ComponentController {
                 String[] oldArgArray = arg.split(" : ");
                 if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldArgArray[1]))
                     removeConnectionAndClass(oldArgArray[1]);
+                else
+                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldArgArray[1]);
             }
         }
         app.getWorkspaceManager().reloadWorkspace();

@@ -113,4 +113,8 @@ public class CustomConnection {
     public String getArrowType(){
         return arrowType;
     }
+    
+    public void setArrowType(String type){
+        arrowType = type;
+    }
 }

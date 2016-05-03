@@ -445,13 +445,52 @@ public class DataManager {
             if(m.getReturnType().equals(toCheck))
                 useCount++;
             for(String arg : m.getArguments()){
-                if(arg.equals(toCheck))
+                String[] argArray = arg.split(" : ");
+                if(argArray[1].equals(toCheck))
                     useCount++;
             }
         }
         if(useCount > 0)
             return true;
         return false;
+    }
+    
+    /**
+     * Called when a implemented/extended class, variable, or method is removed/added but the
+     * associated connection already exists/continues to exist. Sets the associated connection's arrow
+     * type to its new value based on the values in the class.
+     * @param c
+     * @param toCheck 
+     */
+    public void reloadArrowType(CustomClassWrapper c, String toCheck){
+        CustomConnection toReload = getConnection(c.getData().getClassName(), toCheck);
+        CustomClass data = c.getData();
+        String arrowType = CustomConnection.DEFAULT_POINT_TYPE;
+        
+        for(CustomMethod m : data.getMethods()){
+            if(m.getReturnType().equals(toCheck))
+                arrowType = CustomConnection.FEATHERED_ARROW_POINT_TYPE;
+            for(String arg : m.getArguments()){
+                String[] argArray = arg.split(" : ");
+                if(argArray[1].equals(toCheck))
+                    arrowType = CustomConnection.FEATHERED_ARROW_POINT_TYPE;
+            }
+        }
+        
+        for(CustomVar v : data.getVariables()){
+            if(v.getVarType().equals(toCheck))
+                arrowType = CustomConnection.DIAMOND_POINT_TYPE;
+        }
+        
+        if(data.getExtendedClass().equals(toCheck))
+            arrowType = CustomConnection.ARROW_POINT_TYPE;
+        for(String i : data.getImplementedClasses()){
+            if(i.equals(toCheck))
+                arrowType = CustomConnection.ARROW_POINT_TYPE;
+        }
+        
+        toReload.setArrowType(arrowType);
+        toReload.getLastPoint().setPointType(arrowType);
     }
         
     public void setState(JDCAppState newState){
