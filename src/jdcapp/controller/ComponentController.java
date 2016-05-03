@@ -189,7 +189,7 @@ public class ComponentController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getVariables().add(new CustomVar());
-        workspaceManager.reloadSelectedClass();
+        workspaceManager.reloadWorkspace();
         workspaceManager.loadVariableData();
         //TODO: Insert code here to set all variables with default data fields to red text
         //This method should be similar to checkCombinations method in DataManager
@@ -214,7 +214,7 @@ public class ComponentController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getMethods().add(new CustomMethod());
-        workspaceManager.reloadSelectedClass();
+        workspaceManager.reloadWorkspace();
         workspaceManager.loadMethodData();
         //TODO: Insert code here to set all methods with default data fields to red text
         //This method should be similar to checkCombinations method in DataManager

@@ -42,6 +42,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -935,16 +936,31 @@ public class WorkspaceManager {
     public void reloadWorkspace() {
         DataManager dataManager = app.getDataManager();
         ArrayList<Boolean> isRed = new ArrayList<>();
+        ArrayList<Rectangle> oldBoxes = new ArrayList<>();
+        
         for(int i = 0; i < dataManager.getClasses().size(); i++){
             isRed.add(false);
             if(dataManager.getClasses().get(i).getNameText().getFill().equals(Color.RED))
                 isRed.set(i, true);
+            oldBoxes.add((Rectangle)dataManager.getClasses().get(i).getOutlineShape());
         }
         canvas.getChildren().clear();
         
         for(int i = 0; i < dataManager.getClasses().size(); i++){
             CustomBox c = dataManager.getClasses().get(i);
             c.toDisplay();
+            
+            //Ensures that points connected to reloaded box are moved appropriately
+            Rectangle newBox = (Rectangle)c.getOutlineShape();
+            ArrayList<CustomConnection> fromConnections = dataManager.getFromConnections(c);
+            ArrayList<CustomConnection> toConnections = dataManager.getToConnections(c);
+            for(CustomConnection connection : fromConnections){
+                connection.getFirstPoint().reloadEndPoint(oldBoxes.get(i), newBox);
+            }
+            for(CustomConnection connection : toConnections){
+                connection.getLastPoint().reloadEndPoint(oldBoxes.get(i), newBox);
+            }
+            
             if(c == dataManager.getSelectedClass()){
                 //Sets the outline rectangle to highlighted
                 c.highlight(highlightedEffect);
@@ -976,6 +992,7 @@ public class WorkspaceManager {
         boolean isRed = false;
         if(dataManager.getSelectedClass().getNameText().getFill().equals(Color.RED))
             isRed = true;
+        Rectangle oldBox = (Rectangle) dataManager.getSelectedClass().getOutlineShape();
 
         //Remove the selected class from the canvas and the arraylist of classes
         canvas.getChildren().remove(dataManager.getSelectedClass().getDisplay());
@@ -984,6 +1001,19 @@ public class WorkspaceManager {
         //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
         dataManager.getSelectedClass().toDisplay();
         dataManager.getSelectedClass().highlight(highlightedEffect);
+        
+        //Ensures that points connected to reloaded box are moved appropriately
+        ArrayList<CustomConnection> fromConnections = dataManager.getFromConnections(dataManager.getSelectedClass());
+        ArrayList<CustomConnection> toConnections = dataManager.getToConnections(dataManager.getSelectedClass());
+        Rectangle newBox = (Rectangle) dataManager.getSelectedClass().getOutlineShape();
+        for(CustomConnection connection : fromConnections){
+            connection.getFirstPoint().reloadEndPoint(oldBox, newBox);
+        }
+        for(CustomConnection connection : toConnections){
+            connection.getLastPoint().reloadEndPoint(oldBox, newBox);
+        }
+        
+        
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
         canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());

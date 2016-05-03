@@ -151,6 +151,13 @@ public class CustomPoint extends CustomBox{
         return isRemovable;
     }
     
+    public void reloadEndPoint(Rectangle oldBox, Rectangle newBox){
+        if(startX == oldBox.getX() + oldBox.getWidth())
+            startX = newBox.getX() + newBox.getWidth();
+        if(startY == oldBox.getY() + oldBox.getHeight())
+            startY = newBox.getY() + newBox.getHeight();
+    }
+    
     /**
      * Used when dragging a point attached to a CustomClass display rectangle.
      * Keeps point locked to rectangle edge.
