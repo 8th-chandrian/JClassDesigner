@@ -187,9 +187,9 @@ public class ComponentController {
                 dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldExtendedClass);
         }
         
+        workspaceManager.reloadWorkspace();
         workspaceManager.wipeSelectedClassData();
         workspaceManager.reloadSelectedClassData();
-        workspaceManager.reloadWorkspace();
     }
 
     public void handleAddVariable() {
@@ -257,27 +257,29 @@ public class ComponentController {
         DataManager dataManager = app.getDataManager();
         if(!oldValue.equals(newValue)){
             customVar.setVarType(newValue);
-            //Generate connection and possibly class as well for new value
-            if(!dataManager.hasName(newValue)){
-                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                        dataManager.getSelectedClass().getStartY() + 5, newValue);
-                dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.DIAMOND_POINT_TYPE);
-            }
-            else{
-                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
-                String selectedClassName;
-                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
-                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
-                else
-                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
-
-                if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
-                            CustomConnection.DIAMOND_POINT_TYPE);
+            if(!isPrimitive(newValue)){
+                //Generate connection and possibly class as well for new value
+                if(!dataManager.hasName(newValue)){
+                    CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                            dataManager.getSelectedClass().getStartY() + 5, newValue);
+                    dataManager.getClasses().add(newImport);
+                    dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.DIAMOND_POINT_TYPE);
                 }
-                else
-                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), newValue);
+                else{
+                    //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                    String selectedClassName;
+                    if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                        selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                    else
+                        selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                    if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
+                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
+                                CustomConnection.DIAMOND_POINT_TYPE);
+                    }
+                    else
+                        dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), newValue);
+                }
             }
             //Remove connection associated with old value
             if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
@@ -287,6 +289,7 @@ public class ComponentController {
             app.getWorkspaceManager().reloadWorkspace();
             dataManager.checkCombinations();
         }
+        app.getWorkspaceManager().loadSelectedClassData();
     }
 
     public void handleMethodTypeChange(CustomMethod customMethod, String newValue, String oldValue) {
@@ -294,48 +297,10 @@ public class ComponentController {
         if(!oldValue.equals(newValue)){
             customMethod.setReturnType(newValue);
             //Create new connection and possibly class for new value
-            if(!dataManager.hasName(newValue)){
-                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                        dataManager.getSelectedClass().getStartY() + 5, newValue);
-                dataManager.getClasses().add(newImport);
-                dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
-            }
-            else{
-                //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
-                String selectedClassName;
-                if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
-                    selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
-                else
-                    selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
-
-                if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
-                    dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
-                            CustomConnection.FEATHERED_ARROW_POINT_TYPE);
-                }
-                else
-                    dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), newValue);
-            }
-            //Remove connection associated with old value
-            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
-                removeConnectionAndClass(oldValue);
-            else
-                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldValue);
-            app.getWorkspaceManager().reloadWorkspace();
-            dataManager.checkCombinations();
-        }
-    }
-    
-    public void handleArgsChange(CustomMethod customMethod, ArrayList<String> oldArgs, ArrayList<String> newArgs) {
-        DataManager dataManager = app.getDataManager();
-        if(!oldArgs.equals(newArgs)){
-            customMethod.setArguments(newArgs);
-            
-            //Generate all connections and classes necessary for new arguments
-            for(String arg : newArgs){
-                String[] argArray = arg.split(" : ");
-                if(!dataManager.hasName(argArray[1])){
+            if(!isPrimitive(newValue)){
+                if(!dataManager.hasName(newValue)){
                     CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                            dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
+                            dataManager.getSelectedClass().getStartY() + 5, newValue);
                     dataManager.getClasses().add(newImport);
                     dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                 }
@@ -347,12 +312,55 @@ public class ComponentController {
                     else
                         selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
 
-                    if(!dataManager.checkConnectionPair(selectedClassName, argArray[1])){
-                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(argArray[1]), 
+                    if(!dataManager.checkConnectionPair(selectedClassName, newValue)){
+                        dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(newValue), 
                                 CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                     }
                     else
-                        dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), argArray[1]);
+                        dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), newValue);
+                }
+            }
+            //Remove connection associated with old value
+            if(!dataManager.isUsed((CustomClassWrapper)dataManager.getSelectedClass(), oldValue))
+                removeConnectionAndClass(oldValue);
+            else
+                dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), oldValue);
+            app.getWorkspaceManager().reloadWorkspace();
+            dataManager.checkCombinations();
+        }
+        app.getWorkspaceManager().loadSelectedClassData();
+    }
+    
+    public void handleArgsChange(CustomMethod customMethod, ArrayList<String> oldArgs, ArrayList<String> newArgs) {
+        DataManager dataManager = app.getDataManager();
+        if(!oldArgs.equals(newArgs)){
+            customMethod.setArguments(newArgs);
+            
+            //Generate all connections and classes necessary for new arguments
+            for(String arg : newArgs){
+                String[] argArray = arg.split(" : ");
+                if(!isPrimitive(argArray[1])){
+                    if(!dataManager.hasName(argArray[1])){
+                        CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
+                                dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
+                        dataManager.getClasses().add(newImport);
+                        dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
+                    }
+                    else{
+                        //Check connections to see if one already exists for string pair. If so, do nothing. If not, create one.
+                        String selectedClassName;
+                        if(dataManager.getSelectedClass() instanceof CustomClassWrapper)
+                            selectedClassName = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+                        else
+                            selectedClassName = ((CustomImport)dataManager.getSelectedClass()).getImportName();
+
+                        if(!dataManager.checkConnectionPair(selectedClassName, argArray[1])){
+                            dataManager.generateConnection(dataManager.getSelectedClass(), dataManager.getClassByName(argArray[1]), 
+                                    CustomConnection.FEATHERED_ARROW_POINT_TYPE);
+                        }
+                        else
+                            dataManager.reloadArrowType((CustomClassWrapper)dataManager.getSelectedClass(), argArray[1]);
+                    }
                 }
             }
             //Remove all connections associated with old arguments
@@ -366,6 +374,7 @@ public class ComponentController {
         }
         app.getWorkspaceManager().reloadWorkspace();
         dataManager.checkCombinations();
+        app.getWorkspaceManager().loadSelectedClassData();
     }
     
     /**
@@ -383,5 +392,33 @@ public class ComponentController {
         //is not a custom class, remove it entirely
         if(!dataManager.hasConnectionsAssociated(toRemove) && (dataManager.getClassByName(toRemove) instanceof CustomImport))
             dataManager.getClasses().remove(dataManager.getClassByName(toRemove));
+    }
+    
+    /**
+     * Determines whether or not a string is a primitive data type.
+     * @param s
+     * @return 
+     */
+    private boolean isPrimitive(String s){
+        if(s.equals(CustomMethod.BOOLEAN_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.CHAR_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.INT_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.FLOAT_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.BYTE_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.LONG_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.DOUBLE_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.SHORT_RETURN_TYPE))
+            return true;
+        else if(s.equals(CustomMethod.VOID_RETURN_TYPE))
+            return true;
+        else
+            return false;
     }
 }

@@ -467,6 +467,9 @@ public class DataManager {
         CustomClass data = c.getData();
         String arrowType = CustomConnection.DEFAULT_POINT_TYPE;
         
+        if(toReload == null)
+            return;
+        
         for(CustomMethod m : data.getMethods()){
             if(m.getReturnType().equals(toCheck))
                 arrowType = CustomConnection.FEATHERED_ARROW_POINT_TYPE;

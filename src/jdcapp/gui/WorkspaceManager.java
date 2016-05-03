@@ -677,6 +677,7 @@ public class WorkspaceManager {
         //Handler for removeVariable button
         removeVariable.setOnAction(e -> {
             componentController.handleRemoveVariable((CustomVar)variableTableView.getSelectionModel().getSelectedItem());
+            variableTableView.getSelectionModel().clearSelection();
         });
         
         //Handler for addMethod button
@@ -687,6 +688,7 @@ public class WorkspaceManager {
         //Handler for removeMethod button
         removeMethod.setOnAction(e -> {
             componentController.handleRemoveMethod((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
+            methodTableView.getSelectionModel().clearSelection();
         });
         
         //Handler for editMethodArgs button
