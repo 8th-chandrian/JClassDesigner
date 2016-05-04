@@ -54,6 +54,7 @@ public class DataManager {
         connections = new ArrayList<>();
         tempParents = new ArrayList<>();
         isExportable = false;
+        state = SELECTING;
         //TODO: Finish coding constructor (is this all we need here?)
     }
     

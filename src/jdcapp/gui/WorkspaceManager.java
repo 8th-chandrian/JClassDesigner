@@ -879,7 +879,8 @@ public class WorkspaceManager {
     public void activateWorkspaceControls(){
         photoExportButton.setDisable(false);
         //codeExportButton.setDisable(false);
-        selectButton.setDisable(false);
+        selectButton.setDisable(true);
+        resizeButton.setDisable(false);
         addClassButton.setDisable(false);
         addInterfaceButton.setDisable(false);
         zoomInButton.setDisable(false);
@@ -900,21 +901,26 @@ public class WorkspaceManager {
     public void updateEditToolbarControls(){
         DataManager dataManager = app.getDataManager();
         
-        if(dataManager.getState() == JDCAppState.SELECTING && dataManager.getSelectedClass() != null){
-            selectButton.setDisable(true);
-            resizeButton.setDisable(false);
+        if(dataManager.getSelectedClass() != null)
             removeButton.setDisable(false);
-        }
-        else if(dataManager.getState() == JDCAppState.SELECTING){
-            selectButton.setDisable(true);
-            resizeButton.setDisable(true);
+        else
             removeButton.setDisable(true);
-        }
-        else if(dataManager.getState() == JDCAppState.RESIZING_NOTHING){
-            selectButton.setDisable(false);
+        
+        if(dataManager.getState() == JDCAppState.RESIZING_NOTHING || dataManager.getState() == JDCAppState.RESIZING_CLASS
+                || dataManager.getState() == JDCAppState.RESIZING_NOTHING)
             resizeButton.setDisable(true);
-            removeButton.setDisable(false);
-        }
+        else if(dataManager.getSelectedPoint() != null)
+            resizeButton.setDisable(true);
+        else
+            resizeButton.setDisable(false);
+        
+        if(dataManager.getState() == JDCAppState.SELECTING || dataManager.getState() == JDCAppState.DRAGGING_CLASS || 
+                dataManager.getState() == JDCAppState.DRAGGING_NOTHING)
+            selectButton.setDisable(true);
+        else if(dataManager.getSelectedPoint() != null)
+            selectButton.setDisable(true);
+        else
+            selectButton.setDisable(false);
         
         //TODO: Possibly finish adding cases (if there are any more cases to be handled)
     }

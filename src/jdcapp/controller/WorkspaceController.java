@@ -56,6 +56,7 @@ public class WorkspaceController {
                 }
             }
         }
+        app.getWorkspaceManager().updateEditToolbarControls();
     }
 
     public void handleMouseDragged(double x, double y) {
