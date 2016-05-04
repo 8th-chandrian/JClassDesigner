@@ -3,9 +3,13 @@
  */
 package jdcapp.controller;
 
+import java.util.ArrayList;
 import jdcapp.JDCApp;
+import jdcapp.data.CustomBox;
 import jdcapp.data.CustomClass;
 import jdcapp.data.CustomClassWrapper;
+import jdcapp.data.CustomConnection;
+import jdcapp.data.CustomImport;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
 import jdcapp.gui.WorkspaceManager;
@@ -94,7 +98,38 @@ public class EditController {
     }
 
     public void handleRemoveRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        if(dataManager.getSelectedClass() instanceof CustomClassWrapper){
+            for(CustomConnection c : dataManager.getFromConnections(dataManager.getSelectedClass())){
+                dataManager.getConnections().remove(c);
+            }
+        }
+        for(CustomConnection c : dataManager.getToConnections(dataManager.getSelectedClass())){
+            dataManager.getConnections().remove(c);
+        }
+        dataManager.getClasses().remove(dataManager.getSelectedClass());
+        dataManager.setSelectedClass(null);
+        
+        //Remove any imports which no longer have connections associated with them
+        ArrayList<CustomBox> toRemove = new ArrayList<>();
+        for(CustomBox b : dataManager.getClasses()){
+            if(b instanceof CustomImport){
+                String check = ((CustomImport) b).getImportName();
+                if(!dataManager.hasConnectionsAssociated(check)){
+                    toRemove.add(b);
+                }
+            }
+        }
+        for(CustomBox b : toRemove){
+            dataManager.getClasses().remove(b);
+        }
+        
+        //Reload the workspace and wipe out any right toolbar data associated with the removed class
+        workspaceManager.reloadWorkspace();
+        workspaceManager.wipeSelectedClassData();
+        workspaceManager.wipeTableData();
     }
 
     public void handleUndoRequest() {
