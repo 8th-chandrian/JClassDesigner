@@ -6,6 +6,7 @@ package jdcapp.controller;
 import javafx.scene.shape.Rectangle;
 import jdcapp.JDCApp;
 import jdcapp.data.CustomBox;
+import jdcapp.data.CustomClassWrapper;
 import jdcapp.data.CustomConnection;
 import jdcapp.data.CustomPoint;
 import jdcapp.data.DataManager;
@@ -48,6 +49,8 @@ public class WorkspaceController {
             else{
                 CustomBox c = dataManager.selectTopClass(x, y);
                 if(c != null){
+                    if(app.getWorkspaceManager().getSnapToGrid())
+                        dataManager.getSelectedClass().initDragSnapped();
                     dataManager.getSelectedClass().initDrag(x, y);
                     dataManager.initDragOnConnections(dataManager.getSelectedClass(), x, y);
                     dataManager.setState(JDCAppState.DRAGGING_CLASS);
@@ -66,7 +69,10 @@ public class WorkspaceController {
         
         //Set the starting x and y values of the selected class, then reload it into canvas
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
-            dataManager.getSelectedClass().drag(x, y);
+            if(workspaceManager.getSnapToGrid())
+                dataManager.getSelectedClass().dragSnapped(x, y);
+            else
+                dataManager.getSelectedClass().drag(x, y);
             dataManager.dragConnections(dataManager.getSelectedClass(), x, y);
             workspaceManager.reloadSelectedClass();
         }
@@ -89,6 +95,8 @@ public class WorkspaceController {
     public void handleMouseReleased(double x, double y) {
         DataManager dataManager = app.getDataManager();
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
+            if(app.getWorkspaceManager().getSnapToGrid())
+                dataManager.getSelectedClass().endDragSnapped();
             dataManager.getSelectedClass().endDrag();
             dataManager.endDragOnConnections(dataManager.getSelectedClass());
             dataManager.setState(JDCAppState.SELECTING);
@@ -149,5 +157,4 @@ public class WorkspaceController {
         dataManager.setSelectedPoint(null);
         workspaceManager.reloadWorkspace();
     }
-    
 }

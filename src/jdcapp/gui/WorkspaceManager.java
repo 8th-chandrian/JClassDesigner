@@ -43,6 +43,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -146,6 +147,7 @@ public class WorkspaceManager {
     
     static final double DEFAULT_WIDTH = 2000;
     static final double DEFAULT_HEIGHT = 1000;
+    public static final int GRID_BOX_SIZE = 10;
     
     static final ObservableList<String> access = FXCollections.observableArrayList(CustomVar.PRIVATE_VAR_ACCESS, 
             CustomVar.PROTECTED_VAR_ACCESS, CustomVar.PUBLIC_VAR_ACCESS);
@@ -267,6 +269,9 @@ public class WorkspaceManager {
     Pane canvas;
     ScrollPane canvasScrollPane;
     boolean canvasActivated;
+    boolean generateGrid;
+    boolean snapToGrid;
+    int numLines;
     
     //The effect to be used on the selected CustomClass
     Effect highlightedEffect;
@@ -285,6 +290,9 @@ public class WorkspaceManager {
         appTitle = initAppTitle;
         app = initApp;
         canvasActivated = false;
+        generateGrid = false;
+        snapToGrid = false;
+        numLines = 0;
         canvas = new Pane();
         canvas.setFocusTraversable(true);
         canvasScrollPane = new ScrollPane(canvas);
@@ -571,10 +579,11 @@ public class WorkspaceManager {
             viewController.handleZoomOutRequest();
         });
         gridCheck.setOnAction(e -> {
-            viewController.handleGridCheckRequest(gridCheck.isSelected());
+            generateGrid = gridCheck.isSelected();
+            reloadWorkspace();
         });
         snapCheck.setOnAction(e -> {
-            viewController.handleSnapCheckRequest(snapCheck.isSelected());
+            snapToGrid = snapCheck.isSelected();
         });
         
         //Set up the canvas mouse event handlers using WorkspaceController
@@ -986,6 +995,10 @@ public class WorkspaceManager {
     public Pane getCanvas(){
         return canvas;
     }
+    
+    public boolean getSnapToGrid(){
+        return snapToGrid;
+    }
 
     /**
      * To be called when loading all CustomClassWrapper objects into canvas
@@ -1002,6 +1015,34 @@ public class WorkspaceManager {
             oldBoxes.add((Rectangle)dataManager.getClasses().get(i).getOutlineShape());
         }
         canvas.getChildren().clear();
+        
+        //Generate grid if grid checkbox is checked
+        if(generateGrid){
+            for(int i = 0; i < canvas.getWidth(); i = i + GRID_BOX_SIZE){
+                Line newLine = new Line();
+                newLine.setStartX(i);
+                newLine.setEndX(i);
+                newLine.setStartY(0);
+                newLine.setEndY(canvas.getHeight());
+                newLine.setStrokeWidth(.75);
+                newLine.setStroke(Color.DARKGRAY);
+                canvas.getChildren().add(newLine);
+                numLines++;
+            }
+            for(int i = 0; i < canvas.getHeight(); i = i + GRID_BOX_SIZE){
+                Line newLine = new Line();
+                newLine.setStartX(0);
+                newLine.setEndX(canvas.getWidth());
+                newLine.setStartY(i);
+                newLine.setEndY(i);
+                newLine.setStrokeWidth(.75);
+                newLine.setStroke(Color.DARKGRAY);
+                canvas.getChildren().add(newLine);
+                numLines++;
+            }
+        }
+        else
+            numLines = 0;
         
         for(int i = 0; i < dataManager.getClasses().size(); i++){
             CustomBox c = dataManager.getClasses().get(i);
@@ -1073,7 +1114,12 @@ public class WorkspaceManager {
         
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
-        canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
+        
+        if(generateGrid){
+            canvas.getChildren().add(dataManager.getClasses().size() + numLines, dataManager.getSelectedClass().getDisplay());
+        }
+        else
+            canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().add(dataManager.getSelectedClass());
     }
     

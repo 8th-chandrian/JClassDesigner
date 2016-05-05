@@ -3,7 +3,6 @@
  */
 package jdcapp.data;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
