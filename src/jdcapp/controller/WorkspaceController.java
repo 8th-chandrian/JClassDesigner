@@ -6,6 +6,7 @@ package jdcapp.controller;
 import javafx.scene.shape.Rectangle;
 import jdcapp.JDCApp;
 import jdcapp.data.CustomBox;
+import jdcapp.data.CustomConnection;
 import jdcapp.data.CustomPoint;
 import jdcapp.data.DataManager;
 import jdcapp.data.JDCAppState;
@@ -99,6 +100,54 @@ public class WorkspaceController {
         else if(dataManager.getState() == JDCAppState.DRAGGING_NOTHING){
             dataManager.setState(JDCAppState.SELECTING);
         }
+    }
+
+    public void handleAddPointBeforeSelected() {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        //Get the selected point and the point before the selected point
+        CustomPoint selectedPoint = dataManager.getSelectedPoint();
+        int selectedPointIndex = dataManager.getSelectedConnection().getPoints().indexOf(selectedPoint);
+        CustomPoint beforePoint = dataManager.getSelectedConnection().getPoints().get(selectedPointIndex - 1);
+        
+        //Create the new point halfway between the two
+        CustomPoint newPoint = new CustomPoint((selectedPoint.getStartX() + beforePoint.getStartX()) / 2, 
+                (selectedPoint.getStartY() + beforePoint.getStartY()) / 2, CustomConnection.DEFAULT_POINT_TYPE, true);
+        
+        //Add the new point at the index of the currently selected point. The selected point and any following it
+        //will have their indices incremented by 1.
+        dataManager.getSelectedConnection().getPoints().add(selectedPointIndex, newPoint);
+        workspaceManager.reloadWorkspace();
+    }
+
+    public void handleAddPointAfterSelected() {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        //Get the selected point and the point before the selected point
+        CustomPoint selectedPoint = dataManager.getSelectedPoint();
+        int selectedPointIndex = dataManager.getSelectedConnection().getPoints().indexOf(selectedPoint);
+        CustomPoint afterPoint = dataManager.getSelectedConnection().getPoints().get(selectedPointIndex + 1);
+        
+        //Create the new point halfway between the two
+        CustomPoint newPoint = new CustomPoint((selectedPoint.getStartX() + afterPoint.getStartX()) / 2, 
+                (selectedPoint.getStartY() + afterPoint.getStartY()) / 2, CustomConnection.DEFAULT_POINT_TYPE, true);
+        
+        //Add the new point at the index of the point after the currently selected point. That point and any following it
+        //will have their indices incremented by 1.
+        dataManager.getSelectedConnection().getPoints().add(selectedPointIndex + 1, newPoint);
+        workspaceManager.reloadWorkspace();
+    }
+
+    public void handleRemovePoint() {
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        dataManager.getSelectedConnection().getPoints().remove(dataManager.getSelectedPoint());
+        workspaceManager.unhighlightSelectedPoint();
+        dataManager.setSelectedPoint(null);
+        workspaceManager.reloadWorkspace();
     }
     
 }

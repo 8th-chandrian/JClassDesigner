@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import jdcapp.data.CustomMethod;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
+import jdcapp.gui.AddPointSingleton;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
 import jdcapp.gui.ArgumentsDisplaySingleton;
@@ -55,6 +56,8 @@ public class JDCApp extends Application {
 	yesNoDialog.init(primaryStage);
         ArgumentsDisplaySingleton argsDialog = ArgumentsDisplaySingleton.getSingleton();
         argsDialog.init(primaryStage);
+        AddPointSingleton addPoint = AddPointSingleton.getSingleton();
+        addPoint.init(primaryStage);
 	
 	PropertiesManager props = PropertiesManager.getPropertiesManager();
 

@@ -21,6 +21,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jdcapp.data.CustomMethod;
+import static jdcapp.settings.AppPropertyType.ARGUMENTS_DISPLAY_TITLE;
+import properties_manager.PropertiesManager;
 
 /**
  *
@@ -255,6 +257,8 @@ public class ArgumentsDisplaySingleton extends Stage{
             temp.setSpacing(10);
             textVBox.getChildren().add(temp);
         }
+        
+        setTitle(PropertiesManager.getPropertiesManager().getProperty(ARGUMENTS_DISPLAY_TITLE.toString()));
 	
 	// AND OPEN UP THIS DIALOG, MAKING SURE THE APPLICATION
 	// WAITS FOR IT TO BE RESOLVED BEFORE LETTING THE USER

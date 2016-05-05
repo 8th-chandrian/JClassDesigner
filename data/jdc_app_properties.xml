@@ -94,6 +94,8 @@
         <property name="PROPERTIES_LOAD_ERROR_MESSAGE"	value="An error occured loading a properties file."></property>	
         <property name="PROPERTIES_LOAD_ERROR_TITLE"	value="Properties File Loading Error"></property>
         <property name="INVALID_COMBINATION_ERROR_MESSAGE"  value="Error: Class/Package Combo Already Exists"></property>
+        <property name="REMOVE_POINT_ERROR_TITLE"       value="Point Merge Error"></property>
+        <property name="REMOVE_POINT_ERROR_MESSAGE"     value="Error: Point is an end point and cannot be removed."></property>
 	
         <!-- VERIFICATION MESSAGES -->
 	
@@ -122,6 +124,10 @@
         <property name="EXPORT_ERROR_MESSAGE_FILES"         value="Error: Invalid Method/Variable, Export Failed"></property>
         <property name="EXPORT_ERROR_UNKNOWN"               value="Error: An Unknown Error Occurred"></property>
         <property name="EXPORT_SUCCESS_MESSAGE"             value="Code Successfully Exported To Directory!"></property>
+        
+        <property name="ARGUMENTS_DISPLAY_TITLE"        value="Arguments For Selected Method"></property>
+        <property name="ADD_POINT_TITLE"                value="Add New Point"></property>
+        <property name="ADD_POINT_MESSAGE"              value="Would you like to add a point before or after the selected point?"></property>
         
         
     </property_list>

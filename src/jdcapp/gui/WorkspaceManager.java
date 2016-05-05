@@ -34,6 +34,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -68,6 +69,8 @@ import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_ICON;
 import static jdcapp.settings.AppPropertyType.ADD_INTERFACE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.ADD_METHOD_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.ADD_NEW_PARENT_LABEL;
+import static jdcapp.settings.AppPropertyType.ADD_POINT_MESSAGE;
+import static jdcapp.settings.AppPropertyType.ADD_POINT_TITLE;
 import static jdcapp.settings.AppPropertyType.ADD_VARIABLE_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.APP_LOGO;
 import static jdcapp.settings.AppPropertyType.CLASS_NAME_LABEL;
@@ -114,6 +117,8 @@ import static jdcapp.settings.AppPropertyType.EXTENDED_CLASS_NAME_LABEL;
 import static jdcapp.settings.AppPropertyType.IMPLEMENTED_CLASS_BUTTON_TEXT;
 import static jdcapp.settings.AppPropertyType.REMOVE_EXTENDED_TOOLTIP;
 import static jdcapp.settings.AppPropertyType.REMOVE_IMPLEMENTED_TOOLTIP;
+import static jdcapp.settings.AppPropertyType.REMOVE_POINT_ERROR_MESSAGE;
+import static jdcapp.settings.AppPropertyType.REMOVE_POINT_ERROR_TITLE;
 import properties_manager.PropertiesManager;
 
 /**
@@ -281,6 +286,7 @@ public class WorkspaceManager {
         app = initApp;
         canvasActivated = false;
         canvas = new Pane();
+        canvas.setFocusTraversable(true);
         canvasScrollPane = new ScrollPane(canvas);
         
         //Initializes the toolbars and various controls=
@@ -508,6 +514,8 @@ public class WorkspaceManager {
     private void initTopToolbarHandlers(){
         //Set up the handlers for the file toolbar using FileController
         fileController = new FileController(app);
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        
         newButton.setOnAction(e -> {
             fileController.handleNewRequest();
         });
@@ -579,12 +587,53 @@ public class WorkspaceManager {
         });
         canvas.setOnMousePressed(e -> {
             workspaceController.handleMousePressed(e.getX(), e.getY());
+            canvas.requestFocus();
         });
         canvas.setOnMouseDragged(e -> {
             workspaceController.handleMouseDragged(e.getX(), e.getY());
+            canvas.requestFocus();
         });
         canvas.setOnMouseReleased(e -> {
             workspaceController.handleMouseReleased(e.getX(), e.getY());
+            canvas.requestFocus();
+        });
+        canvas.setOnKeyPressed(e -> {
+            if(app.getDataManager().getSelectedPoint() != null){
+                //We are adding a point here
+                if(e.getCode().equals(KeyCode.S)){
+
+                    //If the point selected is the first point in the connection, add after it
+                    if(app.getDataManager().getSelectedPoint().equals(app.getDataManager().getSelectedConnection().getFirstPoint())){
+                        workspaceController.handleAddPointAfterSelected();
+                    }
+
+                    //If the point selected is the last point in the connection, add before it
+                    else if(app.getDataManager().getSelectedPoint().equals(app.getDataManager().getSelectedConnection().getLastPoint())){
+                        workspaceController.handleAddPointBeforeSelected();
+                    }
+
+                    //Otherwise, ask the user whether to add before or after the selected point
+                    else{
+                        AddPointSingleton s = AddPointSingleton.getSingleton();
+                        s.show(props.getProperty(ADD_POINT_TITLE.toString()), props.getProperty(ADD_POINT_MESSAGE.toString()));
+                        if(s.getSelection().equals(s.BEFORE_POINT)){
+                            workspaceController.handleAddPointBeforeSelected();
+                        } else {
+                            workspaceController.handleAddPointAfterSelected();
+                        }
+                    }
+                }
+                else if(e.getCode().equals(KeyCode.M)){
+                    if(!app.getDataManager().getSelectedPoint().getIsRemovable()){
+                        AppMessageDialogSingleton m  = AppMessageDialogSingleton.getSingleton();
+                        m.show(props.getProperty(REMOVE_POINT_ERROR_TITLE.toString()), props.getProperty(REMOVE_POINT_ERROR_MESSAGE.toString()));
+                    }
+                    else{
+                        //We are removing a point here
+                        workspaceController.handleRemovePoint();
+                    }
+                }
+            }
         });
     }
     
@@ -1058,11 +1107,12 @@ public class WorkspaceManager {
      */
     public void highlightSelectedClass(){
         DataManager dataManager = app.getDataManager();
-        dataManager.getSelectedClass().highlight(highlightedEffect);
+        dataManager.getSelectedClass().highlight(highlightedEffect);        
     }
     
     /**
-     * To be called just before selecting a new point.
+     * To be called just before selecting a new point. Unhighlights the selected point
+     * and removes its event handler.
      */
     public void unhighlightSelectedPoint(){
         DataManager dataManager = app.getDataManager();
@@ -1070,7 +1120,8 @@ public class WorkspaceManager {
     }
     
     /**
-     * To be called just after selecting a new point.
+     * To be called just after selecting a new point. Highlights the selected point
+     * and adds an event handler.
      */
     public void highlightSelectedPoint(){
         DataManager dataManager = app.getDataManager();

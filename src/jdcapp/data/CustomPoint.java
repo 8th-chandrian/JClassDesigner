@@ -7,6 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
@@ -19,7 +20,7 @@ import javafx.scene.text.Text;
  */
 public class CustomPoint extends CustomBox{
     
-    public static final double DEFAULT_POINT_SIDE = 5;
+    public static final double DEFAULT_POINT_RADIUS = 4;
     public static final double DIAMOND_DISTRIBUTION = 4;
     
     //The type of point. Can be either square, diamond, arrow, or feathered arrow
@@ -60,15 +61,14 @@ public class CustomPoint extends CustomBox{
             display.getChildren().add(featheredArrow);
         }
         else{
-            Rectangle pointBox = new Rectangle();
-            pointBox.setHeight(DEFAULT_POINT_SIDE);
-            pointBox.setWidth(DEFAULT_POINT_SIDE);
-            pointBox.setX(startX);
-            pointBox.setY(startY);
-            pointBox.setFill(Color.TRANSPARENT);
-            pointBox.setStroke(Color.BLACK);
-            pointBox.setStrokeWidth(1);
-            display.getChildren().add(pointBox);
+            Circle pointCircle = new Circle();
+            pointCircle.setRadius(DEFAULT_POINT_RADIUS);
+            pointCircle.setCenterX(startX);
+            pointCircle.setCenterY(startY);
+            pointCircle.setFill(Color.TRANSPARENT);
+            pointCircle.setStroke(Color.BLACK);
+            pointCircle.setStrokeWidth(1.5);
+            display.getChildren().add(pointCircle);
         }
     }
     
