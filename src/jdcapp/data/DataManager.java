@@ -34,6 +34,9 @@ public class DataManager {
     //The class currently selected
     CustomBox selectedClass;
     
+    //The class currently being resized
+    CustomBox resizedClass;
+    
     //The point currently selected and its parent connection (these variables should
     //only be altered at the same time)
     CustomPoint selectedPoint;
@@ -48,6 +51,7 @@ public class DataManager {
     public DataManager(JDCApp init){
         app = init;
         selectedClass = null;
+        resizedClass = null;
         selectedPoint = null;
         selectedConnection = null;
         classes = new ArrayList<>();
@@ -67,6 +71,7 @@ public class DataManager {
         connections = new ArrayList<>();
         tempParents = new ArrayList<>();
         selectedClass = null;
+        resizedClass = null;
         selectedPoint = null;
         selectedConnection = null;
         state = SELECTING;
@@ -115,7 +120,24 @@ public class DataManager {
     }
     
     /**
-     * Helper method for selectTopClass, gets the top class which contains the 
+     * Gets the class clicked on (if it exists) and sets it as the class to resize.
+     * @param x
+     *      The x coordinate of the mouse click.
+     * @param y
+     *      The y coordinate of the mouse click.
+     * @return 
+     *      The class clicked on, or null if no class contains the coordinates
+     *      of the mouse click.
+     */
+    public CustomBox resizeTopClass(double x, double y){
+        CustomBox c = getTopClass(x, y);
+        
+        resizedClass = c;
+        return resizedClass;
+    }
+    
+    /**
+     * Helper method for selectTopClass and resizeTopClass, gets the top class which contains the 
      * coordinates of the mouse click.
      * @param x
      *      The x coordinate of the mouse click.
@@ -519,6 +541,14 @@ public class DataManager {
     
     public CustomBox getSelectedClass(){
         return selectedClass;
+    }
+    
+    public void setResizedClass(CustomBox c){
+        resizedClass = c;
+    }
+    
+    public CustomBox getResizedClass(){
+        return resizedClass;
     }
     
     public void setSelectedPoint(CustomPoint p){

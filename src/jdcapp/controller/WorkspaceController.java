@@ -22,8 +22,6 @@ public class WorkspaceController {
     //The parent app
     JDCApp app;
     
-    //Set when a mouse is pressed, referenced when it is dragged, and reset to -1 when it is released
-    
     public WorkspaceController(JDCApp initApp) {
         app = initApp;
     }
@@ -60,6 +58,13 @@ public class WorkspaceController {
                 }
             }
         }
+        else if(dataManager.getState() == JDCAppState.RESIZING){
+            CustomBox c = dataManager.resizeTopClass(x, y);
+            if(c != null){
+                dataManager.getResizedClass().initResize(x, y);
+                dataManager.setState(JDCAppState.RESIZING_CLASS);
+            }
+        }
         app.getWorkspaceManager().updateEditToolbarControls();
     }
 
@@ -88,7 +93,8 @@ public class WorkspaceController {
             workspaceManager.reloadSelectedConnection();
         }
         else if(dataManager.getState() == JDCAppState.RESIZING_CLASS){
-            //TODO: Code this case
+            dataManager.getResizedClass().resize(x, y);
+            workspaceManager.reloadWorkspace();
         }
     }
 
@@ -107,6 +113,14 @@ public class WorkspaceController {
         }
         else if(dataManager.getState() == JDCAppState.DRAGGING_NOTHING){
             dataManager.setState(JDCAppState.SELECTING);
+        }
+        else if(dataManager.getState() == JDCAppState.RESIZING_CLASS){
+            dataManager.getResizedClass().endResize();
+            dataManager.setResizedClass(null);
+            dataManager.setState(JDCAppState.RESIZING);
+        }
+        else if(dataManager.getState() == JDCAppState.RESIZING_NOTHING){
+            dataManager.setState(JDCAppState.RESIZING);
         }
     }
 

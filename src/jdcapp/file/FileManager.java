@@ -121,6 +121,8 @@ public class FileManager {
             //Get all instance variables from the CustomClassWrapper object
             double startX = c.getStartX();
             double startY = c.getStartY();
+            double width = c.getWidth();
+            double height = c.getHeight();
             JsonObject customClassJson;
             if(c instanceof CustomClassWrapper)
                 customClassJson = makeCustomClassJsonObject(((CustomClassWrapper)c).getData());
@@ -131,6 +133,8 @@ public class FileManager {
             JsonObject wrapperJson = Json.createObjectBuilder()
                     .add(JSON_START_X, startX)
                     .add(JSON_START_Y, startY)
+                    .add(JSON_WIDTH, width)
+                    .add(JSON_HEIGHT, height)
                     .add(JSON_CUSTOM_CLASS, customClassJson)
                     .build();
             
@@ -480,14 +484,18 @@ public class FileManager {
         //Load in X and Y values and instantiate the CustomClassWrapper
         double startX = getDataAsDouble(j, JSON_START_X);
         double startY = getDataAsDouble(j, JSON_START_Y);
+        double width = getDataAsDouble(j, JSON_WIDTH);
+        double height = getDataAsDouble(j, JSON_HEIGHT);
+        
         if(j.getJsonObject(JSON_CUSTOM_CLASS).containsKey(JSON_INTERFACE_VALUE)){
-            CustomClassWrapper c = new CustomClassWrapper(startX, startY);
+            CustomClassWrapper c = new CustomClassWrapper(startX, startY, width, height);
             //Load in CustomClass data
             c.setData(loadCustomClass(j.getJsonObject(JSON_CUSTOM_CLASS)));
             return c;
         }
         else{
-            CustomImport c = new CustomImport(startX, startY, j.getJsonObject(JSON_CUSTOM_CLASS).getString(JSON_CLASS_NAME));
+            CustomImport c = new CustomImport(startX, startY, width, height, 
+                    j.getJsonObject(JSON_CUSTOM_CLASS).getString(JSON_CLASS_NAME));
             c.setPackageName(j.getJsonObject(JSON_CUSTOM_CLASS).getString(JSON_PACKAGE_NAME));
             return c;
         }

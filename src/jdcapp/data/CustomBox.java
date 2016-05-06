@@ -24,6 +24,9 @@ public abstract class CustomBox {
     double gridX;
     double gridY;
     
+    double width;
+    double height;
+    
     public CustomBox(double initX, double initY){
         startX = initX;
         startY = initY;
@@ -31,6 +34,8 @@ public abstract class CustomBox {
         dragY = -1;
         gridX = -1;
         gridY = -1;
+        width = -1;
+        height = -1;
     }
     
     public void initDrag(double initDragX, double initDragY){
@@ -77,10 +82,60 @@ public abstract class CustomBox {
     public void endDragSnapped(){
         gridX = -1;
         gridY = -1;
+        dragX = -1;
+        dragY = -1;
     }
     
-    public abstract double getStartX();
-    public abstract double getStartY();
+    public void initResize(double x, double y){
+        dragX = x;
+        dragY = y;
+    }
+    
+    public void resize(double x, double y){
+        width = width + (x - dragX);
+        height = height + (y - dragY);
+        
+        dragX = x;
+        dragY = y;
+    }
+    
+    public void endResize(){
+        dragX = -1;
+        dragY = -1;
+    }
+    
+    public double getWidth(){
+        return width;
+    }
+    
+    public void setWidth(double w){
+        width = w;
+    }
+    
+    public double getHeight(){
+        return height;
+    }
+    
+    public void setHeight(double h){
+        height = h;
+    }
+    
+    public double getStartX(){
+        return startX;
+    }
+    
+    public void setStartX (double x){
+        startX = x;
+    }
+    
+    public double getStartY(){
+        return startY;
+    }
+    
+    public void setStartY(double y){
+        startY = y;
+    }
+    
     public abstract void toDisplay();
     public abstract Group getDisplay();
     public abstract Text getNameText();

@@ -34,6 +34,18 @@ public class ComponentController {
         
         //Set class name to text, display class name
         if(dataManager.getSelectedClass() != null){
+            String oldText = ((CustomClassWrapper)dataManager.getSelectedClass()).getData().getClassName();
+            
+            //Ensure that all connections are updated with the new from/to class name
+            ArrayList<CustomConnection> fromConnections = dataManager.getFromConnections(dataManager.getSelectedClass());
+            ArrayList<CustomConnection> toConnections = dataManager.getToConnections(dataManager.getSelectedClass());
+            for(CustomConnection c : fromConnections){
+                c.setFromClass(text);
+            }
+            for(CustomConnection c : toConnections){
+                c.setToClass(text);
+            }
+            
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setClassName(text);
             workspaceManager.reloadSelectedClass();
             workspaceManager.reloadSelectedClassData();

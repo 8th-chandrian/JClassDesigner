@@ -40,7 +40,11 @@ public class EditController {
     }
 
     public void handleResizeRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        DataManager dataManager = app.getDataManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        dataManager.setState(JDCAppState.RESIZING);
+        workspaceManager.updateEditToolbarControls();
     }
 
     public void handleAddClassRequest() {

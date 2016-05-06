@@ -42,15 +42,21 @@ public class CustomClassWrapper extends CustomBox{
     //The group holding the text objects and rectangles for displaying the class
     private Group display;
     
-    //The width and height of the CustomClass
-    private double width;
-    private double height;
-    
     //The maximum number of characters in any line in the display
     private double maxCharacters;
 
     public CustomClassWrapper(double initX, double initY){
         super(initX, initY);
+        data = new CustomClass();
+        display = new Group();
+        toDisplay();
+    }
+    
+    //Overloaded constructor, TO BE USED FOR LOADING ONLY
+    public CustomClassWrapper(double initX, double initY, double width, double height){
+        super(initX, initY);
+        this.width = width;
+        this.height = height;
         data = new CustomClass();
         display = new Group();
         toDisplay();
@@ -198,15 +204,32 @@ public class CustomClassWrapper extends CustomBox{
         //Create the overlaying rectangle
         outline.setX(startX);
         outline.setY(startY);
-        outline.setWidth(maxCharacters * maxPixelWidth);
-        outline.setHeight(lineOffset * (pixelHeight + spacingOffset));
+        
+        //If width is greater than the calculated width (if it was set by user), set
+        //outline's width to width. Otherwise set width and outline width to calculated
+        //width
+        if(width < maxCharacters * maxPixelWidth){
+            outline.setWidth(maxCharacters * maxPixelWidth);
+            width = maxCharacters * maxPixelWidth;
+        }
+        else{
+            outline.setWidth(width);
+        }
+        
+        //If height is greater than the calculated height (if it was set by user), set
+        //outline's height to height. Otherwise set height and outline height to calculated
+        //height
+        if(height < (lineOffset) * (pixelHeight + spacingOffset)){
+            outline.setHeight((lineOffset) * (pixelHeight + spacingOffset));
+            height = (lineOffset) * (pixelHeight + spacingOffset);
+        }
+        else{
+            outline.setHeight(height);
+        }
+        
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
         outline.setFill(Color.WHITE);
-        
-        //Set the width and height of the CustomClass to the width and height of the overlaying rectangle
-        width = maxCharacters * maxPixelWidth;
-        height = (lineOffset) * (pixelHeight + spacingOffset);
     }
     
     @Override
@@ -234,22 +257,6 @@ public class CustomClassWrapper extends CustomBox{
     public void setData(CustomClass c){
         data = c;
     }
-    
-    public double getStartX() { return startX; }
-
-    public void setStartX(double startX) { this.startX = startX; }
-
-    public double getStartY() { return startY; }
-
-    public void setStartY(double startY) { this.startY = startY; }
-
-    public double getWidth() { return width; }
-
-    public void setWidth(double width) { this.width = width; }
-
-    public double getHeight() { return height; }
-
-    public void setHeight(double height) { this.height = height; }
     
     //Static getters and setters
     public static double getPixelHeight(){

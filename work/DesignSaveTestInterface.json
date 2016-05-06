@@ -1,12 +1,11 @@
 
 {
-    "font_name":"SansSerif Regular",
-    "pixel_height":12.0,
-    "max_pixel_width":8.0,
     "class_array":[
         {
             "start_x":200.0,
             "start_y":200.0,
+            "width":96.0,
+            "height":78.0,
             "custom_class":{
                 "class_name":"ThreadExample",
                 "package_name":"example",
@@ -208,6 +207,8 @@
         {
             "start_x":150.0,
             "start_y":300.0,
+            "width":96.0,
+            "height":78.0,
             "custom_class":{
                 "class_name":"CounterTask",
                 "package_name":"example.task",
@@ -258,6 +259,8 @@
         {
             "start_x":290.0,
             "start_y":650.0,
+            "width":96.0,
+            "height":78.0,
             "custom_class":{
                 "class_name":"DateTask",
                 "package_name":"example.task",
@@ -307,6 +310,8 @@
         {
             "start_x":580.0,
             "start_y":220.0,
+            "width":96.0,
+            "height":78.0,
             "custom_class":{
                 "class_name":"PauseHandler",
                 "package_name":"example.handler",
@@ -351,6 +356,8 @@
         {
             "start_x":580.0,
             "start_y":220.0,
+            "width":96.0,
+            "height":78.0,
             "custom_class":{
                 "class_name":"StartHandler",
                 "package_name":"example.handler",
@@ -395,6 +402,8 @@
         {
             "start_x":150.0,
             "start_y":300.0,
+            "width":96.0,
+            "height":78.0,
             "custom_class":{
                 "class_name":"CounterTaskInterface",
                 "package_name":"example.counter",
@@ -432,5 +441,7 @@
                 ]
             }
         }
+    ],
+    "connection_array":[
     ]
 }

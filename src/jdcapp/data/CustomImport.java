@@ -33,13 +33,21 @@ public class CustomImport extends CustomBox{
     //The text font, to be used with toDisplay (lets us alter the font size when zooming)
     static Font textFont = Font.font("sans-serif", FontWeight.NORMAL, pixelHeight);
     
-    private double width;
-    private double height;
-    
     private Group display;
     
     public CustomImport(double initX, double initY, String importName){
         super(initX, initY);
+        this.importName = importName;
+        packageName = DEFAULT_PACKAGE_NAME;
+        display = new Group();
+        toDisplay();
+    }
+    
+    //Overloaded constructor, TO BE USED FOR LOADING ONLY
+    public CustomImport(double initX, double initY, double width, double height, String importName){
+        super(initX, initY);
+        this.width = width;
+        this.height = height;
         this.importName = importName;
         packageName = DEFAULT_PACKAGE_NAME;
         display = new Group();
@@ -68,14 +76,31 @@ public class CustomImport extends CustomBox{
         //Create the overlaying rectangle
         outline.setX(startX);
         outline.setY(startY);
-        outline.setWidth(importName.length() * maxPixelWidth);
-        outline.setHeight(lineOffset * (pixelHeight + spacingOffset));
+        
+        //If width is greater than the calculated width (if it was set by user), set
+        //outline's width to width. Otherwise set width and outline width to calculated
+        //width
+        if(width < importName.length() * maxPixelWidth){
+            outline.setWidth(importName.length() * maxPixelWidth);
+            width = importName.length() * maxPixelWidth;
+        }
+        else{
+            outline.setWidth(width);
+        }
+        
+        //If height is greater than the calculated height (if it was set by user), set
+        //outline's height to height. Otherwise set height and outline height to calculated
+        //height
+        if(height < (lineOffset) * (pixelHeight + spacingOffset)){
+            outline.setHeight((lineOffset) * (pixelHeight + spacingOffset));
+            height = (lineOffset) * (pixelHeight + spacingOffset);
+        }
+        else{
+            outline.setHeight(height);
+        }
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
         outline.setFill(Color.WHITE);
-        
-        width = importName.length() * maxPixelWidth;
-        height = (lineOffset) * (pixelHeight + spacingOffset);
     }
 
     @Override
@@ -123,4 +148,5 @@ public class CustomImport extends CustomBox{
     public void setImportName(String i){
         importName = i;
     }
+    
 }

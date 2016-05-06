@@ -9,6 +9,7 @@ package jdcapp.data;
  */
 public enum JDCAppState {
     SELECTING,
+    RESIZING,
     DRAGGING_CLASS,
     DRAGGING_POINT,
     RESIZING_CLASS,

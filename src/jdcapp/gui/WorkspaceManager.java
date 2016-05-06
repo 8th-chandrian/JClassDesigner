@@ -964,7 +964,7 @@ public class WorkspaceManager {
         else
             removeButton.setDisable(true);
         
-        if(dataManager.getState() == JDCAppState.RESIZING_NOTHING || dataManager.getState() == JDCAppState.RESIZING_CLASS
+        if(dataManager.getState() == JDCAppState.RESIZING || dataManager.getState() == JDCAppState.RESIZING_CLASS
                 || dataManager.getState() == JDCAppState.RESIZING_NOTHING)
             resizeButton.setDisable(true);
         else if(dataManager.getSelectedPoint() != null)
@@ -1121,6 +1121,52 @@ public class WorkspaceManager {
         else
             canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().add(dataManager.getSelectedClass());
+    }
+    
+    /**
+     * To be called after any change is made to the selected class.
+     * Note: this method has the added effect of moving the selected class to the back of
+     * the arraylist/the front of the canvas
+     * 
+     * Note: this method ensures that text displayed as red (error text) remains red
+     */
+    public void reloadResizedClass(){
+        DataManager dataManager = app.getDataManager();
+        boolean isRed = false;
+        if(dataManager.getResizedClass().getNameText().getFill().equals(Color.RED))
+            isRed = true;
+        Rectangle oldBox = (Rectangle) dataManager.getResizedClass().getOutlineShape();
+
+        //Remove the selected class from the canvas and the arraylist of classes
+        canvas.getChildren().remove(dataManager.getResizedClass().getDisplay());
+        dataManager.getClasses().remove(dataManager.getResizedClass());
+        
+        //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
+        dataManager.getResizedClass().toDisplay();
+        if(dataManager.getResizedClass().equals(dataManager.getSelectedClass()))
+            dataManager.getResizedClass().highlight(highlightedEffect);
+        
+        //Ensures that points connected to reloaded box are moved appropriately
+        ArrayList<CustomConnection> fromConnections = dataManager.getFromConnections(dataManager.getResizedClass());
+        ArrayList<CustomConnection> toConnections = dataManager.getToConnections(dataManager.getResizedClass());
+        Rectangle newBox = (Rectangle) dataManager.getResizedClass().getOutlineShape();
+        for(CustomConnection connection : fromConnections){
+            connection.getFirstPoint().reloadEndPoint(oldBox, newBox);
+        }
+        for(CustomConnection connection : toConnections){
+            connection.getLastPoint().reloadEndPoint(oldBox, newBox);
+        }
+        
+        
+        if(isRed)
+            dataManager.getResizedClass().getNameText().setFill(Color.RED);
+        
+        if(generateGrid){
+            canvas.getChildren().add(dataManager.getClasses().size() + numLines, dataManager.getResizedClass().getDisplay());
+        }
+        else
+            canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getResizedClass().getDisplay());
+        dataManager.getClasses().add(dataManager.getResizedClass());
     }
     
     /**

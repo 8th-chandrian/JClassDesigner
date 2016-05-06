@@ -90,8 +90,16 @@ public class CustomConnection {
         return fromClass;
     }
     
+    public void setFromClass(String from){
+        fromClass = from;
+    }
+    
     public String getToClass(){
         return toClass;
+    }
+    
+    public void setToClass(String to){
+        toClass = to;
     }
     
     public Group getDisplay(){
