@@ -12,6 +12,7 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -41,22 +42,26 @@ public class CustomPoint extends CustomBox{
     
     @Override
     public void toDisplay(){
+        return;
+    }
+    
+    public void toDisplay(double angle){
         display.getChildren().clear();
         
         if(pointType.equals(CustomConnection.DIAMOND_POINT_TYPE)){
-            Polygon diamond = makeDiamond();
+            Polygon diamond = makeDiamond(angle);
             display.getChildren().add(diamond);
         }
         else if(pointType.equals(CustomConnection.ARROW_POINT_TYPE)){
-            Polygon arrow = makeArrow();
+            Polygon arrow = makeArrow(angle);
             display.getChildren().add(arrow);
         }
         else if(pointType.equals(CustomConnection.FEATHERED_ARROW_POINT_TYPE)){
-            Polygon invisibleArrow = makeArrow();
-            invisibleArrow.setFill(Color.GAINSBORO);
+            Polygon invisibleArrow = makeArrow(angle);
+            invisibleArrow.setFill(Color.LIGHTGRAY);
             invisibleArrow.setStroke(Color.TRANSPARENT);
             display.getChildren().add(invisibleArrow);
-            Polyline featheredArrow = makeFeatheredArrow();
+            Polyline featheredArrow = makeFeatheredArrow(angle);
             display.getChildren().add(featheredArrow);
         }
         else{
@@ -71,13 +76,13 @@ public class CustomPoint extends CustomBox{
         }
     }
     
-    public Polygon makeDiamond(){
+    public Polygon makeDiamond(double angle){
         Polygon diamond = new Polygon();
         diamond.getPoints().addAll(new Double[] {
             startX, startY,
-            startX - 6, startY + 4,
-            startX - 12, startY,
-            startX - 6, startY - 4
+            startX - (4 * Math.sin(angle) + 6 * Math.cos(angle)), startY + (4 * Math.cos(angle) - 6 * Math.sin(angle)),
+            startX - (12 * Math.cos(angle)), startY + (-12 * Math.sin(angle)),
+            startX - (-4 * Math.sin(angle) + 6 * Math.cos(angle)), startY + (-4 * Math.cos(angle) - 6 * Math.sin(angle)),
         });
         diamond.setFill(Color.BLACK);
         diamond.setStroke(Color.BLACK);
@@ -85,12 +90,12 @@ public class CustomPoint extends CustomBox{
         return diamond;
     }
     
-    public Polygon makeArrow(){
+    public Polygon makeArrow(double angle){
         Polygon arrow = new Polygon();
         arrow.getPoints().addAll(new Double[] {
            startX, startY,
-           startX - 8, startY + 4,
-           startX - 8, startY - 4
+           startX - (4 * Math.sin(angle) + 8 * Math.cos(angle)), startY + (4 * Math.cos(angle) - 8 * Math.sin(angle)),
+           startX - (-4 * Math.sin(angle) + 8 * Math.cos(angle)), startY + (-4 * Math.cos(angle) - 8 * Math.sin(angle))
         });
         arrow.setFill(Color.BLACK);
         arrow.setStroke(Color.BLACK);
@@ -98,12 +103,12 @@ public class CustomPoint extends CustomBox{
         return arrow;
     }
     
-    public Polyline makeFeatheredArrow(){
+    public Polyline makeFeatheredArrow(double angle){
         Polyline featheredArrow = new Polyline();
         featheredArrow.getPoints().addAll(new Double[] {
-           startX - 8, startY + 4,
+           startX - (4 * Math.sin(angle) + 8 * Math.cos(angle)), startY + (4 * Math.cos(angle) - 8 * Math.sin(angle)),
            startX, startY,
-           startX - 8, startY - 4
+           startX - (-4 * Math.sin(angle) + 8 * Math.cos(angle)), startY + (-4 * Math.cos(angle) - 8 * Math.sin(angle))
         });
         featheredArrow.setFill(Color.TRANSPARENT);
         featheredArrow.setStroke(Color.BLACK);
@@ -111,6 +116,17 @@ public class CustomPoint extends CustomBox{
         return featheredArrow;
     }
     
+    /*
+    public void orient(Rotate r){
+        if(pointType.equals(CustomConnection.DIAMOND_POINT_TYPE) || (pointType.equals(CustomConnection.ARROW_POINT_TYPE))){
+            display.getChildren().get(0).getTransforms().add(r);
+        }
+        else if(pointType.equals(CustomConnection.FEATHERED_ARROW_POINT_TYPE)){
+            display.getChildren().get(0).getTransforms().add(r);
+            display.getChildren().get(1).getTransforms().add(r);
+        }
+    }
+    */
     @Override
     public Group getDisplay(){
         return display;

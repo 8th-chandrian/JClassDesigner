@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.shape.Line;
+import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -75,12 +76,17 @@ public class CustomConnection {
         double prevX = -1;
         double prevY = -1;
         for(CustomPoint p : points){
-            p.toDisplay();
+            double deltaX = p.getStartX() - prevX;
+            double deltaY = p.getStartY() - prevY;
+            double angle = Math.atan2(deltaY, deltaX);
+            
+            p.toDisplay(angle);
             display.getChildren().add(p.getDisplay());
             if(prevX >= 0 && prevY >= 0){
                 Line newLine = new Line(prevX, prevY, p.getStartX(), p.getStartY());
                 display.getChildren().add(newLine);
             }
+            
             prevX = p.getStartX();
             prevY = p.getStartY();
         }
