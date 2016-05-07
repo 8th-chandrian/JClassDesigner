@@ -3,7 +3,9 @@
  */
 package jdcapp.file;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +13,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.text.Font;
@@ -34,6 +38,7 @@ import jdcapp.data.CustomMethod;
 import jdcapp.data.CustomPoint;
 import jdcapp.data.CustomVar;
 import jdcapp.data.DataManager;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -89,6 +94,7 @@ public class FileManager {
     public static final int ERROR_CREATING_JAVA_FILES = -2;
     
     public static final String JAVA_FILE_EXTENSION = ".java";
+    public static final String UNSUPPORTED_OPERATION_EXCEPTION = "throw new UnsupportedOperationException(\"Not supported yet.\");";
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -606,656 +612,456 @@ public class FileManager {
     ///////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
     
-//    /**
-//     * Exports the current design to code. 
-//     * @param dataManager
-//     * @param filePath
-//     * @return 
-//     *       0 if the code was exported correctly.
-//     *      -1 if there was an error creating the package directories.
-//     *      -2 if there was an error creating the java files.
-//     */
-//    public int exportCode(DataManager dataManager, String filePath){
-//        ArrayList<CustomClassWrapper> classes = dataManager.getClasses();
-//        
-//        //First, create all necessary packages to put our java files in.
-//        //Get every package contained in the current design.
-//        ArrayList<String> packages = getAllPackages(classes);
-//        
-//        //Then make all the package directories
-//        boolean makePackagesReturn = makePackageDirectories(packages, filePath);
-//        if(!makePackagesReturn)
-//            return ERROR_CREATING_DIRECTORIES;
-//        
-//        
-//        //Then put all the java files in the packages
-//        boolean makeJavaFilesReturn = makeJavaFiles(classes, filePath);
-//        if(!makeJavaFilesReturn)
-//            return ERROR_CREATING_JAVA_FILES;
-//        
-//        return 0;
-//    }
-//    
-//    /**
-//     * Helper method which extracts an ArrayList of packages from an ArrayList of 
-//     * CustomClassWrappers.
-//     * 
-//     * @param classes
-//     * @return 
-//     *      The ArrayList of packages
-//     */
-//    private ArrayList<String> getAllPackages(ArrayList<CustomClassWrapper> classes){
-//        ArrayList<String> packages = new ArrayList<>();
-//        for(CustomClassWrapper c : classes){
-//            String packageName = c.getData().getPackageName();
-//            
-//            //If packageName is invalid, set packageName to the default package name
-//            if(packageName.equals("") || packageName == null)
-//                packageName = c.getData().DEFAULT_PACKAGE_NAME;
-//            
-//            if(!packages.contains(packageName)){
-//                packages.add(packageName);
-//            }
-//        }
-//        return packages;
-//    }
-//    
-//    /**
-//     * Helper method to make the package directories.
-//     * @param packages
-//     * @return 
-//     *      True if the directories were created successfully, false otherwise.
-//     */
-//    private boolean makePackageDirectories(ArrayList<String> packages, String filePath){
-//
-//        //Sort the package strings based on how many subdirectories they have
-//        //Ex: "jdcapp.data" has 1 more subdirectory than "jdcapp"
-//        Collections.sort(packages, new Comparator<String>(){
-//            @Override
-//            public int compare(String s1, String s2){
-//                int s1Subdirectories = StringUtils.countMatches(s1, ".");
-//                int s2Subdirectories = StringUtils.countMatches(s2, ".");
-//                if(s1Subdirectories > s2Subdirectories)
-//                    return 1;
-//                else if(s1Subdirectories == s2Subdirectories)
-//                    return 0;
-//                else
-//                    return -1;
-//            }
-//        });
-//        
-//        //Now make the directories. Because of the sorting, they should be made in
-//        //order so that no subdirectory is made without its parent directory already
-//        //existing.
-//        for(String packageName : packages){
-//            packageName = packageName.replace('.', '/');
-//            String filePathPackage = filePath + "/" + packageName;
-//                        
-//            File packageFile = new File(filePathPackage);
-//            boolean success = packageFile.mkdirs();
-//            if(!success){
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//    
-//    /**
-//     * Helper method to make all the .java files and put them in their respective directories.
-//     * @param classes
-//     * @param filePath
-//     * @return 
-//     *      True if the files were created successfully, false otherwise.
-//     */
-//    private boolean makeJavaFiles(ArrayList<CustomClassWrapper> classes, String filePath){
-//        
-//        //Loop through all classes in the ArrayList
-//        for(CustomClassWrapper c : classes){
-//            String classFilePath = getJavaFilePath(c.getData(), filePath);
-//            String classFileText = processClass(c.getData(), classes);
-//            if(classFileText == null)
-//                return false;
-//            
-//            //Export the imports, method header, variables, and methods to a new file with address classFilePath
-//            try{
-//                File f = new File(classFilePath);
-//                PrintWriter out = new PrintWriter(classFilePath);
-//                out.println(classFileText);
-//                out.close();
-//            } catch (FileNotFoundException e){
-//                e.printStackTrace();
-//                return false;
-//            } 
-//        }
-//
-//        return true;
-//    }
-//    
-//    private String processClass(CustomClass c, ArrayList<CustomClassWrapper> classes){
-//        //As we traverse our arrays of CustomMethods and CustomVariables, we will
-//        //add strings to this ArrayList to account for any classes that might need
-//        //to be imported
-//        ArrayList<String> imports = new ArrayList<>();
-//        
-//        //Get the class header
-//        String classHeaderText = generateClassHeader(c, classes);
-//        String packageName = c.getPackageName();
-//
-//        //The methods and variables ArrayLists will hold our processed methods and variables,
-//        //ready to be written to our java file
-//        ArrayList<String> methods = new ArrayList<>();
-//        ArrayList<String> variables = new ArrayList<>();
-//        
-//        //Convert the methods to strings
-//        for(CustomMethod m : c.getMethods()){
-//            if(!checkMethod(m, c.isInterface()))
-//                return null;
-//            methods.add(processMethod(m, c.isInterface()));
-//            
-//            //Get imports from methods
-//            ArrayList<String> importTextArray = getMethodImports(m, classes);
-//            //Add imports if they are not already in the ArrayList of imports
-//            if(importTextArray != null){
-//                for(String s : importTextArray){
-//                    if(!imports.contains(s))
-//                        imports.add(s);
-//                }
-//            }
-//        }
-//        
-//        //Use this method to add in all methods inherited from parents WITHIN THE DESIGN
-//        methods.addAll(processInheritedMethods(c, classes));
-//
-//        //Convert the variables to strings
-//        if(!c.isInterface()){
-//            for(CustomVar v : c.getVariables()){
-//                if(!checkVariable(v))
-//                    return null;
-//                variables.add(processVariable(v));
-//            }
-//        }
-//        
-//        //Get imports from variables
-//        for(CustomVar v : c.getVariables()){
-//            ArrayList<String> importTextArray = getVariableImports(v, classes);
-//            //Add imports if they are not already in the ArrayList of imports
-//            if(importTextArray != null){
-//                for(String s : importTextArray){
-//                    if(!imports.contains(s))
-//                        imports.add(s);
-//                }
-//            }
-//        }
-//        
-//        for(String p : c.getParents()){
-//            ArrayList<String> importTextArray = getParentImports(p, classes);
-//            //Add imports if they are not already in the ArrayList of imports
-//            if(importTextArray != null){
-//                for(String s : importTextArray){
-//                    if(!imports.contains(s))
-//                        imports.add(s);
-//                }
-//            }
-//        }
-//        
-//        //Construct our string to return
-//        String toReturn = "";
-//        toReturn += "package " + packageName + ";\n\n";
-//        
-//        for(String importString : imports){
-//            toReturn += "import " + importString + ";\n";
-//        }
-//        
-//        toReturn += "\n" + classHeaderText + "\n";
-//        for(String v : variables){
-//            if(!v.equals(""))
-//                toReturn += "\n" + v;
-//        }
-//        
-//        toReturn += "\n";
-//        
-//        for(String m : methods){
-//            if(!m.equals(""))
-//                toReturn += "\n" + m;
-//        }
-//        
-//        toReturn += "\n}";
-//        
-//        return toReturn;
-//    }
-//    
-//    /**
-//     * Generates the header for a given class and returns it as a String.
-//     * @param c
-//     * @return 
-//     */
-//    private String generateClassHeader(CustomClass c, ArrayList<CustomClassWrapper> classes){
-//        String classHeader = "public ";
-//        if(c.isInterface())
-//            classHeader += "interface ";
-//        else if(c.isAbstract())
-//            classHeader += "abstract class ";
-//        else
-//            classHeader += "class ";
-//        classHeader += c.getClassName() + " ";
-//        
-//        String extended = "";
-//        
-//        //Check if any of the parents are abstract classes. If one is, set it to the extended string
-//        //It will be the only class extended from the current class. All others will be implemented.
-//        for(CustomClassWrapper wrapper : classes){
-//            for(String parent : c.getParents()){
-//                if(wrapper.getData().getClassName().equals(parent) && !wrapper.getData().isInterface()){
-//                    extended = parent;
-//                    break;
-//                }
-//            }
-//            break;
-//        }
-//        
-//        if(!extended.equals(""))
-//            classHeader += "extends " + extended + " ";
-//        else{
-//            //NOTE: THIS IS HARDCODED SO THAT EXPORTED CODE WILL COMPILE
-//            if(c.getParents().size() > 0 && !c.getParents().get(0).equals("") && !c.getParents().get(0).equals("EventHandler")){
-//                classHeader += "extends " + c.getParents().get(0) + " ";
-//                extended = c.getParents().get(0);
-//            }
-//        }
-//        
-//        for(String parent : c.getParents()){
-//            if(!parent.equals(extended))
-//                classHeader += "implements " + parent + " ";
-//        }
-//        
-//        classHeader += "{";
-//        return classHeader;
-//    }
-//    
-//    /**
-//     * Helper method that iterates through a class's parents. If the parents are contained
-//     * within the design, adds an @Override method for each of the parents' methods which need to
-//     * be overridden.
-//     * @param c
-//     * @param classes
-//     * @return 
-//     */
-//    private ArrayList<String> processInheritedMethods(CustomClass c, ArrayList<CustomClassWrapper> classes){
-//        ArrayList<String> processedOverrideMethods = new ArrayList<>();
-//        
-//        for(CustomClassWrapper wrapper : classes){
-//            for(String parent : c.getParents()){
-//                if(wrapper.getData().getClassName().equals(parent) && !wrapper.getData().isInterface()){
-//                    ArrayList<CustomMethod> abstractMethods = getAbstractMethods(wrapper.getData().getMethods());
-//                    for(CustomMethod m : abstractMethods){
-//                        CustomMethod cloneMethod = m.clone();
-//                        cloneMethod.setAbstractValue(false);
-//                        String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
-//                        processedOverrideMethods.add(processed);
-//                    }
-//                }
-//                else if(wrapper.getData().getClassName().equals(parent)){
-//                    for(CustomMethod m : wrapper.getData().getMethods()){
-//                        CustomMethod cloneMethod = m.clone();
-//                        cloneMethod.setAbstractValue(false);
-//                        String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
-//                        processedOverrideMethods.add(processed);
-//                    }
-//                }
-//            }
-//        }
-//        
-//        return processedOverrideMethods;
-//    }
-//    
-//    /**
-//     * Helper method to get all abstract methods in an ArrayList of CustomMethods.
-//     * @param methods
-//     * @return 
-//     */
-//    private ArrayList<CustomMethod> getAbstractMethods(ArrayList<CustomMethod> methods){
-//        ArrayList<CustomMethod> abstractMethods = new ArrayList<>();
-//        for(CustomMethod m : methods){
-//            if(m.isAbstract())
-//                abstractMethods.add(m);
-//        }
-//        return abstractMethods;
-//    }
-//    
-//    /**
-//     * Helper method which processes a CustomMethod object and returns skeleton code
-//     * for that method as a String.
-//     * @param m
-//     * @param isInterface
-//     * @return 
-//     */
-//    private String processMethod(CustomMethod m, boolean isInterface){
-//        String processedMethod = "";
-//        
-//        //If method is an interface, it must be either static or abstract
-//        if(isInterface){
-//            
-//            processedMethod += "\t";
-//            
-//            //If m is static, method should start with "static" modifier
-//            //Interface methods are public by default, so we can exclude the public access modifier
-//            if(m.isStatic()){
-//                processedMethod += "static ";
-//            }
-//            
-//            processedMethod += m.getReturnType() + " ";
-//            processedMethod += m.getMethodName() + " (";
-//            if(!m.hasNoArguments()){
-//                for(String arg : m.getArguments()){
-//                    String[] splitArg = arg.split(" . ");
-//                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
-//                }
-//                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
-//            }
-//            
-//            processedMethod += ")";
-//            
-//            //If m is static, need a return statement. If m is abstract, don't even need brackets.
-//            if(m.isStatic()){
-//                processedMethod += "{\n";
-//                processedMethod += "\t" + getReturnStatement(m);
-//                processedMethod += "\n\t}";
-//            }else if(m.isAbstract()){
-//                processedMethod += ";";
-//            }
-//            
-//        }
-//        else if(m.isAbstract()){
-//            processedMethod += "\t" + m.getAccess() + " ";
-//            if(m.isStatic())
-//                processedMethod += "static ";
-//            processedMethod += "abstract ";
-//            if(!m.isConstructor())
-//                processedMethod += m.getReturnType() + " ";
-//            
-//            processedMethod += m.getMethodName() + " (";
-//            if(!m.hasNoArguments()){
-//                for(String arg : m.getArguments()){
-//                    String[] splitArg = arg.split(" . ");
-//                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
-//                }
-//                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
-//            }
-//            
-//            processedMethod += ");";
-//        }
-//        else{
-//            processedMethod += "\t" + m.getAccess() + " ";
-//            if(m.isStatic())
-//                processedMethod += "static ";
-//            if(!m.isConstructor())
-//                processedMethod += m.getReturnType() + " ";
-//            
-//            processedMethod += m.getMethodName() + " (";
-//            if(!m.hasNoArguments()){
-//                for(String arg : m.getArguments()){
-//                    String[] splitArg = arg.split(" . ");
-//                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
-//                }
-//                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
-//            }
-//            processedMethod += "){\n";
-//            if(!m.isConstructor())
-//                processedMethod += "\t" + getReturnStatement(m);
-//            processedMethod += "\n\t}";
-//        }
-//        return processedMethod;
-//    }
-//    
-//    /**
-//     * Helper method which takes in a CustomVar object and converts it to a formatted
-//     * String instantiation of it.
-//     * @param v
-//     * @return 
-//     */
-//    private String processVariable(CustomVar v){
-//        String processedVariable = "\t";
-//        
-//        processedVariable += v.getAccess() + " ";
-//        if(v.isStatic())
-//            processedVariable += "static ";
-//        processedVariable += v.getVarType() + " ";
-//        processedVariable += v.getVarName() + ";";
-//        
-//        return processedVariable;
-//    }
-//    
-//    /**
-//     * Helper method to get a formatted return statement for a method stub.
-//     * @param m
-//     * @return 
-//     */
-//    private String getReturnStatement(CustomMethod m){
-//        String returnStatement = "";
-//        if(m.getReturnType().equals(CustomMethod.BOOLEAN_RETURN_TYPE))
-//            returnStatement += "\treturn true;";
-//        else if(m.getReturnType().equals(CustomMethod.CHAR_RETURN_TYPE))
-//            returnStatement += "\treturn 'a';";
-//        else if(m.getReturnType().equals(CustomMethod.INT_RETURN_TYPE))
-//            returnStatement += "\treturn 0;";
-//        else if(m.getReturnType().equals(CustomMethod.FLOAT_RETURN_TYPE))
-//            returnStatement += "\treturn 0;";
-//        else if(m.getReturnType().equals(CustomMethod.BYTE_RETURN_TYPE))
-//            returnStatement += "\treturn 0;";
-//        else if(m.getReturnType().equals(CustomMethod.LONG_RETURN_TYPE))
-//            returnStatement += "\treturn 0;";
-//        else if(m.getReturnType().equals(CustomMethod.DOUBLE_RETURN_TYPE))
-//            returnStatement += "\treturn 0;";
-//        else if(m.getReturnType().equals(CustomMethod.SHORT_RETURN_TYPE))
-//            returnStatement += "\treturn 0;";
-//        else if(m.getReturnType().equals(CustomMethod.VOID_RETURN_TYPE))
-//            returnStatement += "\treturn;";
-//        else
-//            returnStatement += "\treturn null;";
-//        return returnStatement;
-//    }
-//    
-//    /**
-//     * Helper method to check whether or not the method is valid. Checks to make sure
-//     * the method name is not null or the empty string, and to make sure the method is
-//     * abstract or static if the class is an interface.
-//     * @param m
-//     * @param isInterface
-//     * @return 
-//     */
-//    private boolean checkMethod(CustomMethod m, boolean isInterface){
-//        //If the class is an interface and the method is not abstract or static, 
-//        //or is a constructor, or is not public return false
-//        if(isInterface && !((m.isAbstract() || m.isStatic()) && !m.isConstructor() && m.getAccess().equals(CustomMethod.PUBLIC_METHOD_ACCESS)))
-//            return false;
-//        if(m.getMethodName() == null || m.getMethodName().equals(""))
-//            return false;
-//        return true;
-//    }
-//    
-//    /**
-//     * Helper method to check whether or not the variable is valid. Checks to make sure
-//     * the variable name is not null or the empty string.
-//     * 
-//     * Note: variables will not be added to the class if it is an interface.
-//     * @param m
-//     * @param isInterface
-//     * @return 
-//     */
-//    private boolean checkVariable(CustomVar v){
-//        //If the variable name is invalid, return false
-//        if(v.getVarName() == null || v.getVarName().equals(""))
-//            return false;
-//        return true;
-//    }
-//    
-//    /**
-//     * Helper method to get the properly-formatted file path of a .java file from
-//     * its CustomClassWrapper object and the directory file path.
-//     * @param c
-//     * @param filePath
-//     * @return 
-//     *      The properly-formatted file path
-//     */
-//    private String getJavaFilePath(CustomClass c, String filePath){
-//        String javaFilePath = filePath + "/";
-//        
-//        //Get the path to the directory in which the file will be put
-//        String packagePath = c.getPackageName().replace('.', '/');
-//        javaFilePath += packagePath + "/";
-//        
-//        javaFilePath = javaFilePath + c.getClassName() + JAVA_FILE_EXTENSION;
-//        return javaFilePath;
-//    }
-//
-//    private ArrayList<String> getMethodImports(CustomMethod m, ArrayList<CustomClassWrapper> classes) {
-//        ArrayList<String> imports = new ArrayList<>();
-//        
-//        //Get an array of strings representing the types to check against the list of classes
-//        ArrayList<String> typesToCheck = new ArrayList<>();
-//        
-//        //First get the types from the return type (could be multiple if return type is an arraylist)
-//        //When adding, first check to be sure that typesToCheck does not already contain the type being added
-//        ArrayList<String> converted = convertToTypes(m.getReturnType());
-//        for(String type : converted){
-//            if(!typesToCheck.contains(type))
-//                typesToCheck.add(type);
-//        }
-//        
-//        //Then do the same for all the arguments
-//        if(!m.hasNoArguments()){
-//            for(String uncheckedType : m.getArguments()){
-//                String[] splitUncheckedType = uncheckedType.split(" : ");
-//                String typeToConvert = splitUncheckedType[1];
-//                converted = convertToTypes(typeToConvert);
-//                for(String type : converted){
-//                    if(!typesToCheck.contains(type))
-//                        typesToCheck.add(type);
-//                }
-//            }
-//        }
-//        
-//        //Get any necessary design imports by comparing typesToCheck to the CustomClasses in the design
-//        imports.addAll(checkAgainstDesignClasses(typesToCheck, classes));
-//        
-//        //Get any necessary api imports by comparing typesToCheck to the packages in Package.getPackages()
-//        imports.addAll(checkAgainstAPIClasses(typesToCheck));
-//        
-//        return imports;
-//    }
-//
-//    private ArrayList<String> getVariableImports(CustomVar v, ArrayList<CustomClassWrapper> classes) {
-//        ArrayList<String> imports = new ArrayList<>();
-//        String varType = v.getVarType();
-//        ArrayList<String> typesToCheck = convertToTypes(varType);
-//        
-//        //Get any necessary design imports by comparing typesToCheck to the CustomClasses in the design
-//        imports.addAll(checkAgainstDesignClasses(typesToCheck, classes));
-//        
-//        //Get any necessary api imports by comparing typesToCheck to the packages in Package.getPackages()
-//        imports.addAll(checkAgainstAPIClasses(typesToCheck));
-//        
-//        return imports;
-//    }
-//    
-//    private ArrayList<String> getParentImports(String s, ArrayList<CustomClassWrapper> classes) {
-//        ArrayList<String> imports = new ArrayList<>();
-//        ArrayList<String> parentTypes = convertToTypes(s);
-//        
-//        //Get any necessary design imports by comparing typesToCheck to the CustomClasses in the design
-//        imports.addAll(checkAgainstDesignClasses(parentTypes, classes));
-//        
-//        //Get any necessary api imports by comparing typesToCheck to the packages in Package.getPackages()
-//        imports.addAll(checkAgainstAPIClasses(parentTypes));
-//        
-//        return imports;
-//    }
-//    
-//    /**
-//     * Gets an ArrayList of type strings from a given string
-//     * @param type
-//     * @return
-//     *      The ArrayList (note that it may contain duplicate elements or may be empty)
-//     */
-//    private ArrayList<String> convertToTypes(String type){
-//        ArrayList<String> typesReturn = new ArrayList<>();
-//        if(type.equals(CustomMethod.BOOLEAN_RETURN_TYPE) || type.equals(CustomMethod.BYTE_RETURN_TYPE) || 
-//                type.equals(CustomMethod.CHAR_RETURN_TYPE) || type.equals(CustomMethod.DOUBLE_RETURN_TYPE) || 
-//                type.equals(CustomMethod.FLOAT_RETURN_TYPE) || type.equals(CustomMethod.INT_RETURN_TYPE) ||
-//                type.equals(CustomMethod.LONG_RETURN_TYPE) || type.equals(CustomMethod.SHORT_RETURN_TYPE) || 
-//                type.equalsIgnoreCase(CustomMethod.VOID_RETURN_TYPE) || type.equals(CustomMethod.CONSTRUCTOR_RETURN_TYPE) || 
-//                type.equals("String"))
-//            return typesReturn;
-//        
-//        //If type is like an arraylist or hashtable, get outer type and inner type
-//        if(type.contains("<") && type.contains(">")){
-//            typesReturn.add(type.substring(0, type.indexOf("<")));
-//            String innerType = type.substring(type.indexOf("<") + 1, type.lastIndexOf(">"));
-//            
-//            //Split the inner type on the ", " regex in case the outer type has more than one
-//            //inner type. Then recursively call convertToTypes on all inner types in case they
-//            //too hold inner types of their own. (This is probably unnecessary, but fuck it)
-//            String[] innerTypeArray = innerType.split(", ");
-//            for(String s : innerTypeArray){
-//                typesReturn.addAll(convertToTypes(s));
-//            }
-//        }
-//        //Otherwise just add the type
-//        else{
-//            typesReturn.add(type);
-//        }
-//        return typesReturn;
-//    }
-//    
-//    /*Test method
-//    public void printPackages(){
-//        Package[] packages = Package.getPackages();
-//        for(int i = 0; i < packages.length; i++)
-//            System.out.println(packages[i].getName());
-//    }*/
-//
-//    private ArrayList<String> checkAgainstDesignClasses(ArrayList<String> typesToCheck, ArrayList<CustomClassWrapper> classes) {
-//        ArrayList<String> imports = new ArrayList<>();
-//        
-//        for(CustomClassWrapper c : classes){
-//            for(String type : typesToCheck){
-//                if(c.getData().getClassName().equals(type)){
-//                    String newImport = c.getData().getPackageName() + "." + type;
-//                    imports.add(newImport);
-//                }
-//            }
-//        }
-//        
-//        return imports;
-//    }
-//
-//    private ArrayList<String> checkAgainstAPIClasses(ArrayList<String> typesToCheck) {
-//        ArrayList<String> imports = new ArrayList<>();
-//        
-//        Package[] packages = Package.getPackages();
-//        for(Package p : packages){
-//            for(String type : typesToCheck){
-//                try{
-//                    Class.forName(p.getName() + "." + type);
-//                    imports.add(p.getName() + "." + type); 
-//                } catch(ClassNotFoundException e){}
-//            }
-//        }
-//        
-//        //NOTE: THIS IS HARDCODED SO THAT EXPORTED CODE WILL COMPILE
-//        for(String type : typesToCheck){
-//            try{
-//                Class.forName("javafx.concurrent" + "." + type);
-//                imports.add("javafx.concurrent" + "." + type); 
-//            } catch(ClassNotFoundException e){}
-//        }
-//        
-//        for(String i : imports){
-//            if(i.contains("com.sun.") || i.contains("org.w3c."))
-//                imports.remove(i);
-//        }
-//        
-//        return imports;
-//    }
-//    
+    /**
+     * Exports the current design to code. 
+     * @param dataManager
+     * @param filePath
+     * @return 
+     *       0 if the code was exported correctly.
+     *      -1 if there was an error creating the package directories.
+     *      -2 if there was an error creating the java files.
+     */
+    public int exportCode(DataManager dataManager, String filePath){
+        //First, create all necessary packages to put our java files in.
+        //Get every package contained in the current design.
+        ArrayList<String> packages = getAllPackages(dataManager.getClasses());
+        
+        //Then make all the package directories
+        boolean makePackagesReturn = makePackageDirectories(packages, filePath);
+        if(!makePackagesReturn)
+            return ERROR_CREATING_DIRECTORIES;
+        
+        //Then put all the java files in the packages
+        boolean makeJavaFilesReturn = makeJavaFiles(dataManager, filePath);
+        if(!makeJavaFilesReturn)
+            return ERROR_CREATING_JAVA_FILES;
+        
+        return 0;
+    }
+    
+    /**
+     * Helper method which extracts an ArrayList of packages from an ArrayList of 
+     * CustomClassWrappers.
+     * 
+     * @param classes
+     * @return 
+     *      The ArrayList of packages
+     */
+    private ArrayList<String> getAllPackages(ArrayList<CustomBox> classes){
+        ArrayList<String> packages = new ArrayList<>();
+        for(CustomBox cb : classes){
+            if(cb instanceof CustomClassWrapper){
+                CustomClassWrapper c = (CustomClassWrapper) cb;
+                String packageName = c.getData().getPackageName();
+
+                //If packageName is invalid, set packageName to the default package name
+                if(packageName.equals("") || packageName == null)
+                    packageName = c.getData().DEFAULT_PACKAGE_NAME;
+
+                if(!packages.contains(packageName)){
+                    packages.add(packageName);
+                }
+            }
+        }
+        return packages;
+    }
+    
+    /**
+     * Helper method to make the package directories.
+     * @param packages
+     * @return 
+     *      True if the directories were created successfully, false otherwise.
+     */
+    private boolean makePackageDirectories(ArrayList<String> packages, String filePath){
+
+        //Sort the package strings based on how many subdirectories they have
+        //Ex: "jdcapp.data" has 1 more subdirectory than "jdcapp"
+        Collections.sort(packages, new Comparator<String>(){
+            @Override
+            public int compare(String s1, String s2){
+                int s1Subdirectories = StringUtils.countMatches(s1, ".");
+                int s2Subdirectories = StringUtils.countMatches(s2, ".");
+                if(s1Subdirectories > s2Subdirectories)
+                    return 1;
+                else if(s1Subdirectories == s2Subdirectories)
+                    return 0;
+                else
+                    return -1;
+            }
+        });
+        
+        //Now make the directories. Because of the sorting, they should be made in
+        //order so that no subdirectory is made without its parent directory already
+        //existing.
+        for(String packageName : packages){
+            packageName = packageName.replace('.', '/');
+            String filePathPackage = filePath + "/" + packageName;
+                        
+            File packageFile = new File(filePathPackage);
+            boolean success = packageFile.mkdirs();
+            if(!success){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Helper method to make all the .java files and put them in their respective directories.
+     * @param classes
+     * @param filePath
+     * @return 
+     *      True if the files were created successfully, false otherwise.
+     */
+    private boolean makeJavaFiles(DataManager data, String filePath){
+        
+        //Loop through all classes in the ArrayList
+        for(CustomBox cb : data.getClasses()){
+            if(cb instanceof CustomClassWrapper){
+                CustomClassWrapper c = (CustomClassWrapper) cb;
+                String classFilePath = getJavaFilePath(c.getData(), filePath);
+                String classFileText = processClass(c, data);
+                if(classFileText == null)
+                    return false;
+
+                //Export the imports, method header, variables, and methods to a new file with address classFilePath
+                try{
+                    File f = new File(classFilePath);
+                    PrintWriter out = new PrintWriter(classFilePath);
+                    out.println(classFileText);
+                    out.close();
+                } catch (FileNotFoundException e){
+                    e.printStackTrace();
+                    return false;
+                } 
+            }
+        }
+
+        return true;
+    }
+    
+    private String processClass(CustomClassWrapper c, DataManager data){
+        //As we traverse our arrays of CustomMethods and CustomVariables, we will
+        //add strings to this ArrayList to account for any classes that might need
+        //to be imported
+        ArrayList<String> imports = new ArrayList<>();
+        
+        //Get the class header
+        String classHeaderText = generateClassHeader(c.getData());
+        String packageName = c.getData().getPackageName();
+
+        //The methods and variables ArrayLists will hold our processed methods and variables,
+        //ready to be written to our java file
+        ArrayList<String> variables = new ArrayList<>();
+        ArrayList<String> methods = new ArrayList<>();
+        
+        //Convert the variables to strings
+        if(!c.getData().isInterface()){
+            for(CustomVar v : c.getData().getVariables()){
+                variables.add(processVariable(v));
+            }
+        }
+        
+        //Convert the methods to strings
+        for(CustomMethod m : c.getData().getMethods()){
+            methods.add(processMethod(m, c.getData().isInterface()));
+        }
+        
+        //Use this method to add override methods for all abstract methods inherited WITHIN THE DESIGN
+        //Note: this will only be done if the current class is not an abstract class/interface
+        if(!c.getData().isAbstract() && !c.getData().isInterface())
+            methods.addAll(processInheritedMethods(c.getData(), data));
+        
+        //Get the full import strings of all classes being imported and and add them to the array of imports
+        ArrayList<CustomConnection> importConnections = data.getFromConnections(c);
+        for(CustomConnection connection : importConnections){
+            CustomBox toImport = data.getClassByName(connection.getToClass());
+            if(toImport instanceof CustomClassWrapper){
+                CustomClassWrapper toImportWrapper = (CustomClassWrapper) toImport;
+                if(!toImportWrapper.getData().getPackageName().equals(packageName)){
+                    String importString = toImportWrapper.getData().getPackageName() + "." + toImportWrapper.getData().getClassName();
+                    imports.add(importString);
+                }
+            }
+            else if(toImport instanceof CustomImport){
+                CustomImport toImportBox = (CustomImport) toImport;
+                if(!toImportBox.getPackageName().equals(packageName)){
+                    String importString = toImportBox.getPackageName() + "." + toImportBox.getImportName();
+                    imports.add(importString);
+                }
+            }
+        }
+        
+        //Construct our string to return
+        String toReturn = "";
+        toReturn += "package " + packageName + ";\n\n";
+        
+        for(String importString : imports){
+            toReturn += "import " + importString + ";\n";
+        }
+        
+        toReturn += "\n" + classHeaderText + "\n";
+        for(String v : variables){
+            if(!v.equals(""))
+                toReturn += "\n" + v;
+        }
+        
+        toReturn += "\n";
+        
+        for(String m : methods){
+            if(!m.equals(""))
+                toReturn += "\n" + m;
+        }
+        
+        toReturn += "\n}";
+        
+        return toReturn;
+    }
+    
+    /**
+     * Generates the header for a given class and returns it as a String.
+     * @param c
+     * @return 
+     */
+    private String generateClassHeader(CustomClass c){
+        String classHeader = "public ";
+        if(c.isInterface())
+            classHeader += "interface ";
+        else if(c.isAbstract())
+            classHeader += "abstract class ";
+        else
+            classHeader += "class ";
+        classHeader += c.getClassName() + " ";
+        
+        if(c.getExtendedClass() != null && !c.getExtendedClass().equals(""))
+            classHeader += "extends " + c.getExtendedClass() + " ";
+        
+        for(String implemented : c.getImplementedClasses()){
+            if(!implemented.equals("")){
+                classHeader += "implements " + implemented + " ";
+            }
+        }
+        
+        classHeader += "{";
+        return classHeader;
+    }
+    
+    /**
+     * Helper method that iterates through a class's parents. If the parents are contained
+     * within the design, adds an @Override method for each of the parents' methods which need to
+     * be overridden.
+     * @param c
+     * @param classes
+     * @return 
+     */
+    private ArrayList<String> processInheritedMethods(CustomClass c, DataManager data){
+        ArrayList<String> processedOverrideMethods = new ArrayList<>();
+        
+        //Get all abstract methods associated with the extended class (if the extended class
+        //was created by the user) and override them in the current class
+        CustomBox extendedClass = data.getClassByName(c.getExtendedClass());
+        if(extendedClass != null && extendedClass instanceof CustomClassWrapper){
+            ArrayList<CustomMethod> abstractMethods = getAbstractMethods(((CustomClassWrapper)extendedClass).getData().getMethods());
+            for(CustomMethod m : abstractMethods){
+                CustomMethod cloneMethod = m.clone();
+                cloneMethod.setAbstractValue(false);
+                String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
+                processedOverrideMethods.add(processed);
+            }
+        }
+        
+        //Get all methods associated with any implemented classes created by the user
+        //and override them in the current class (since they must all be abstract)
+        for(String implemented : c.getImplementedClasses()){
+            CustomBox implementedClass = data.getClassByName(implemented);
+            if(implementedClass != null && implementedClass instanceof CustomClassWrapper){
+                for(CustomMethod m : ((CustomClassWrapper)implementedClass).getData().getMethods()){
+                    CustomMethod cloneMethod = m.clone();
+                    cloneMethod.setAbstractValue(false);
+                    String processed = "\t@Override\n" + processMethod(cloneMethod, c.isInterface());
+                    processedOverrideMethods.add(processed);
+                }
+            }
+        }
+        
+        return processedOverrideMethods;
+    }
+    
+    /**
+     * Helper method to get all abstract methods in an ArrayList of CustomMethods.
+     * @param methods
+     * @return 
+     */
+    private ArrayList<CustomMethod> getAbstractMethods(ArrayList<CustomMethod> methods){
+        ArrayList<CustomMethod> abstractMethods = new ArrayList<>();
+        for(CustomMethod m : methods){
+            if(m.isAbstract())
+                abstractMethods.add(m);
+        }
+        return abstractMethods;
+    }
+    
+    /**
+     * Helper method which processes a CustomMethod object and returns skeleton code
+     * for that method as a String.
+     * @param m
+     * @param isInterface
+     * @return 
+     */
+    private String processMethod(CustomMethod m, boolean isInterface){
+        String processedMethod = "";
+        
+        //If method is an interface, it must be either static or abstract
+        if(isInterface){
+            
+            processedMethod += "\t";
+            
+            //If m is static, method should start with "static" modifier
+            //Interface methods are public by default, so we can exclude the public access modifier
+            if(m.isStatic()){
+                processedMethod += "static ";
+            }
+            
+            processedMethod += m.getReturnType() + " ";
+            processedMethod += m.getMethodName() + " (";
+            if(!m.hasNoArguments()){
+                for(String arg : m.getArguments()){
+                    String[] splitArg = arg.split(" . ");
+                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+                }
+                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            }
+            
+            processedMethod += ")";
+            
+            //If m is static, need a return statement. If m is abstract, don't even need brackets.
+            if(m.isStatic()){
+                processedMethod += "{\n";
+                processedMethod += "\t" + UNSUPPORTED_OPERATION_EXCEPTION;
+                processedMethod += "\n\t}";
+            }else if(m.isAbstract()){
+                processedMethod += ";";
+            }
+            
+        }
+        else if(m.isAbstract()){
+            processedMethod += "\t" + m.getAccess() + " ";
+            if(m.isStatic())
+                processedMethod += "static ";
+            processedMethod += "abstract ";
+            if(!m.isConstructor())
+                processedMethod += m.getReturnType() + " ";
+            
+            processedMethod += m.getMethodName() + " (";
+            if(!m.hasNoArguments()){
+                for(String arg : m.getArguments()){
+                    String[] splitArg = arg.split(" . ");
+                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+                }
+                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            }
+            
+            processedMethod += ");";
+        }
+        else{
+            processedMethod += "\t" + m.getAccess() + " ";
+            if(m.isStatic())
+                processedMethod += "static ";
+            if(!m.isConstructor())
+                processedMethod += m.getReturnType() + " ";
+            
+            processedMethod += m.getMethodName() + " (";
+            if(!m.hasNoArguments()){
+                for(String arg : m.getArguments()){
+                    String[] splitArg = arg.split(" . ");
+                    processedMethod  = processedMethod + splitArg[1] + " " + splitArg[0] + ", ";
+                }
+                processedMethod = processedMethod.substring(0, processedMethod.length() - 2);
+            }
+            processedMethod += "){\n";
+            processedMethod += "\t" + UNSUPPORTED_OPERATION_EXCEPTION;
+            processedMethod += "\n\t}";
+        }
+        return processedMethod;
+    }
+    
+    /**
+     * Helper method which takes in a CustomVar object and converts it to a formatted
+     * String instantiation of it.
+     * @param v
+     * @return 
+     */
+    private String processVariable(CustomVar v){
+        String processedVariable = "\t";
+        
+        processedVariable += v.getAccess() + " ";
+        if(v.isStatic())
+            processedVariable += "static ";
+        processedVariable += v.getVarType() + " ";
+        processedVariable += v.getVarName() + ";";
+        
+        return processedVariable;
+    }
+    
+    /**
+     * Helper method to get the properly-formatted file path of a .java file from
+     * its CustomClassWrapper object and the directory file path.
+     * @param c
+     * @param filePath
+     * @return 
+     *      The properly-formatted file path
+     */
+    private String getJavaFilePath(CustomClass c, String filePath){
+        String javaFilePath = filePath + "/";
+        
+        //Get the path to the directory in which the file will be put
+        String packagePath = c.getPackageName().replace('.', '/');
+        javaFilePath += packagePath + "/";
+        
+        javaFilePath = javaFilePath + c.getClassName() + JAVA_FILE_EXTENSION;
+        return javaFilePath;
+    }
+    
+    /**
+     * Gets an ArrayList of type strings from a given string (useful for classes like ArrayList, where
+     * there can be any other class inside the carrots).
+     * 
+     * Note: This class is currently unused, but may be used in the future for determining how many new connections
+     * to generate when a new parent, method return/argument, or variable is added. Currently only one is generated,
+     * but in the case of ArrayLists more than one may be necessary.
+     * 
+     * @param type
+     * @return
+     *      The ArrayList (note that it may contain duplicate elements or may be empty)
+     */
+    /*private ArrayList<String> convertToTypes(String type){
+        ArrayList<String> typesReturn = new ArrayList<>();
+        if(type.equals(CustomMethod.BOOLEAN_RETURN_TYPE) || type.equals(CustomMethod.BYTE_RETURN_TYPE) || 
+                type.equals(CustomMethod.CHAR_RETURN_TYPE) || type.equals(CustomMethod.DOUBLE_RETURN_TYPE) || 
+                type.equals(CustomMethod.FLOAT_RETURN_TYPE) || type.equals(CustomMethod.INT_RETURN_TYPE) ||
+                type.equals(CustomMethod.LONG_RETURN_TYPE) || type.equals(CustomMethod.SHORT_RETURN_TYPE) || 
+                type.equalsIgnoreCase(CustomMethod.VOID_RETURN_TYPE) || type.equals(CustomMethod.CONSTRUCTOR_RETURN_TYPE) || 
+                type.equals("String"))
+            return typesReturn;
+        
+        //If type is like an arraylist or hashtable, get outer type and inner type
+        if(type.contains("<") && type.contains(">")){
+            typesReturn.add(type.substring(0, type.indexOf("<")));
+            String innerType = type.substring(type.indexOf("<") + 1, type.lastIndexOf(">"));
+            
+            //Split the inner type on the ", " regex in case the outer type has more than one
+            //inner type. Then recursively call convertToTypes on all inner types in case they
+            //too hold inner types of their own. (This is probably unnecessary, but fuck it)
+            String[] innerTypeArray = innerType.split(", ");
+            for(String s : innerTypeArray){
+                typesReturn.addAll(convertToTypes(s));
+            }
+        }
+        //Otherwise just add the type
+        else{
+            typesReturn.add(type);
+        }
+        return typesReturn;
+    } */
+    
 }

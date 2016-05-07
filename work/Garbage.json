@@ -1,0 +1,26 @@
+
+{
+    "class_array":[
+        {
+            "start_x":464.0,
+            "start_y":225.0,
+            "width":96.0,
+            "height":78.0,
+            "custom_class":{
+                "class_name":"DefaultClass",
+                "package_name":"default_package",
+                "interface_value":false,
+                "abstract_value":false,
+                "extended_class":"",
+                "implemented_classes":[
+                ],
+                "variables":[
+                ],
+                "methods":[
+                ]
+            }
+        }
+    ],
+    "connection_array":[
+    ]
+}

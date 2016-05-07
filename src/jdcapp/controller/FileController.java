@@ -5,12 +5,20 @@ package jdcapp.controller;
 
 import java.io.File;
 import java.io.IOException;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
+import static jdcapp.settings.AppPropertyType.EXPORT_CODE_TITLE;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_DIRECTORIES;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_FILES;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_UNKNOWN;
+import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_TITLE;
+import static jdcapp.settings.AppPropertyType.EXPORT_SUCCESS_MESSAGE;
+import static jdcapp.settings.AppPropertyType.EXPORT_SUCCESS_TITLE;
 import static jdcapp.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
 import static jdcapp.settings.AppPropertyType.LOAD_ERROR_TITLE;
 import static jdcapp.settings.AppPropertyType.LOAD_WORK_TITLE;
@@ -169,7 +177,6 @@ public class FileController {
     }
 
     public void handleCodeExportRequest() {
-        /*
         // WE'LL NEED THIS TO GET CUSTOM STUFF
 	PropertiesManager props = PropertiesManager.getPropertiesManager();
         DataManager dataManager = app.getDataManager();
@@ -193,7 +200,6 @@ public class FileController {
             else
                 dialog.show(props.getProperty(EXPORT_ERROR_TITLE), props.getProperty(EXPORT_ERROR_MESSAGE_UNKNOWN));
         }
-        */
     }
     
     public void handleExitRequest() {
@@ -266,7 +272,8 @@ public class FileController {
     // HELPER METHOD FOR SAVING WORK
     private void saveWork(File selectedFile) throws IOException {
 	// SAVE IT TO A FILE
-	app.getFileManager().saveData(app.getDataManager(), selectedFile.getPath());
+	app.getFileManager().saveData(app.getDataManager(), 
+                selectedFile.getPath().substring(0, selectedFile.getPath().indexOf(".") + 1));
 	
 	// MARK IT AS SAVED
 	currentWorkFile = selectedFile;
@@ -309,6 +316,7 @@ public class FileController {
 		// MAKE SURE THE WORKSPACE IS ACTIVATED
 		//app.getWorkspaceManager().activateWorkspace(app.getGUI().getAppPane());
                 saved = true;
+                currentWorkFile = selectedFile;
                 app.getWorkspaceManager().activateWorkspaceControls();
                 app.getWorkspaceManager().updateFileToolbarControls(saved);
                 app.getWorkspaceManager().wipeSelectedClassData();
