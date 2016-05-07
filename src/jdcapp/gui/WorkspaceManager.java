@@ -555,18 +555,23 @@ public class WorkspaceManager {
             editController.handleResizeRequest();
         });
         addClassButton.setOnAction(e -> {
+            updateSaveStatus();
             editController.handleAddClassRequest();
         });
         addInterfaceButton.setOnAction(e -> {
+            updateSaveStatus();
             editController.handleAddInterfaceRequest();
         });
         removeButton.setOnAction(e -> {
+           updateSaveStatus();
            editController.handleRemoveRequest(); 
         });
         undoButton.setOnAction(e -> {
+           updateSaveStatus();
            editController.handleUndoRequest(); 
         });
         redoButton.setOnAction(e -> {
+            updateSaveStatus();
             editController.handleRedoRequest();
         });
         
@@ -595,14 +600,17 @@ public class WorkspaceManager {
             workspaceController.handleMouseExited();
         });
         canvas.setOnMousePressed(e -> {
+            updateSaveStatus();
             workspaceController.handleMousePressed(e.getX(), e.getY());
             canvas.requestFocus();
         });
         canvas.setOnMouseDragged(e -> {
+            updateSaveStatus();
             workspaceController.handleMouseDragged(e.getX(), e.getY());
             canvas.requestFocus();
         });
         canvas.setOnMouseReleased(e -> {
+            updateSaveStatus();
             workspaceController.handleMouseReleased(e.getX(), e.getY());
             canvas.requestFocus();
         });
@@ -610,7 +618,8 @@ public class WorkspaceManager {
             if(app.getDataManager().getSelectedPoint() != null){
                 //We are adding a point here
                 if(e.getCode().equals(KeyCode.S)){
-
+                    updateSaveStatus();
+                    
                     //If the point selected is the first point in the connection, add after it
                     if(app.getDataManager().getSelectedPoint().equals(app.getDataManager().getSelectedConnection().getFirstPoint())){
                         workspaceController.handleAddPointAfterSelected();
@@ -639,6 +648,7 @@ public class WorkspaceManager {
                     }
                     else{
                         //We are removing a point here
+                        updateSaveStatus();
                         workspaceController.handleRemovePoint();
                     }
                 }
@@ -657,6 +667,7 @@ public class WorkspaceManager {
         //is lost.
         classNameText.setOnKeyPressed(e -> {
             if(e.getCode().equals(KeyCode.ENTER)){
+                updateSaveStatus();
                 componentController.handleClassNameTextEdited(classNameText.getText());
                 canvas.requestFocus();
             }
@@ -664,8 +675,10 @@ public class WorkspaceManager {
         classNameText.focusedProperty().addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> change, Boolean oldFocus, Boolean newFocus){
-                if(!newFocus)
+                if(!newFocus){
+                    updateSaveStatus();
                     componentController.handleClassNameTextEdited(classNameText.getText());
+                }
             }
         });
         
@@ -673,6 +686,7 @@ public class WorkspaceManager {
         //is lost.
         packageNameText.setOnKeyPressed(e -> {
             if(e.getCode().equals(KeyCode.ENTER)){
+                updateSaveStatus();
                 componentController.handlePackageNameTextEdited(packageNameText.getText());
                 canvas.requestFocus();
             }
@@ -680,8 +694,10 @@ public class WorkspaceManager {
         packageNameText.focusedProperty().addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> change, Boolean oldFocus, Boolean newFocus){
-                if(!newFocus)
+                if(!newFocus){
+                    updateSaveStatus();
                     componentController.handlePackageNameTextEdited(packageNameText.getText());
+                }
             }
         });
         
@@ -689,6 +705,7 @@ public class WorkspaceManager {
         //is lost.
         newParentText.setOnKeyPressed(e -> {
             if(e.getCode().equals(KeyCode.ENTER)){
+                updateSaveStatus();
                 componentController.handleNewParentAdded(newParentText.getText());
                 newParentText.setText(null);
                 canvas.requestFocus();
@@ -697,8 +714,10 @@ public class WorkspaceManager {
         newParentText.focusedProperty().addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> change, Boolean oldFocus, Boolean newFocus){
-                if(!newFocus)
+                if(!newFocus){
+                    updateSaveStatus();
                     newParentText.setText(null);
+                }
             }
         });
         
@@ -711,6 +730,7 @@ public class WorkspaceManager {
         });
         
         removeAllImplementedClassesButton.setOnAction(e -> {
+            updateSaveStatus();
             componentController.handleRemoveAllInterfaces();
         });
         
@@ -718,33 +738,40 @@ public class WorkspaceManager {
         extendedClassComboBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue v, String oldValue, String newValue){
-                if(newValue != null)
+                if(newValue != null){
+                    updateSaveStatus();
                     componentController.handleExtendedClassSelected(newValue);
+                }
             }
         });
               
         removeExtendedClassButton.setOnAction(e -> {
+            updateSaveStatus();
             componentController.handleRemoveExtendedClass();
         });
         
         //Handler for addVariable button
         addVariable.setOnAction(e -> {
+            updateSaveStatus();
             componentController.handleAddVariable();
         });
         
         //Handler for removeVariable button
         removeVariable.setOnAction(e -> {
+            updateSaveStatus();
             componentController.handleRemoveVariable((CustomVar)variableTableView.getSelectionModel().getSelectedItem());
             variableTableView.getSelectionModel().clearSelection();
         });
         
         //Handler for addMethod button
         addMethod.setOnAction(e -> {
+            updateSaveStatus();
             componentController.handleAddMethod();
         });
         
         //Handler for removeMethod button
         removeMethod.setOnAction(e -> {
+            updateSaveStatus();
             componentController.handleRemoveMethod((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
             methodTableView.getSelectionModel().clearSelection();
         });
@@ -754,6 +781,7 @@ public class WorkspaceManager {
             ArgumentsDisplaySingleton s = ArgumentsDisplaySingleton.getSingleton();
             s.show((CustomMethod)methodTableView.getSelectionModel().getSelectedItem());
             if(s.selection.equals(s.OKAY)){
+                updateSaveStatus();
                 componentController.handleArgsChange((CustomMethod)methodTableView.getSelectionModel().getSelectedItem(), 
                         s.getOldArgs(), s.getNewArgs());
             }
@@ -1548,6 +1576,11 @@ public class WorkspaceManager {
         variableTableView.getColumns().clear();
         methodTableView.getItems().clear();
         methodTableView.getColumns().clear();
+    }
+    
+    public void updateSaveStatus(){
+        fileController.setSaved(false);
+        updateFileToolbarControls(false);
     }
     
     //TODO: Finish adding methods

@@ -115,18 +115,7 @@ public class CustomPoint extends CustomBox{
         featheredArrow.setStrokeWidth(1);
         return featheredArrow;
     }
-    
-    /*
-    public void orient(Rotate r){
-        if(pointType.equals(CustomConnection.DIAMOND_POINT_TYPE) || (pointType.equals(CustomConnection.ARROW_POINT_TYPE))){
-            display.getChildren().get(0).getTransforms().add(r);
-        }
-        else if(pointType.equals(CustomConnection.FEATHERED_ARROW_POINT_TYPE)){
-            display.getChildren().get(0).getTransforms().add(r);
-            display.getChildren().get(1).getTransforms().add(r);
-        }
-    }
-    */
+
     @Override
     public Group getDisplay(){
         return display;

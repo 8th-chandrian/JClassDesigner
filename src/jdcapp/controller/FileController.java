@@ -321,4 +321,13 @@ public class FileController {
             }
         }
     }
+    
+    /**
+     * Helper method used by other classes to update the saved boolean when a change
+     * is made to the design.
+     * @param b 
+     */
+    public void setSaved(boolean b){
+        saved = b;
+    }
 }
