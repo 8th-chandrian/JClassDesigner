@@ -89,11 +89,24 @@ public abstract class CustomBox {
     public void initResize(double x, double y){
         dragX = x;
         dragY = y;
+        gridX = width;
+        gridY = height;
     }
     
     public void resize(double x, double y){
-        width = width + (x - dragX);
-        height = height + (y - dragY);
+        int gridshift = WorkspaceManager.GRID_BOX_SIZE;
+        gridX = gridX + (x - dragX);
+        gridY = gridY + (y - dragY);
+        
+        if(gridX % gridshift > (gridshift / 2))
+            width = gridX + (gridshift - (gridX % gridshift));
+        else
+            width = gridX - (gridX % gridshift);
+        
+        if(gridY % gridshift > (gridshift / 2))
+            height = gridY + (gridshift - (gridY % gridshift));
+        else
+            height = gridY - (gridY % gridshift);
         
         dragX = x;
         dragY = y;
@@ -102,6 +115,8 @@ public abstract class CustomBox {
     public void endResize(){
         dragX = -1;
         dragY = -1;
+        gridX = -1;
+        gridY = -1;
     }
     
     public double getWidth(){

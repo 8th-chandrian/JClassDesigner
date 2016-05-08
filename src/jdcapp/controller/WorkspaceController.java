@@ -41,14 +41,18 @@ public class WorkspaceController {
         if(dataManager.getState() == JDCAppState.SELECTING){
             CustomPoint p = dataManager.selectTopPoint(x, y);
             if(p != null){
+                if(app.getWorkspaceManager().getSnapToGrid())
+                    dataManager.getSelectedPoint().initDragSnapped();
                 dataManager.getSelectedPoint().initDrag(x, y);
                 dataManager.setState(JDCAppState.DRAGGING_POINT);
             }
             else{
                 CustomBox c = dataManager.selectTopClass(x, y);
                 if(c != null){
-                    if(app.getWorkspaceManager().getSnapToGrid())
+                    if(app.getWorkspaceManager().getSnapToGrid()){
                         dataManager.getSelectedClass().initDragSnapped();
+                        dataManager.initDragSnappedOnConnections(dataManager.getSelectedClass(), x, y);
+                    }
                     dataManager.getSelectedClass().initDrag(x, y);
                     dataManager.initDragOnConnections(dataManager.getSelectedClass(), x, y);
                     dataManager.setState(JDCAppState.DRAGGING_CLASS);
@@ -74,23 +78,39 @@ public class WorkspaceController {
         
         //Set the starting x and y values of the selected class, then reload it into canvas
         if(dataManager.getState() == JDCAppState.DRAGGING_CLASS){
-            if(workspaceManager.getSnapToGrid())
+            if(workspaceManager.getSnapToGrid()){
                 dataManager.getSelectedClass().dragSnapped(x, y);
-            else
+                dataManager.dragConnectionsSnapped(dataManager.getSelectedClass(), x, y);
+            }
+            else{
                 dataManager.getSelectedClass().drag(x, y);
-            dataManager.dragConnections(dataManager.getSelectedClass(), x, y);
+                dataManager.dragConnections(dataManager.getSelectedClass(), x, y);
+            }
             workspaceManager.reloadSelectedClass();
         }
         else if(dataManager.getState() == JDCAppState.DRAGGING_POINT){
-            if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getFirstPoint())
-                dataManager.getSelectedPoint().dragEnd(x, y, 
-                        (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getFromClass()).getOutlineShape());
-            else if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getLastPoint())
-                dataManager.getSelectedPoint().dragEnd(x, y, 
-                        (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getToClass()).getOutlineShape());
-            else
-                dataManager.getSelectedPoint().drag(x, y);
-            workspaceManager.reloadSelectedConnection();
+            if(workspaceManager.getSnapToGrid()){
+                if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getFirstPoint())
+                    dataManager.getSelectedPoint().dragSnappedEnd(x, y, 
+                            (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getFromClass()).getOutlineShape());
+                else if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getLastPoint())
+                    dataManager.getSelectedPoint().dragSnappedEnd(x, y, 
+                            (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getToClass()).getOutlineShape());
+                else
+                    dataManager.getSelectedPoint().dragSnapped(x, y);
+                workspaceManager.reloadSelectedConnection();
+            }
+            else{
+                if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getFirstPoint())
+                    dataManager.getSelectedPoint().dragEnd(x, y, 
+                            (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getFromClass()).getOutlineShape());
+                else if(dataManager.getSelectedPoint() == dataManager.getSelectedConnection().getLastPoint())
+                    dataManager.getSelectedPoint().dragEnd(x, y, 
+                            (Rectangle)dataManager.getClassByName(dataManager.getSelectedConnection().getToClass()).getOutlineShape());
+                else
+                    dataManager.getSelectedPoint().drag(x, y);
+                workspaceManager.reloadSelectedConnection();
+            }
         }
         else if(dataManager.getState() == JDCAppState.RESIZING_CLASS){
             dataManager.getResizedClass().resize(x, y);
@@ -108,6 +128,8 @@ public class WorkspaceController {
             dataManager.setState(JDCAppState.SELECTING);
         }
         else if(dataManager.getState() == JDCAppState.DRAGGING_POINT){
+            if(app.getWorkspaceManager().getSnapToGrid())
+                dataManager.getSelectedPoint().endDragSnapped();
             dataManager.getSelectedPoint().endDrag();
             dataManager.setState(JDCAppState.SELECTING);
         }

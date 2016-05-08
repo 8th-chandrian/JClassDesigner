@@ -46,6 +46,17 @@ public class CustomClass{
         methods = new ArrayList<>();
     }
     
+    public CustomClass(String name){
+        interfaceValue = false;
+        abstractValue = false;
+        className = name;
+        packageName = DEFAULT_PACKAGE_NAME;
+        implementedClasses = new ArrayList<>();
+        extendedClass = DEFAULT_EXTENDED_CLASS;
+        variables = new ArrayList<>();
+        methods = new ArrayList<>();
+    }
+    
     public String getClassName(){
         return className;
     }

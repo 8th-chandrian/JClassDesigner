@@ -13,6 +13,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import static jdcapp.data.CustomVar.PRIVATE_VAR_ACCESS;
 import static jdcapp.data.CustomVar.PUBLIC_VAR_ACCESS;
+import jdcapp.gui.WorkspaceManager;
 
 /**
  * Contains a reference to a CustomClass object as data, and holds all requisite
@@ -45,9 +46,9 @@ public class CustomClassWrapper extends CustomBox{
     //The maximum number of characters in any line in the display
     private double maxCharacters;
 
-    public CustomClassWrapper(double initX, double initY){
+    public CustomClassWrapper(double initX, double initY, String name){
         super(initX, initY);
-        data = new CustomClass();
+        data = new CustomClass(name);
         display = new Group();
         toDisplay();
     }
@@ -225,6 +226,16 @@ public class CustomClassWrapper extends CustomBox{
         }
         else{
             outline.setHeight(height);
+        }
+        
+        //Ensures that generated class fits perfectly onto grid
+        if(height % WorkspaceManager.GRID_BOX_SIZE != 0){
+            height += WorkspaceManager.GRID_BOX_SIZE - (height % WorkspaceManager.GRID_BOX_SIZE);
+            outline.setHeight(height);
+        }
+        if(width % WorkspaceManager.GRID_BOX_SIZE != 0){
+            width += WorkspaceManager.GRID_BOX_SIZE - (width % WorkspaceManager.GRID_BOX_SIZE);
+            outline.setWidth(width);
         }
         
         outline.setStroke(Color.BLACK);

@@ -26,9 +26,11 @@ public class EditController {
     
     //The parent application
     JDCApp app;
+    int numDefaultClassesAdded;
     
     public EditController(JDCApp initApp){
         app = initApp;
+        numDefaultClassesAdded = 0;
     }
 
     public void handleSelectRequest() {
@@ -52,7 +54,8 @@ public class EditController {
         WorkspaceManager workspaceManager = app.getWorkspaceManager();
         
         //Create a new custom class and set its position to the default x and y values given
-        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY);
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY, CustomClass.DEFAULT_CLASS_NAME + numDefaultClassesAdded);
+        numDefaultClassesAdded++;
         
         //Add the default class to the arraylist of classes
         dataManager.getClasses().add(newClass);
@@ -79,7 +82,8 @@ public class EditController {
         
         //Create a new custom class and set its position to the default x and y values given
         //Set the interface value to true (default is false)
-        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY);
+        CustomClassWrapper newClass = new CustomClassWrapper(defaultX, defaultY, CustomClass.DEFAULT_CLASS_NAME + numDefaultClassesAdded);
+        numDefaultClassesAdded++;
         newClass.getData().setInterfaceValue(true);
         
         //Add the default class to the arraylist of classes

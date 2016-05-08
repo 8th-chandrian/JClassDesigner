@@ -13,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import jdcapp.gui.WorkspaceManager;
 
 /**
  *
@@ -22,6 +23,7 @@ public class CustomPoint extends CustomBox{
     
     public static final double DEFAULT_POINT_RADIUS = 4;
     public static final double DIAMOND_DISTRIBUTION = 4;
+    public static final double DRAG_END_BUFFER = 10;
     
     //The type of point. Can be either square, diamond, arrow, or feathered arrow
     private String pointType;
@@ -174,6 +176,28 @@ public class CustomPoint extends CustomBox{
      * @param r 
      */
     public void dragEnd(double x, double y, Rectangle r){
+        
+        //This will hopefully fix the issue that arises when the point's x or y gets shifted so
+        //that it no longer falls exactly on the edge of the rectangle
+        if(startX != r.getX() && startY != r.getY() && startX != r.getX() + r.getWidth() && startY != r.getY() + r.getHeight()){
+            if(startX < r.getX() + DRAG_END_BUFFER && startX > r.getX() - DRAG_END_BUFFER)
+                startX = r.getX();
+            if(startX < r.getX() + r.getWidth() + DRAG_END_BUFFER && startX > r.getX() + r.getWidth() - DRAG_END_BUFFER )
+                startX = r.getX() + r.getWidth();
+            
+            if(startY < r.getY() + DRAG_END_BUFFER && startY > r.getY() - DRAG_END_BUFFER)
+                startY = r.getY();
+            if(startY < r.getY() + r.getHeight() + DRAG_END_BUFFER && startY > r.getY() + r.getHeight() - DRAG_END_BUFFER )
+                startY = r.getY() + r.getHeight();
+        }
+        
+        //If the point is still off the edge of the rectangle, reset it.
+        if(startX != r.getX() && startY != r.getY() && startX != r.getX() + r.getWidth() && startY != r.getY() + r.getHeight()){
+            startX = r.getX();
+            startY = r.getY();
+        }
+        
+        //If the point is on one of the corners, determine which way to drag it
         if((startX == r.getX() || startX == r.getX() + r.getWidth()) && (startY == r.getY() || startY == r.getY() + r.getHeight())){
             if(Math.abs(x - dragX) > Math.abs(y - dragY)){
                 if(startX + (x - dragX) < r.getX())
@@ -192,6 +216,7 @@ public class CustomPoint extends CustomBox{
                     startY = startY + (y - dragY);
             }
         }
+        //If the point is on one of the horizontal edges, it can only be dragged horizontally
         else if(startX == r.getX() || startX == r.getX() + r.getWidth()){
             if(startY < r.getY())
                 startY = r.getY();
@@ -200,6 +225,7 @@ public class CustomPoint extends CustomBox{
             else
                 startY = startY + (y - dragY);
         }
+        //If the point is on one of the vertical edges, it can only be dragged vertically
         else if(startY == r.getY() || startY == r.getY() + r.getHeight()){
             if(startX < r.getX())
                 startX = r.getX();
@@ -207,6 +233,87 @@ public class CustomPoint extends CustomBox{
                 startX = r.getX() + r.getWidth();
             else
                 startX = startX + (x - dragX);
+        }
+        dragX = x;
+        dragY = y;
+    }
+    
+    /**
+     * Used when dragging a point attached to a CustomClass display rectangle.
+     * Keeps point locked to rectangle edge.
+     * @param x
+     * @param y
+     * @param r 
+     */
+    public void dragSnappedEnd(double x, double y, Rectangle r){
+        int gridshift = WorkspaceManager.GRID_BOX_SIZE;
+        gridX = gridX + (x - dragX);
+        gridY = gridY + (y - dragY);
+        
+        //This will hopefully fix the issue that arises when the point's x or y gets shifted so
+        //that it no longer falls exactly on the edge of the rectangle
+        if(startX != r.getX() && startY != r.getY() && startX != r.getX() + r.getWidth() && startY != r.getY() + r.getHeight()){
+            if(startX < r.getX() + DRAG_END_BUFFER && startX > r.getX() - DRAG_END_BUFFER)
+                startX = r.getX();
+            if(startX < r.getX() + r.getWidth() + DRAG_END_BUFFER && startX > r.getX() + r.getWidth() - DRAG_END_BUFFER )
+                startX = r.getX() + r.getWidth();
+            
+            if(startY < r.getY() + DRAG_END_BUFFER && startY > r.getY() - DRAG_END_BUFFER)
+                startY = r.getY();
+            if(startY < r.getY() + r.getHeight() + DRAG_END_BUFFER && startY > r.getY() + r.getHeight() - DRAG_END_BUFFER )
+                startY = r.getY() + r.getHeight();
+        }
+        
+        //If the point is still off the edge of the rectangle, reset it.
+        if(startX != r.getX() && startY != r.getY() && startX != r.getX() + r.getWidth() && startY != r.getY() + r.getHeight()){
+            startX = r.getX();
+            startY = r.getY();
+        }
+        
+        //If the point is on one of the corners, determine which way to drag it
+        if((startX == r.getX() || startX == r.getX() + r.getWidth()) && (startY == r.getY() || startY == r.getY() + r.getHeight())){
+            if(Math.abs(x - dragX) > Math.abs(y - dragY)){
+                if(gridX < r.getX())
+                    startX = r.getX();
+                else if(gridX > r.getX() + r.getWidth())
+                    startX = r.getX() + r.getWidth();
+                else if(gridX % gridshift > (gridshift / 2))
+                    startX = gridX + (gridshift - (gridX % gridshift));
+                else
+                    startX = gridX - (gridX % gridshift);
+            }
+            else{
+                if(gridY < r.getY())
+                    startY = r.getY();
+                else if(gridY > r.getY() + r.getHeight())
+                    startY = r.getY() + r.getHeight();
+                else if(gridY % gridshift > (gridshift / 2))
+                    startY = gridY + (gridshift - (gridY % gridshift));
+                else
+                    startY = gridY - (gridY % gridshift);
+            }
+        }
+        //If the point is on one of the horizontal edges, it can only be dragged horizontally
+        else if(startX == r.getX() || startX == r.getX() + r.getWidth()){
+            if(startY < r.getY())
+                startY = r.getY();
+            else if(startY > r.getY() + r.getHeight())
+                startY = r.getY() + r.getHeight();
+            else if(gridY % gridshift > (gridshift / 2))
+                startY = gridY + (gridshift - (gridY % gridshift));
+            else
+                startY = gridY - (gridY % gridshift);
+        }
+        //If the point is on one of the vertical edges, it can only be dragged vertically
+        else if(startY == r.getY() || startY == r.getY() + r.getHeight()){
+            if(startX < r.getX())
+                startX = r.getX();
+            else if(startX > r.getX() + r.getWidth())
+                startX = r.getX() + r.getWidth();
+            if(gridX % gridshift > (gridshift / 2))
+                startX = gridX + (gridshift - (gridX % gridshift));
+            else
+                startX = gridX - (gridX % gridshift);
         }
         dragX = x;
         dragY = y;

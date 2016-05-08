@@ -281,8 +281,6 @@ public class DataManager {
      */
     public boolean isCombinationUnique(String className, String packageName){
         int numOccurances = 0;
-        if(className.equals(CustomClass.DEFAULT_CLASS_NAME) || packageName.equals(CustomClass.DEFAULT_PACKAGE_NAME))
-                return false;
         for(CustomBox cb : classes){
             if(cb instanceof CustomClassWrapper){
                 CustomClassWrapper c = (CustomClassWrapper) cb;
@@ -398,6 +396,25 @@ public class DataManager {
     }
     
     /**
+     * Calls initDrag on every point associated with the given CustomBox, using the
+     * given x and y parameters.
+     * @param b
+     * @param initX
+     * @param initY 
+     */
+    public void initDragSnappedOnConnections(CustomBox b, double initX, double initY){
+        ArrayList<CustomConnection> fromConnections = getFromConnections(b);
+        ArrayList<CustomConnection> toConnections = getToConnections(b);
+        
+        for(CustomConnection f : fromConnections){
+            f.getFirstPoint().initDragSnapped();
+        }
+        for(CustomConnection t : toConnections){
+            t.getLastPoint().initDragSnapped();
+        }
+    }
+    
+    /**
      * Calls drag on every point associated with the given CustomBox, using the
      * given x and y parameters.
      * @param b
@@ -414,6 +431,27 @@ public class DataManager {
         }
         for(CustomConnection t : toConnections){
             t.getLastPoint().drag(x, y);
+            t.toDisplay();
+        }
+    }
+    
+    /**
+     * Calls drag on every point associated with the given CustomBox, using the
+     * given x and y parameters.
+     * @param b
+     * @param x
+     * @param y 
+     */
+    public void dragConnectionsSnapped(CustomBox b, double x, double y){
+        ArrayList<CustomConnection> fromConnections = getFromConnections(b);
+        ArrayList<CustomConnection> toConnections = getToConnections(b);
+        
+        for(CustomConnection f : fromConnections){
+            f.getFirstPoint().dragSnapped(x, y);
+            f.toDisplay();
+        }
+        for(CustomConnection t : toConnections){
+            t.getLastPoint().dragSnapped(x, y);
             t.toDisplay();
         }
     }

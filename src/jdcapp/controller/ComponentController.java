@@ -24,6 +24,8 @@ public class ComponentController {
     
     JDCApp app;
     
+    public static final double DEFAULT_IMPORT_OFFSET = 15;
+    
     public ComponentController(JDCApp initApp) {
         app = initApp;
     }
@@ -84,8 +86,8 @@ public class ComponentController {
             //it and create a new connection linking it and the selected class as well.
             if(!dataManager.hasName(classToImplement)){
                 dataManager.getTempParents().remove(classToImplement);
-                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                        dataManager.getSelectedClass().getStartY() + 5, classToImplement);
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + DEFAULT_IMPORT_OFFSET, 
+                        dataManager.getSelectedClass().getStartY() + DEFAULT_IMPORT_OFFSET, classToImplement);
                 dataManager.getClasses().add(newImport);
                 dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.ARROW_POINT_TYPE);
                 dataManager.checkCombinations();
@@ -134,8 +136,8 @@ public class ComponentController {
             ((CustomClassWrapper)dataManager.getSelectedClass()).getData().setExtendedClass(extendedClass);
             if(!dataManager.hasName(extendedClass)){
                 dataManager.getTempParents().remove(extendedClass);
-                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                        dataManager.getSelectedClass().getStartY() + 5, extendedClass);
+                CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + DEFAULT_IMPORT_OFFSET, 
+                        dataManager.getSelectedClass().getStartY() + DEFAULT_IMPORT_OFFSET, extendedClass);
                 dataManager.getClasses().add(newImport);
                 dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.ARROW_POINT_TYPE);
                 workspaceManager.reloadWorkspace();
@@ -272,8 +274,8 @@ public class ComponentController {
             if(!isPrimitive(newValue)){
                 //Generate connection and possibly class as well for new value
                 if(!dataManager.hasName(newValue)){
-                    CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                            dataManager.getSelectedClass().getStartY() + 5, newValue);
+                    CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + DEFAULT_IMPORT_OFFSET, 
+                            dataManager.getSelectedClass().getStartY() + DEFAULT_IMPORT_OFFSET, newValue);
                     dataManager.getClasses().add(newImport);
                     dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.DIAMOND_POINT_TYPE);
                 }
@@ -311,8 +313,8 @@ public class ComponentController {
             //Create new connection and possibly class for new value
             if(!isPrimitive(newValue)){
                 if(!dataManager.hasName(newValue)){
-                    CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                            dataManager.getSelectedClass().getStartY() + 5, newValue);
+                    CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + DEFAULT_IMPORT_OFFSET, 
+                            dataManager.getSelectedClass().getStartY() + DEFAULT_IMPORT_OFFSET, newValue);
                     dataManager.getClasses().add(newImport);
                     dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                 }
@@ -353,8 +355,8 @@ public class ComponentController {
                 String[] argArray = arg.split(" : ");
                 if(!isPrimitive(argArray[1])){
                     if(!dataManager.hasName(argArray[1])){
-                        CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + 5, 
-                                dataManager.getSelectedClass().getStartY() + 5, argArray[1]);
+                        CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + DEFAULT_IMPORT_OFFSET, 
+                                dataManager.getSelectedClass().getStartY() + DEFAULT_IMPORT_OFFSET, argArray[1]);
                         dataManager.getClasses().add(newImport);
                         dataManager.generateConnection(dataManager.getSelectedClass(), newImport, CustomConnection.FEATHERED_ARROW_POINT_TYPE);
                     }
@@ -429,6 +431,8 @@ public class ComponentController {
         else if(s.equals(CustomMethod.SHORT_RETURN_TYPE))
             return true;
         else if(s.equals(CustomMethod.VOID_RETURN_TYPE))
+            return true;
+        else if(s.equals("String"))
             return true;
         else
             return false;

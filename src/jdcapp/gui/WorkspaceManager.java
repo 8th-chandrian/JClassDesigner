@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -1045,6 +1046,7 @@ public class WorkspaceManager {
         canvas.getChildren().clear();
         
         //Generate grid if grid checkbox is checked
+        Group gridGroup = new Group();
         if(generateGrid){
             for(int i = 0; i < canvas.getWidth(); i = i + GRID_BOX_SIZE){
                 Line newLine = new Line();
@@ -1054,7 +1056,7 @@ public class WorkspaceManager {
                 newLine.setEndY(canvas.getHeight());
                 newLine.setStrokeWidth(.75);
                 newLine.setStroke(Color.DARKGRAY);
-                canvas.getChildren().add(newLine);
+                gridGroup.getChildren().add(newLine);
                 numLines++;
             }
             for(int i = 0; i < canvas.getHeight(); i = i + GRID_BOX_SIZE){
@@ -1065,12 +1067,13 @@ public class WorkspaceManager {
                 newLine.setEndY(i);
                 newLine.setStrokeWidth(.75);
                 newLine.setStroke(Color.DARKGRAY);
-                canvas.getChildren().add(newLine);
+                gridGroup.getChildren().add(newLine);
                 numLines++;
             }
         }
         else
             numLines = 0;
+        canvas.getChildren().add(gridGroup);
         
         for(int i = 0; i < dataManager.getClasses().size(); i++){
             CustomBox c = dataManager.getClasses().get(i);
@@ -1121,6 +1124,7 @@ public class WorkspaceManager {
         Rectangle oldBox = (Rectangle) dataManager.getSelectedClass().getOutlineShape();
 
         //Remove the selected class from the canvas and the arraylist of classes
+        int index = canvas.getChildren().indexOf(dataManager.getSelectedClass().getDisplay());
         canvas.getChildren().remove(dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().remove(dataManager.getSelectedClass());
         
@@ -1143,11 +1147,17 @@ public class WorkspaceManager {
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
         
-        if(generateGrid){
-            canvas.getChildren().add(dataManager.getClasses().size() + numLines, dataManager.getSelectedClass().getDisplay());
-        }
-        else
+//        if(generateGrid){
+//            canvas.getChildren().add(dataManager.getClasses().size() + numLines, dataManager.getSelectedClass().getDisplay());
+//        }
+//        else
+//            canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
+        if(index == -1 && generateGrid)
+            canvas.getChildren().add(dataManager.getClasses().size() + 1, dataManager.getSelectedClass().getDisplay());
+        else if(index == -1)
             canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
+        else
+            canvas.getChildren().add(index, dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().add(dataManager.getSelectedClass());
     }
     

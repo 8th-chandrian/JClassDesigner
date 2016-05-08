@@ -11,6 +11,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import jdcapp.gui.WorkspaceManager;
 
 /**
  *
@@ -98,6 +99,17 @@ public class CustomImport extends CustomBox{
         else{
             outline.setHeight(height);
         }
+        
+        //Ensures that generated class fits perfectly onto grid
+        if(height % WorkspaceManager.GRID_BOX_SIZE != 0){
+            height += WorkspaceManager.GRID_BOX_SIZE - (height % WorkspaceManager.GRID_BOX_SIZE);
+            outline.setHeight(height);
+        }
+        if(width % WorkspaceManager.GRID_BOX_SIZE != 0){
+            width += WorkspaceManager.GRID_BOX_SIZE - (width % WorkspaceManager.GRID_BOX_SIZE);
+            outline.setWidth(width);
+        }
+        
         outline.setStroke(Color.BLACK);
         outline.setStrokeWidth(1);
         outline.setFill(Color.WHITE);
