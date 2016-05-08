@@ -5,13 +5,17 @@ package jdcapp.controller;
 
 import java.io.File;
 import java.io.IOException;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 import jdcapp.JDCApp;
 import jdcapp.data.DataManager;
 import jdcapp.file.FileManager;
 import jdcapp.gui.AppMessageDialogSingleton;
 import jdcapp.gui.AppYesNoCancelDialogSingleton;
+import jdcapp.gui.WorkspaceManager;
 import static jdcapp.settings.AppPropertyType.EXPORT_CODE_TITLE;
 import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_DIRECTORIES;
 import static jdcapp.settings.AppPropertyType.EXPORT_ERROR_MESSAGE_FILES;
@@ -30,6 +34,10 @@ import static jdcapp.settings.AppPropertyType.SAVE_COMPLETED_MESSAGE;
 import static jdcapp.settings.AppPropertyType.SAVE_COMPLETED_TITLE;
 import static jdcapp.settings.AppPropertyType.SAVE_ERROR_MESSAGE;
 import static jdcapp.settings.AppPropertyType.SAVE_ERROR_TITLE;
+import static jdcapp.settings.AppPropertyType.SAVE_SNAPSHOT_COMPLETED_MESSAGE;
+import static jdcapp.settings.AppPropertyType.SAVE_SNAPSHOT_COMPLETED_TITLE;
+import static jdcapp.settings.AppPropertyType.SAVE_SNAPSHOT_ERROR_MESSAGE;
+import static jdcapp.settings.AppPropertyType.SAVE_SNAPSHOT_ERROR_TITLE;
 import static jdcapp.settings.AppPropertyType.SAVE_UNSAVED_WORK_MESSAGE;
 import static jdcapp.settings.AppPropertyType.SAVE_UNSAVED_WORK_TITLE;
 import static jdcapp.settings.AppPropertyType.SAVE_WORK_TITLE;
@@ -43,6 +51,8 @@ import properties_manager.PropertiesManager;
  * @author Noah
  */
 public class FileController {
+    
+    static final String SNAPSHOT_EXTENSION = "png";
     
     //The parent application
     JDCApp app;
@@ -173,7 +183,35 @@ public class FileController {
     }
 
     public void handlePhotoExportRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // WE'LL NEED THIS TO GET CUSTOM STUFF
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        WorkspaceManager workspaceManager = app.getWorkspaceManager();
+        
+        // PROMPT THE USER FOR A FILE NAME
+        FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(PATH_WORK));
+        fc.setTitle(props.getProperty(SAVE_WORK_TITLE));
+        fc.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter(props.getProperty(WORK_FILE_EXT_DESC), props.getProperty(WORK_FILE_EXT)));
+
+        File selectedFile = fc.showSaveDialog(app.getWorkspaceManager().getWindow());
+        if(selectedFile != null){
+            WritableImage image = workspaceManager.getCanvas().snapshot(null, 
+                    new WritableImage(workspaceManager.DEFAULT_WIDTH, workspaceManager.DEFAULT_HEIGHT));
+            File snapshot = new File(selectedFile.getPath() + SNAPSHOT_EXTENSION);
+            try{
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", snapshot);
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                dialog.show(props.getProperty(SAVE_SNAPSHOT_COMPLETED_TITLE.toString()), 
+                        props.getProperty(SAVE_SNAPSHOT_COMPLETED_MESSAGE.toString()));
+            }
+            catch (Exception e){
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                dialog.show(props.getProperty(SAVE_SNAPSHOT_ERROR_TITLE.toString()), 
+                        props.getProperty(SAVE_SNAPSHOT_ERROR_MESSAGE.toString()));
+                e.printStackTrace();
+            }
+        }
     }
 
     public void handleCodeExportRequest() {
@@ -203,7 +241,24 @@ public class FileController {
     }
     
     public void handleExitRequest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            // WE MAY HAVE TO SAVE CURRENT WORK
+            boolean continueToExit = true;
+            if (!saved) {
+                // THE USER CAN OPT OUT HERE
+                continueToExit = promptToSave();
+            }
+
+            // IF THE USER REALLY WANTS TO EXIT THE APP
+            if (continueToExit) {
+                // EXIT THE APPLICATION
+                System.exit(0);
+            }
+        } catch (IOException ioe) {
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+		PropertiesManager props = PropertiesManager.getPropertiesManager();
+                dialog.show(props.getProperty(SAVE_ERROR_TITLE), props.getProperty(SAVE_ERROR_MESSAGE));
+        }
     }
     
     /**

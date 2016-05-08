@@ -1,19 +1,232 @@
 
 {
+    "num_classes_added":9,
     "class_array":[
         {
-            "start_x":470.0,
-            "start_y":40.0,
-            "width":90.0,
+            "start_x":10.0,
+            "start_y":290.0,
+            "width":100.0,
             "height":40.0,
             "custom_class":{
-                "class_name":"Application",
-                "package_name":"javafx.application"
+                "class_name":"EventHandler",
+                "package_name":"javafx.event"
             }
         },
         {
-            "start_x":720.0,
-            "start_y":640.0,
+            "start_x":90.0,
+            "start_y":150.0,
+            "width":310.0,
+            "height":120.0,
+            "custom_class":{
+                "class_name":"StartHandler",
+                "package_name":"test.handlers",
+                "interface_value":false,
+                "abstract_value":false,
+                "extended_class":"",
+                "implemented_classes":[
+                    "EventHandler"
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"StartHandler",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "app : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"handle",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "event : Event"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "start_x":90.0,
+            "start_y":350.0,
+            "width":280.0,
+            "height":120.0,
+            "custom_class":{
+                "class_name":"PauseHandler",
+                "package_name":"test.handlers",
+                "interface_value":false,
+                "abstract_value":false,
+                "extended_class":"",
+                "implemented_classes":[
+                    "EventHandler"
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"PauseHandler",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "app : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"handle",
+                        "method_return":"void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "event : Event"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "start_x":410.0,
+            "start_y":290.0,
+            "width":40.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"Event",
+                "package_name":"javafx.event"
+            }
+        },
+        {
+            "start_x":1210.0,
+            "start_y":170.0,
+            "width":40.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"Date",
+                "package_name":"java.util"
+            }
+        },
+        {
+            "start_x":890.0,
+            "start_y":170.0,
+            "width":280.0,
+            "height":130.0,
+            "custom_class":{
+                "class_name":"DateTask",
+                "package_name":"test.tasks",
+                "interface_value":false,
+                "abstract_value":false,
+                "extended_class":"Task<Void>",
+                "implemented_classes":[
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    },
+                    {
+                        "var_name":"now",
+                        "var_type":"Date",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"DateTask",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"call",
+                        "method_return":"Void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"protected",
+                        "method_arguments":[
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "start_x":890.0,
+            "start_y":410.0,
+            "width":300.0,
+            "height":130.0,
+            "custom_class":{
+                "class_name":"CounterTask",
+                "package_name":"test.tasks",
+                "interface_value":false,
+                "abstract_value":false,
+                "extended_class":"Task<Void>",
+                "implemented_classes":[
+                ],
+                "variables":[
+                    {
+                        "var_name":"app",
+                        "var_type":"ThreadExample",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    },
+                    {
+                        "var_name":"counter",
+                        "var_type":"int",
+                        "var_static_value":false,
+                        "var_access":"private"
+                    }
+                ],
+                "methods":[
+                    {
+                        "method_name":"CounterTask",
+                        "method_return":"",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"public",
+                        "method_arguments":[
+                            "initApp : ThreadExample"
+                        ]
+                    },
+                    {
+                        "method_name":"call",
+                        "method_return":"Void",
+                        "method_static_value":false,
+                        "method_abstract_value":false,
+                        "method_access":"protected",
+                        "method_arguments":[
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "start_x":830.0,
+            "start_y":670.0,
             "width":40.0,
             "height":40.0,
             "custom_class":{
@@ -22,8 +235,8 @@
             }
         },
         {
-            "start_x":630.0,
-            "start_y":640.0,
+            "start_x":720.0,
+            "start_y":670.0,
             "width":80.0,
             "height":40.0,
             "custom_class":{
@@ -32,63 +245,13 @@
             }
         },
         {
-            "start_x":550.0,
-            "start_y":640.0,
-            "width":70.0,
-            "height":40.0,
-            "custom_class":{
-                "class_name":"TextArea",
-                "package_name":"javafx.scene.control"
-            }
-        },
-        {
             "start_x":490.0,
-            "start_y":640.0,
-            "width":50.0,
-            "height":40.0,
-            "custom_class":{
-                "class_name":"Button",
-                "package_name":"javafx.scene.control"
-            }
-        },
-        {
-            "start_x":410.0,
-            "start_y":640.0,
-            "width":70.0,
-            "height":40.0,
-            "custom_class":{
-                "class_name":"FlowPane",
-                "package_name":"javafx.scene.layout"
-            }
-        },
-        {
-            "start_x":320.0,
-            "start_y":640.0,
-            "width":80.0,
-            "height":40.0,
-            "custom_class":{
-                "class_name":"BorderPane",
-                "package_name":"javafx.scene.layout"
-            }
-        },
-        {
-            "start_x":270.0,
-            "start_y":640.0,
-            "width":40.0,
-            "height":40.0,
-            "custom_class":{
-                "class_name":"Stage",
-                "package_name":"javafx.stage"
-            }
-        },
-        {
-            "start_x":410.0,
-            "start_y":180.0,
+            "start_y":140.0,
             "width":330.0,
             "height":410.0,
             "custom_class":{
                 "class_name":"ThreadExample",
-                "package_name":"default_package",
+                "package_name":"test",
                 "interface_value":false,
                 "abstract_value":false,
                 "extended_class":"Application",
@@ -286,175 +449,321 @@
                     }
                 ]
             }
+        },
+        {
+            "start_x":600.0,
+            "start_y":40.0,
+            "width":90.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"Application",
+                "package_name":"javafx.application"
+            }
+        },
+        {
+            "start_x":1230.0,
+            "start_y":340.0,
+            "width":80.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"Task<Void>",
+                "package_name":"javafx.concurrent"
+            }
+        },
+        {
+            "start_x":630.0,
+            "start_y":670.0,
+            "width":70.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"TextArea",
+                "package_name":"javafx.scene.control"
+            }
+        },
+        {
+            "start_x":560.0,
+            "start_y":670.0,
+            "width":50.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"Button",
+                "package_name":"javafx.scene.control"
+            }
+        },
+        {
+            "start_x":470.0,
+            "start_y":670.0,
+            "width":70.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"FlowPane",
+                "package_name":"javafx.scene.layout"
+            }
+        },
+        {
+            "start_x":370.0,
+            "start_y":670.0,
+            "width":80.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"BorderPane",
+                "package_name":"javafx.scene.layout"
+            }
+        },
+        {
+            "start_x":310.0,
+            "start_y":670.0,
+            "width":40.0,
+            "height":40.0,
+            "custom_class":{
+                "class_name":"Stage",
+                "package_name":"javafx.stage"
+            }
         }
     ],
     "connection_array":[
         {
-            "from_class":"ThreadExample",
-            "to_class":"Application",
+            "from_class":"StartHandler",
+            "to_class":"ThreadExample",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":400.0,
+                    "point_y":200.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":490.0,
+                    "point_y":200.0
+                }
+            ]
+        },
+        {
+            "from_class":"StartHandler",
+            "to_class":"EventHandler",
             "arrow_type":"arrow",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":510.0,
-                    "point_y":180.0
+                    "point_x":90.0,
+                    "point_y":200.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":60.0,
+                    "point_y":200.0
                 },
                 {
                     "point_type":"arrow",
                     "is_removable":false,
-                    "point_x":510.0,
-                    "point_y":80.0
+                    "point_x":60.0,
+                    "point_y":290.0
                 }
             ]
         },
         {
-            "from_class":"ThreadExample",
-            "to_class":"FlowPane",
+            "from_class":"StartHandler",
+            "to_class":"Event",
+            "arrow_type":"feathered arrow",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":400.0,
+                    "point_y":230.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":430.0,
+                    "point_y":230.0
+                },
+                {
+                    "point_type":"feathered arrow",
+                    "is_removable":false,
+                    "point_x":430.0,
+                    "point_y":290.0
+                }
+            ]
+        },
+        {
+            "from_class":"PauseHandler",
+            "to_class":"EventHandler",
+            "arrow_type":"arrow",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":90.0,
+                    "point_y":400.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":60.0,
+                    "point_y":400.0
+                },
+                {
+                    "point_type":"arrow",
+                    "is_removable":false,
+                    "point_x":60.0,
+                    "point_y":330.0
+                }
+            ]
+        },
+        {
+            "from_class":"PauseHandler",
+            "to_class":"ThreadExample",
             "arrow_type":"diamond",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":440.0,
-                    "point_y":590.0
+                    "point_x":370.0,
+                    "point_y":420.0
                 },
                 {
                     "point_type":"diamond",
                     "is_removable":false,
-                    "point_x":440.0,
-                    "point_y":640.0
+                    "point_x":490.0,
+                    "point_y":420.0
                 }
             ]
         },
         {
-            "from_class":"ThreadExample",
-            "to_class":"Button",
+            "from_class":"PauseHandler",
+            "to_class":"Event",
+            "arrow_type":"feathered arrow",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":370.0,
+                    "point_y":390.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":430.0,
+                    "point_y":390.0
+                },
+                {
+                    "point_type":"feathered arrow",
+                    "is_removable":false,
+                    "point_x":430.0,
+                    "point_y":330.0
+                }
+            ]
+        },
+        {
+            "from_class":"DateTask",
+            "to_class":"ThreadExample",
             "arrow_type":"diamond",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":500.0,
-                    "point_y":590.0
+                    "point_x":890.0,
+                    "point_y":210.0
                 },
                 {
                     "point_type":"diamond",
                     "is_removable":false,
-                    "point_x":500.0,
-                    "point_y":640.0
+                    "point_x":820.0,
+                    "point_y":210.0
                 }
             ]
         },
         {
-            "from_class":"ThreadExample",
-            "to_class":"TextArea",
+            "from_class":"DateTask",
+            "to_class":"Date",
             "arrow_type":"diamond",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":560.0,
-                    "point_y":590.0
+                    "point_x":1170.0,
+                    "point_y":190.0
                 },
                 {
                     "point_type":"diamond",
                     "is_removable":false,
-                    "point_x":560.0,
-                    "point_y":640.0
+                    "point_x":1210.0,
+                    "point_y":190.0
                 }
             ]
         },
         {
-            "from_class":"ThreadExample",
-            "to_class":"BorderPane",
+            "from_class":"CounterTask",
+            "to_class":"ThreadExample",
             "arrow_type":"diamond",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":420.0,
-                    "point_y":590.0
-                },
-                {
-                    "point_type":"square",
-                    "is_removable":true,
-                    "point_x":420.0,
-                    "point_y":610.0
-                },
-                {
-                    "point_type":"square",
-                    "is_removable":true,
-                    "point_x":360.0,
-                    "point_y":610.0
+                    "point_x":890.0,
+                    "point_y":460.0
                 },
                 {
                     "point_type":"diamond",
                     "is_removable":false,
-                    "point_x":360.0,
-                    "point_y":640.0
+                    "point_x":820.0,
+                    "point_y":460.0
                 }
             ]
         },
         {
-            "from_class":"ThreadExample",
-            "to_class":"Stage",
-            "arrow_type":"diamond",
+            "from_class":"DateTask",
+            "to_class":"Task<Void>",
+            "arrow_type":"arrow",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":410.0,
-                    "point_y":590.0
+                    "point_x":1170.0,
+                    "point_y":220.0
                 },
                 {
                     "point_type":"square",
                     "is_removable":true,
-                    "point_x":410.0,
-                    "point_y":600.0
+                    "point_x":1270.0,
+                    "point_y":220.0
                 },
                 {
-                    "point_type":"square",
-                    "is_removable":true,
-                    "point_x":300.0,
-                    "point_y":600.0
-                },
-                {
-                    "point_type":"diamond",
+                    "point_type":"arrow",
                     "is_removable":false,
-                    "point_x":300.0,
-                    "point_y":640.0
+                    "point_x":1270.0,
+                    "point_y":340.0
                 }
             ]
         },
         {
-            "from_class":"ThreadExample",
-            "to_class":"ScrollPane",
-            "arrow_type":"diamond",
+            "from_class":"CounterTask",
+            "to_class":"Task<Void>",
+            "arrow_type":"arrow",
             "custom_point_array":[
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":580.0,
-                    "point_y":590.0
+                    "point_x":1190.0,
+                    "point_y":460.0
                 },
                 {
                     "point_type":"square",
                     "is_removable":true,
-                    "point_x":580.0,
-                    "point_y":620.0
+                    "point_x":1270.0,
+                    "point_y":460.0
                 },
                 {
-                    "point_type":"square",
-                    "is_removable":true,
-                    "point_x":640.0,
-                    "point_y":620.0
-                },
-                {
-                    "point_type":"diamond",
+                    "point_type":"arrow",
                     "is_removable":false,
-                    "point_x":640.0,
-                    "point_y":640.0
+                    "point_x":1270.0,
+                    "point_y":380.0
                 }
             ]
         },
@@ -466,26 +775,207 @@
                 {
                     "point_type":"square",
                     "is_removable":false,
-                    "point_x":590.0,
-                    "point_y":590.0
+                    "point_x":800.0,
+                    "point_y":550.0
                 },
                 {
                     "point_type":"square",
                     "is_removable":true,
-                    "point_x":590.0,
+                    "point_x":800.0,
                     "point_y":610.0
                 },
                 {
                     "point_type":"square",
                     "is_removable":true,
-                    "point_x":720.0,
+                    "point_x":830.0,
                     "point_y":610.0
                 },
                 {
                     "point_type":"diamond",
                     "is_removable":false,
-                    "point_x":720.0,
-                    "point_y":640.0
+                    "point_x":830.0,
+                    "point_y":670.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"Application",
+            "arrow_type":"arrow",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":640.0,
+                    "point_y":140.0
+                },
+                {
+                    "point_type":"arrow",
+                    "is_removable":false,
+                    "point_x":640.0,
+                    "point_y":80.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"ScrollPane",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":740.0,
+                    "point_y":550.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":740.0,
+                    "point_y":620.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":760.0,
+                    "point_y":620.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":760.0,
+                    "point_y":670.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"TextArea",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":670.0,
+                    "point_y":550.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":670.0,
+                    "point_y":670.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"Button",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":590.0,
+                    "point_y":550.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":590.0,
+                    "point_y":670.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"FlowPane",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":550.0,
+                    "point_y":550.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":550.0,
+                    "point_y":620.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":520.0,
+                    "point_y":620.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":520.0,
+                    "point_y":670.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"BorderPane",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":530.0,
+                    "point_y":550.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":530.0,
+                    "point_y":600.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":440.0,
+                    "point_y":600.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":440.0,
+                    "point_y":670.0
+                }
+            ]
+        },
+        {
+            "from_class":"ThreadExample",
+            "to_class":"Stage",
+            "arrow_type":"diamond",
+            "custom_point_array":[
+                {
+                    "point_type":"square",
+                    "is_removable":false,
+                    "point_x":510.0,
+                    "point_y":550.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":510.0,
+                    "point_y":580.0
+                },
+                {
+                    "point_type":"square",
+                    "is_removable":true,
+                    "point_x":340.0,
+                    "point_y":580.0
+                },
+                {
+                    "point_type":"diamond",
+                    "is_removable":false,
+                    "point_x":340.0,
+                    "point_y":670.0
                 }
             ]
         }

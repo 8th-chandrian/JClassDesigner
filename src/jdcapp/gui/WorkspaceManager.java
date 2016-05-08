@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -147,8 +148,8 @@ public class WorkspaceManager {
     static final String WORKSPACE_SCROLL_PANE_CLASS = "workspace_scroll_pane";
     static final String TABLE_VIEW_CLASS = "table_view";
     
-    static final double DEFAULT_WIDTH = 2000;
-    static final double DEFAULT_HEIGHT = 1000;
+    public static final int DEFAULT_WIDTH = 2000;
+    public static final int DEFAULT_HEIGHT = 1000;
     public static final int GRID_BOX_SIZE = 10;
     
     static final ObservableList<String> access = FXCollections.observableArrayList(CustomVar.PRIVATE_VAR_ACCESS, 
@@ -1595,8 +1596,4 @@ public class WorkspaceManager {
         fileController.setSaved(false);
         updateFileToolbarControls(false);
     }
-    
-    //TODO: Finish adding methods
-    
-    
 }

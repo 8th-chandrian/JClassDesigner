@@ -48,6 +48,9 @@ public class DataManager {
     //Whether or not the code could currently be exported
     boolean isExportable;
     
+    //Used to ensure that no classes are added with the same name
+    int numClassesAdded;
+    
     public DataManager(JDCApp init){
         app = init;
         selectedClass = null;
@@ -59,6 +62,7 @@ public class DataManager {
         tempParents = new ArrayList<>();
         isExportable = false;
         state = SELECTING;
+        numClassesAdded = 0;
         //TODO: Finish coding constructor (is this all we need here?)
     }
     
@@ -75,6 +79,7 @@ public class DataManager {
         selectedPoint = null;
         selectedConnection = null;
         state = SELECTING;
+        numClassesAdded = 0;
     }
     
     /**
@@ -607,5 +612,13 @@ public class DataManager {
     
     public ArrayList<CustomConnection> getConnections(){
         return connections;
+    }
+    
+    public int getNumClassesAdded(){
+        return numClassesAdded;
+    }
+    
+    public void setNumClassesAdded(int n){
+        numClassesAdded = n;
     }
 }

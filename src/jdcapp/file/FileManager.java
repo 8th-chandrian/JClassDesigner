@@ -46,6 +46,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class FileManager {
     
+    static final String JSON_NUM_CLASSES_ADDED = "num_classes_added";
+    
     static final String JSON_START_X = "start_x";
     static final String JSON_START_Y = "start_y";
     static final String JSON_WIDTH = "width";
@@ -118,9 +120,7 @@ public class FileManager {
         JsonArrayBuilder classArrayBuilder = Json.createArrayBuilder();
         JsonArrayBuilder connectionArrayBuilder = Json.createArrayBuilder();
         
-//        String fontName = CustomClassWrapper.getFont().getName();
-//        double pixelHeight = CustomClassWrapper.getPixelHeight();
-//        double maxPixelWidth = CustomClassWrapper.getMaxPixelWidth();
+        int numClasses = dataManager.getNumClassesAdded();
         
         for(CustomBox c : dataManager.getClasses()){
             
@@ -173,9 +173,7 @@ public class FileManager {
         
         //Create the final JsonObject containing the entire DataManager
         JsonObject dataManagerJSO = Json.createObjectBuilder()
-//                .add(JSON_FONT_NAME, fontName)
-//                .add(JSON_PIXEL_HEIGHT, pixelHeight)
-//                .add(JSON_MAX_PIXEL_WIDTH, maxPixelWidth)
+                .add(JSON_NUM_CLASSES_ADDED, numClasses)
                 .add(JSON_CLASS_ARRAY, classArray)
                 .add(JSON_CONNECTION_ARRAY, connectionArray)
                 .build();
@@ -420,15 +418,8 @@ public class FileManager {
 	// LOAD THE JSON FILE WITH ALL THE DATA
 	JsonObject json = loadJSONFile(filePath);
 	
-	// Load the font data
-//	String fontName = json.getString(JSON_FONT_NAME);
-//        double pixelHeight = getDataAsDouble(json, JSON_PIXEL_HEIGHT);
-//        Font textFont = Font.font(fontName, FontWeight.NORMAL, pixelHeight);
-//        double maxPixelWidth = getDataAsDouble(json, JSON_MAX_PIXEL_WIDTH);
-//        
-//	CustomClassWrapper.setFont(textFont);
-//        CustomClassWrapper.setPixelHeight(pixelHeight);
-//        CustomClassWrapper.setMaxPixelWidth(maxPixelWidth);
+	int numClasses = json.getInt(JSON_NUM_CLASSES_ADDED);
+        dataManager.setNumClassesAdded(numClasses);
 	
 	// Load the array of CustomClassWrappers
 	JsonArray jsonClassArray = json.getJsonArray(JSON_CLASS_ARRAY);
@@ -909,7 +900,7 @@ public class FileManager {
      * @return 
      */
     private String processMethod(CustomMethod m, boolean isInterface){
-        String processedMethod = "";
+        String processedMethod = "    ";
         
         //If method is an interface, it must be either static or abstract
         if(isInterface){
@@ -936,7 +927,7 @@ public class FileManager {
             if(m.isStatic()){
                 processedMethod += "{\n";
                 processedMethod += "\t" + UNSUPPORTED_OPERATION_EXCEPTION;
-                processedMethod += "\n}";
+                processedMethod += "\n    }";
             }else if(m.isAbstract()){
                 processedMethod += ";";
             }
@@ -978,7 +969,7 @@ public class FileManager {
             }
             processedMethod += "){\n";
             processedMethod += "\t" + UNSUPPORTED_OPERATION_EXCEPTION;
-            processedMethod += "\n}";
+            processedMethod += "\n    }";
         }
         return processedMethod;
     }
@@ -990,7 +981,7 @@ public class FileManager {
      * @return 
      */
     private String processVariable(CustomVar v){
-        String processedVariable = "";
+        String processedVariable = "    ";
         
         processedVariable += v.getAccess() + " ";
         if(v.isStatic())
