@@ -914,8 +914,6 @@ public class FileManager {
         //If method is an interface, it must be either static or abstract
         if(isInterface){
             
-            processedMethod += "\t";
-            
             //If m is static, method should start with "static" modifier
             //Interface methods are public by default, so we can exclude the public access modifier
             if(m.isStatic()){
@@ -938,14 +936,14 @@ public class FileManager {
             if(m.isStatic()){
                 processedMethod += "{\n";
                 processedMethod += "\t" + UNSUPPORTED_OPERATION_EXCEPTION;
-                processedMethod += "\n\t}";
+                processedMethod += "\n}";
             }else if(m.isAbstract()){
                 processedMethod += ";";
             }
             
         }
         else if(m.isAbstract()){
-            processedMethod += "\t" + m.getAccess() + " ";
+            processedMethod += m.getAccess() + " ";
             if(m.isStatic())
                 processedMethod += "static ";
             processedMethod += "abstract ";
@@ -964,7 +962,7 @@ public class FileManager {
             processedMethod += ");";
         }
         else{
-            processedMethod += "\t" + m.getAccess() + " ";
+            processedMethod += m.getAccess() + " ";
             if(m.isStatic())
                 processedMethod += "static ";
             if(!m.isConstructor())
@@ -980,7 +978,7 @@ public class FileManager {
             }
             processedMethod += "){\n";
             processedMethod += "\t" + UNSUPPORTED_OPERATION_EXCEPTION;
-            processedMethod += "\n\t}";
+            processedMethod += "\n}";
         }
         return processedMethod;
     }
@@ -992,7 +990,7 @@ public class FileManager {
      * @return 
      */
     private String processVariable(CustomVar v){
-        String processedVariable = "\t";
+        String processedVariable = "";
         
         processedVariable += v.getAccess() + " ";
         if(v.isStatic())

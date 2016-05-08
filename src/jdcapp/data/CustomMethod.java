@@ -159,7 +159,10 @@ public class CustomMethod {
      * @param arguments the arguments to set
      */
     public void setArguments(ArrayList<String> arguments) {
-        this.arguments = arguments;
+        this.arguments.clear();
+        for(String a : arguments){
+            this.arguments.add(a);
+        }
     }
     
     /**

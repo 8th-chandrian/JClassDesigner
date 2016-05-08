@@ -23,6 +23,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -416,6 +417,7 @@ public class WorkspaceManager {
         
         variableScrollPane = new ScrollPane();
         variableTableView = new TableView();
+        variableTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         variableScrollPane.setContent(variableTableView);
         variableScrollPane.setPrefViewportWidth(100);
         variableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -436,6 +438,7 @@ public class WorkspaceManager {
         
         methodScrollPane = new ScrollPane();
         methodTableView = new TableView();
+        variableTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         methodTableView.setFixedCellSize(Region.USE_COMPUTED_SIZE);
         methodScrollPane.setContent(methodTableView);
         methodScrollPane.setPrefViewportWidth(100);
