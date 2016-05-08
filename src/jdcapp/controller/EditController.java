@@ -137,6 +137,7 @@ public class EditController {
         workspaceManager.wipeSelectedClassData();
         workspaceManager.wipeTableData();
         workspaceManager.updateEditToolbarControls();
+        dataManager.checkCombinations();
     }
 
     public void handleUndoRequest() {
