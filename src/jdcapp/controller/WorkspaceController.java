@@ -56,6 +56,7 @@ public class WorkspaceController {
                     dataManager.getSelectedClass().initDrag(x, y);
                     dataManager.initDragOnConnections(dataManager.getSelectedClass(), x, y);
                     dataManager.setState(JDCAppState.DRAGGING_CLASS);
+                    app.getWorkspaceManager().moveSelectedClassForward();
                 }
                 else{
                     dataManager.setState(JDCAppState.DRAGGING_NOTHING);

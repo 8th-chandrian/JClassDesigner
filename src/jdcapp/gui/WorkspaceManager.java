@@ -1112,10 +1112,10 @@ public class WorkspaceManager {
         }
     }
     
-    /**
+      /**
      * To be called after any change is made to the selected class.
      * Note: this method has the added effect of moving the selected class to the back of
-     * the arraylist/the front of the canvas
+     * the arraylist/the front of the canvas (stays behind all connections however)
      * 
      * Note: this method ensures that text displayed as red (error text) remains red
      */
@@ -1127,14 +1127,20 @@ public class WorkspaceManager {
         Rectangle oldBox = (Rectangle) dataManager.getSelectedClass().getOutlineShape();
 
         //Remove the selected class from the canvas and the arraylist of classes
-        int index = canvas.getChildren().indexOf(dataManager.getSelectedClass().getDisplay());
         canvas.getChildren().remove(dataManager.getSelectedClass().getDisplay());
         dataManager.getClasses().remove(dataManager.getSelectedClass());
         
-        //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
+        //Reload the display data in CustomClassWrapper
         dataManager.getSelectedClass().toDisplay();
         dataManager.getSelectedClass().highlight(highlightedEffect);
         
+        // Add the selected class back into data manager and its display into canvas
+        // Note that display is being added after potential grid lines and all other classes, but
+        // before all connections.
+        canvas.getChildren().add((canvas.getChildren().size() - dataManager.getConnections().size()), 
+                dataManager.getSelectedClass().getDisplay());
+        dataManager.getClasses().add(dataManager.getSelectedClass());
+
         //Ensures that points connected to reloaded box are moved appropriately
         ArrayList<CustomConnection> fromConnections = dataManager.getFromConnections(dataManager.getSelectedClass());
         ArrayList<CustomConnection> toConnections = dataManager.getToConnections(dataManager.getSelectedClass());
@@ -1146,68 +1152,26 @@ public class WorkspaceManager {
             connection.getLastPoint().reloadEndPoint(oldBox, newBox);
         }
         
-        
         if(isRed)
             dataManager.getSelectedClass().getNameText().setFill(Color.RED);
-        
-//        if(generateGrid){
-//            canvas.getChildren().add(dataManager.getClasses().size() + numLines, dataManager.getSelectedClass().getDisplay());
-//        }
-//        else
-//            canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
-        if(index == -1 && generateGrid)
-            canvas.getChildren().add(dataManager.getClasses().size() + 1, dataManager.getSelectedClass().getDisplay());
-        else if(index == -1)
-            canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getSelectedClass().getDisplay());
-        else
-            canvas.getChildren().add(index, dataManager.getSelectedClass().getDisplay());
-        dataManager.getClasses().add(dataManager.getSelectedClass());
     }
     
     /**
-     * To be called after any change is made to the selected class.
-     * Note: this method has the added effect of moving the selected class to the back of
-     * the arraylist/the front of the canvas
-     * 
-     * Note: this method ensures that text displayed as red (error text) remains red
+     * Moves selected class forward so it is the front-most class in the canvas
      */
-    public void reloadResizedClass(){
+    public void moveSelectedClassForward(){
         DataManager dataManager = app.getDataManager();
-        boolean isRed = false;
-        if(dataManager.getResizedClass().getNameText().getFill().equals(Color.RED))
-            isRed = true;
-        Rectangle oldBox = (Rectangle) dataManager.getResizedClass().getOutlineShape();
-
+        
         //Remove the selected class from the canvas and the arraylist of classes
-        canvas.getChildren().remove(dataManager.getResizedClass().getDisplay());
-        dataManager.getClasses().remove(dataManager.getResizedClass());
+        canvas.getChildren().remove(dataManager.getSelectedClass().getDisplay());
+        dataManager.getClasses().remove(dataManager.getSelectedClass());
         
-        //Reload the display data in CustomClassWrapper and add back into canvas and arraylist
-        dataManager.getResizedClass().toDisplay();
-        if(dataManager.getResizedClass().equals(dataManager.getSelectedClass()))
-            dataManager.getResizedClass().highlight(highlightedEffect);
-        
-        //Ensures that points connected to reloaded box are moved appropriately
-        ArrayList<CustomConnection> fromConnections = dataManager.getFromConnections(dataManager.getResizedClass());
-        ArrayList<CustomConnection> toConnections = dataManager.getToConnections(dataManager.getResizedClass());
-        Rectangle newBox = (Rectangle) dataManager.getResizedClass().getOutlineShape();
-        for(CustomConnection connection : fromConnections){
-            connection.getFirstPoint().reloadEndPoint(oldBox, newBox);
-        }
-        for(CustomConnection connection : toConnections){
-            connection.getLastPoint().reloadEndPoint(oldBox, newBox);
-        }
-        
-        
-        if(isRed)
-            dataManager.getResizedClass().getNameText().setFill(Color.RED);
-        
-        if(generateGrid){
-            canvas.getChildren().add(dataManager.getClasses().size() + numLines, dataManager.getResizedClass().getDisplay());
-        }
-        else
-            canvas.getChildren().add(dataManager.getClasses().size(), dataManager.getResizedClass().getDisplay());
-        dataManager.getClasses().add(dataManager.getResizedClass());
+        // Add the selected class back into data manager and its display into canvas
+        // Note that display is being added after potential grid lines and all other classes, but
+        // before all connections.
+        canvas.getChildren().add((canvas.getChildren().size() - dataManager.getConnections().size()), 
+                dataManager.getSelectedClass().getDisplay());
+        dataManager.getClasses().add(dataManager.getSelectedClass());
     }
     
     /**
