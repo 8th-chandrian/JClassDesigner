@@ -1,3 +1,15 @@
-This is the final project which I built for my CSE 219 class. It is currently incomplete, but still has basic functionality. It acts as a UML Diagram editing program, and gives users the option to export the diagram which they created to compilable Java skeleton code.
+This is the final project which I built for my CSE 219 class. It is currently incomplete, but still has the vast majority of its functionality. It acts as a UML Diagram editing program, and gives users the option to export the diagram which they created to compilable Java skeleton code.
 
-The functions still in progress are: Undo/Redo, Zoom In/Zoom Out, and some limited export-to-code functionality.
+The functionality which is currently complete is:
+- Adding classes/interfaces
+- Editing and moving classes/interfaces
+- Adding parents/variables/methods to classes
+- Taking snapshots of designs (snapshots exported as .png files)
+- Saving/loading designs
+- Exporting to code (almost entirely functional)
+- Grid display and snap-to-grid
+
+The functions still in process are:
+- Undo/Redo
+- Zoom in/Zoom out
+- A few aspects of exporting to code
