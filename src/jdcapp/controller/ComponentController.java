@@ -309,7 +309,7 @@ public class ComponentController {
         if(!oldValue.equals(newValue)){
             customMethod.setReturnType(newValue);
             //Create new connection and possibly class for new value
-            if(!isPrimitive(newValue) && !newValue.equals("")){
+            if(!isPrimitive(newValue)){
                 if(!dataManager.hasName(newValue)){
                     CustomImport newImport = new CustomImport(dataManager.getSelectedClass().getStartX() + app.getWorkspaceManager().GRID_BOX_SIZE, 
                             dataManager.getSelectedClass().getStartY() + app.getWorkspaceManager().GRID_BOX_SIZE, newValue);

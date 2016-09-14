@@ -91,8 +91,6 @@
         <property name="LOAD_ERROR_TITLE"		value="Load Work Error"></property>
         <property name="SAVE_ERROR_MESSAGE"             value="An error occured saving work."></property>
         <property name="SAVE_ERROR_TITLE"		value="Save Work Error"></property>
-        <property name="SAVE_SNAPSHOT_ERROR_MESSAGE"    value="An error occured saving snapshot."></property>
-        <property name="SAVE_SNAPSHOT_ERROR_TITLE"	value="Save Snapshot Error"></property>
         <property name="PROPERTIES_LOAD_ERROR_MESSAGE"	value="An error occured loading a properties file."></property>	
         <property name="PROPERTIES_LOAD_ERROR_TITLE"	value="Properties File Loading Error"></property>
         <property name="INVALID_COMBINATION_ERROR_MESSAGE"  value="Error: Class/Package Combo Already Exists"></property>
@@ -107,8 +105,6 @@
         <property name="LOAD_COMPLETED_TITLE"		value="Loading Completed"></property>
         <property name="SAVE_COMPLETED_MESSAGE"		value="File Saving Completed"></property>
         <property name="SAVE_COMPLETED_TITLE"		value="Saving Completed"></property>
-        <property name="SAVE_SNAPSHOT_COMPLETED_MESSAGE"	value="Snapshot Was Saved Successfully"></property>
-        <property name="SAVE_SNAPSHOT_COMPLETED_TITLE"		value="Snapshot Saving Completed"></property>
         <property name="SAVE_UNSAVED_WORK_MESSAGE"	value="Would you like to save your unsaved work first?"></property>
         <property name="SAVE_UNSAVED_WORK_TITLE"	value="Save unsaved work?"></property>
 	
