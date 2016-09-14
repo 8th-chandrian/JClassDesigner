@@ -15,3 +15,5 @@ The functions still in process are:
 - Undo/Redo
 - Zoom in/Zoom out
 - A few aspects of exporting to code
+
+Installation Note: To fix broken dependencies after cloning, requisite .jar files have been included in resources folder
